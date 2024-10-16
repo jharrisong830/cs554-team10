@@ -11,26 +11,27 @@
 
 ## Project Overview
 
-(overview goes here)
+People including many in this group are obsessed with ranking literally anything. Whether it be food, athletes, or music. One way that this is frequenetly done is using what is called a battle ranker. Essentially doing this or that battles to fully sort a list based on your preferences. What our project is creating a Battle Ranker for Music. Using Spotify's API we can gather an artist(s)'s discography to rank them against each-other. Allowing our users to then fully rank it based on the user's criteria. We will allow them to then customize what they are ranking in the artists discography by filtering albums or songs.
+
 
 ## Course Technologies
 
 We intend to use the following technologies (which we have studied this semester) throughout our project:
 
 
-#### Core Technology #1
+#### React
 
-(description)
-
-
-#### Core Technology #2
-
-(description) 
+React will be used to compose the user interface of our application. The application will be "single-paged", with React components being used to create an interactive user interface.
 
 
-#### Core Technology #3
+#### Typescript
 
-(description)
+Typescript adds additional syntax options to Javascript to enable more robust typechecking. The Typescript compiler will "translate" our code to native Javascript, and throw compile-time errors for typing errors. Typescript will aid us in validation and preventing runtime errors.
+
+
+#### Redis
+
+Redis will be used to cache results from the Spotify API, to avoid continually making requests for frequently used data.
 
 
 ## Independent Technologies
@@ -38,11 +39,11 @@ We intend to use the following technologies (which we have studied this semester
 Additionally, we will use the following independent technologies (not covered by our course) during development:
 
 
-#### Independent Technology #1
+#### Tailwind CSS
 
-(description)
+One of the independent technologies we will use is Tailwind CSS. Tailwind is a framework that extends CSS in order to more easily customize website appearances and functionality. We will use it to design our frontend web pages alongside React.
 
 
-#### Independent Technology #2
+#### Vercel
 
-(description)
+We will use Vercel to deploy and host our application. Free-tier Vercel projects allow you to host a dynamic web application, store secrets and environment variables, and also to store a small amount of data in a relational DBMS.
