@@ -1,4 +1,4 @@
-# (project name here)
+# Spotify Battle Ranker (cooler name tbd)
 
 **Group**: Team 10 (in reference to the [late 2010's content creator group](https://en.wikipedia.org/wiki/Jake_Paul#2017%E2%80%932019:_Music,_business,_and_Team_10) by the same name)
 
