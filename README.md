@@ -2,6 +2,8 @@
 
 **Group**: Team 10 (in reference to the [late 2010's content creator group](https://en.wikipedia.org/wiki/Jake_Paul#2017%E2%80%932019:_Music,_business,_and_Team_10) by the same name)
 
+**[Source Code](https://github.com/jharrisong830/cs554-team10)**: https://github.com/jharrisong830/cs554-team10
+
 **Members**:
 - John Graham (20006581)
 - Emma Hodor (20006178)
@@ -39,9 +41,9 @@ Redis will be used to cache results from the Spotify API, to avoid continually m
 Additionally, we will use the following independent technologies (not covered by our course) during development:
 
 
-#### Tailwind CSS
+#### TODO
 
-One of the independent technologies we will use is Tailwind CSS. Tailwind is a framework that extends CSS in order to more easily customize website appearances and functionality. We will use it to design our frontend web pages alongside React.
+TODO
 
 
 #### Vercel
