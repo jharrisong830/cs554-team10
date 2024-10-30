@@ -41,9 +41,9 @@ Redis will be used to cache results from the Spotify API, to avoid continually m
 Additionally, we will use the following independent technologies (not covered by our course) during development:
 
 
-#### TODO
+#### ImageMagick
 
-TODO
+ImageMagick will be used to progamatically create images of user-created matchups. These images can then be downloaded by the user and shared to social media platforms.
 
 
 #### Vercel
