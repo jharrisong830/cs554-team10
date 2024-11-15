@@ -1,0 +1,6 @@
+# does not style anything found in .gitignore, and also...
+*.md
+*.handlebars
+*.html
+package-lock.json
+
