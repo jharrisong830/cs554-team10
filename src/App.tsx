@@ -32,6 +32,9 @@ function App() {
             <p className="read-the-docs">
                 Click on the Vite and React logos to learn more
             </p>
+            <div className="card">
+                <a href="/auth">Log in to spotify</a>
+            </div>
         </>
     );
 }
