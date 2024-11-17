@@ -11,7 +11,8 @@ import {
     getAuthorizationURL,
     getPKCECodes,
     getTrack,
-    getAlbum
+    getAlbum,
+    getArtwork
 } from "./lib/spotify/data";
 import { emptyAPIContextValue, Track, Album } from "./lib/spotify/types";
 import AuthSuccessPage from "./AuthSuccessPage";
@@ -20,6 +21,8 @@ export default function App() {
     const [apiState, setApiState] = useState(emptyAPIContextValue());
     const [currTrack, setCurrTrack] = useState<Track | null>(null);
     const [currAlbum, setCurrAlbum] = useState<Album | null>(null);
+    const [currTrackImage, setCurrTrackImage] = useState<string | null>(null);
+    const [currAlbumImage, setCurrAlbumImage] = useState<string | null>(null);
 
     useEffect(() => {
         // these funcs are only called when accessToken is not null, we can force the value with !
@@ -29,6 +32,12 @@ export default function App() {
                 "26QLJMK8G0M06sk7h7Fkse?si=f4e3764ddc3148a0"
             );
             setCurrTrack(newTrack);
+
+            const newTrackImage = await getArtwork(
+                apiState.accessToken!,
+                newTrack.albumId
+            );
+            setCurrTrackImage(newTrackImage);
         };
 
         const albumWrapper = async () => {
@@ -37,6 +46,12 @@ export default function App() {
                 "4HTy9WFTYooRjE9giTmzAF?si=efxmZtHvR1W8FKyo5r7_MQ"
             );
             setCurrAlbum(newAlbum);
+
+            const newAlbumImage = await getArtwork(
+                apiState.accessToken!,
+                "4HTy9WFTYooRjE9giTmzAF?si=efxmZtHvR1W8FKyo5r7_MQ"
+            );
+            setCurrAlbumImage(newAlbumImage);
         };
 
         if (apiState.accessToken !== null) {
@@ -57,9 +72,11 @@ export default function App() {
                         <div>
                             <p>Test track:</p>
                             <p>{JSON.stringify(currTrack)}</p>
+                            <img src={currTrackImage ?? ""} />
 
                             <p>Test album:</p>
                             <p>{JSON.stringify(currAlbum)}</p>
+                            <img src={currAlbumImage ?? ""} />
                         </div>
                     )}
                 </>
