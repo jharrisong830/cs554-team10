@@ -262,9 +262,9 @@ const BattleComponent = ({ characterDataToSort }: { characterDataToSort: string[
     if (loading) {
         return <div className="loading">Loading...</div>;
     }
-    
+
     if (showResults) {
-        return <Results finalResults={finalCharacters.current || []} />;
+        return <Results finalResults={finalCharacters.current || []} history={history.current} characterDataToSort={characterDataToSort}/>;
     }
 
     return (
