@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useLoaderData } from "react-router-dom";
 import { APIContextValue } from "./lib/spotify/types";
 import { getUserAccessCode } from "./lib/spotify/data";
+import { useNavigate } from "react-router-dom";
 
 export default function TestDisplayAuthSuccess({
     stateValue,
@@ -13,6 +14,7 @@ export default function TestDisplayAuthSuccess({
     const queryParams = useLoaderData() as URLSearchParams;
     const codeVerifier = queryParams.get("codeVerifier")!;
     const authorizationCode = queryParams.get("code")!;
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchWrapper = async () => {
@@ -21,15 +23,11 @@ export default function TestDisplayAuthSuccess({
                 codeVerifier
             );
             stateSetter(newState);
+            navigate("/", { replace: true });
         };
 
         fetchWrapper();
     }, []);
 
-    return (
-        <>
-            <h1>Keys after auth stage:</h1>
-            <p>{JSON.stringify(stateValue)}</p>
-        </>
-    );
+    return <h1>Loading</h1>;
 }

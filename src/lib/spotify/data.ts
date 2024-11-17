@@ -2,7 +2,7 @@
  * data functions for spotify api
  */
 
-import { Track, Album, APIContextValue } from "./types";
+import { APIContextValue, Track, Album } from "./types";
 
 const SPOTIFY_CLIENT_ID = "afb9fc797fd2485abe86d74540b42c77";
 const pkcePossible =
@@ -112,10 +112,10 @@ export const getUserAccessCode = async (
     codeVerifier: string
 ): Promise<APIContextValue> => {
     const accessBody = new URLSearchParams({
+        client_id: SPOTIFY_CLIENT_ID, // for PKCE
         grant_type: "authorization_code",
         code: authorizationCode,
         redirect_uri: "http://localhost:5173/auth/success",
-        client_id: SPOTIFY_CLIENT_ID, // for PKCE
         code_verifier: codeVerifier
     });
     const accessHeader = {
@@ -144,22 +144,48 @@ export const getUserAccessCode = async (
     };
 };
 
-// const getTrack = async (accessToken: string, trackId: string): Track => {
-//     const data = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
-//         method: "GET",
-//         headers: {
-//             Authorization: `Bearer ${accessToken}`
-//         }
-//     });
+export const getTrack = async (
+    accessToken: string,
+    trackId: string
+): Promise<Track> => {
+    const data = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${accessToken}`
+        }
+    });
 
-//     return {
-//         _id: data.id, // all info is stored within a "track" subobject in the items array
-//         platform: "SP", // hardcoded bc duh...
-//         type: "track", // again...
-//         isrc: data.external_ids.isrc,
-//         name: data.name,
-//         artists: data.artists.map((a) => a.name), // extract only the names
-//         platformURL: data.external_urls.spotify,
-//         albumId: data.album.id
-//     };
-// };
+    const responseBody = await data.json();
+
+    return {
+        type: "track",
+        spotifyId: responseBody.id,
+        isrc: responseBody.external_ids.isrc,
+        name: responseBody.name,
+        artists: responseBody.artists.map((a: any) => a.name),
+        platformURL: responseBody.external_urls.spotify,
+        albumId: responseBody.album.id
+    };
+};
+
+export const getAlbum = async (
+    accessToken: string,
+    albumId: string
+): Promise<Album> => {
+    const data = await fetch(`https://api.spotify.com/v1/albums/${albumId}`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${accessToken}`
+        }
+    });
+
+    const responseBody = await data.json();
+
+    return {
+        type: "album",
+        spotifyId: responseBody.id,
+        name: responseBody.name,
+        artists: responseBody.artists.map((a: any) => a.name),
+        platformURL: responseBody.external_urls.spotify
+    };
+};
