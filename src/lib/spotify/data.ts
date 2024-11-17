@@ -189,3 +189,20 @@ export const getAlbum = async (
         platformURL: responseBody.external_urls.spotify
     };
 };
+
+export const getArtwork = async (
+    accessToken: string,
+    albumId: string
+): Promise<string> => {
+    const data = await fetch(`https://api.spotify.com/v1/albums/${albumId}`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${accessToken}` }
+    });
+
+    const responseBody = await data.json();
+
+    return Object.keys(responseBody).includes("images") &&
+        responseBody.images.length > 0
+        ? responseBody.images[0].url
+        : null;
+};

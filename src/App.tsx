@@ -14,7 +14,7 @@ import {
     getAlbum
 } from "./lib/spotify/data";
 import { emptyAPIContextValue, Track, Album } from "./lib/spotify/types";
-import TestDisplayAuthSuccess from "./TestDisplayAuthSuccess";
+import AuthSuccessPage from "./AuthSuccessPage";
 
 export default function App() {
     const [apiState, setApiState] = useState(emptyAPIContextValue());
@@ -77,12 +77,7 @@ export default function App() {
         },
         {
             path: "/auth/success",
-            element: (
-                <TestDisplayAuthSuccess
-                    stateValue={apiState}
-                    stateSetter={setApiState}
-                />
-            ),
+            element: <AuthSuccessPage stateSetter={setApiState} />,
             loader: async ({ request }) => {
                 const urlObj = new URL(request.url);
                 const codeVerifier = localStorage.getItem("codeVerifier");

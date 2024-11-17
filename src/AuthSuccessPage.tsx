@@ -4,11 +4,9 @@ import { APIContextValue } from "./lib/spotify/types";
 import { getUserAccessCode } from "./lib/spotify/data";
 import { useNavigate } from "react-router-dom";
 
-export default function TestDisplayAuthSuccess({
-    stateValue,
+export default function AuthSuccessPage({
     stateSetter
 }: {
-    stateValue: APIContextValue;
     stateSetter: React.Dispatch<React.SetStateAction<APIContextValue>>;
 }) {
     const queryParams = useLoaderData() as URLSearchParams;
@@ -29,5 +27,10 @@ export default function TestDisplayAuthSuccess({
         fetchWrapper();
     }, []);
 
-    return <h1>Loading</h1>;
+    return (
+        <div>
+            <h1>Loading...</h1>
+            <p>We're connecting to Spotify, hold tight!</p>
+        </div>
+    );
 }
