@@ -2,7 +2,7 @@
  * data functions for spotify api
  */
 
-import { Track, Album } from "./types";
+import { Track, Album, APIContextValue } from "./types";
 
 const SPOTIFY_CLIENT_ID = "afb9fc797fd2485abe86d74540b42c77";
 const pkcePossible =
@@ -20,8 +20,8 @@ export const getAuthorizationURL = (codeChallenge: string): string => {
     const scope = "playlist-read-private user-read-private user-library-read"; // TODO: refine scopes to be minimal
     const userAuthQuery = {
         response_type: "code",
-        redirect_uri: "http://localhost:3000",
-        client_id: import.meta.env.VITE_SPOTIFY_CLIENT_SECRET,
+        redirect_uri: "http://localhost:5173/auth/success",
+        client_id: SPOTIFY_CLIENT_ID,
         scope: scope,
         code_challenge_method: "S256",
         code_challenge: codeChallenge
@@ -104,6 +104,43 @@ export const getPKCECodes = async (length: number = 64) => {
         codeVerifier: codeVerifier,
         hashed: hashed,
         codeChallenge: codeChallenge
+    };
+};
+
+export const getUserAccessCode = async (
+    authorizationCode: string,
+    codeVerifier: string
+): Promise<APIContextValue> => {
+    const accessBody = new URLSearchParams({
+        grant_type: "authorization_code",
+        code: authorizationCode,
+        redirect_uri: "http://localhost:5173/auth/success",
+        client_id: SPOTIFY_CLIENT_ID, // for PKCE
+        code_verifier: codeVerifier
+    });
+    const accessHeader = {
+        "Content-Type": "application/x-www-form-urlencoded"
+    };
+
+    const data = await fetch("https://accounts.spotify.com/api/token", {
+        method: "POST",
+        headers: accessHeader,
+        body: accessBody
+    }); // post request, with given body/header data
+
+    const responseBody = await data.json();
+
+    const now = Math.floor(Date.now() / 1000); // add to expires_in, the time that the access token expires at
+
+    const accessToken: string | null = responseBody.access_token;
+    const expiresAt: number | null = now + responseBody.expires_in;
+    const refreshToken: string | null = responseBody.refresh_token;
+
+    return {
+        codeVerifier: codeVerifier,
+        accessToken: accessToken,
+        expiresAt: expiresAt,
+        refreshToken: refreshToken
     };
 };
 

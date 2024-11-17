@@ -1,42 +1,57 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import {
+    createBrowserRouter,
+    redirect,
+    RouteObject,
+    RouterProvider
+} from "react-router-dom";
 import "./App.css";
+import { getAuthorizationURL, getPKCECodes } from "./lib/spotify/data";
+import { emptyAPIContextValue } from "./lib/spotify/types";
+import TestDisplayAuthSuccess from "./TestDisplayAuthSuccess";
 
-function App() {
-    const [count, setCount] = useState(0);
+export default function App() {
+    const [apiState, setApiState] = useState(emptyAPIContextValue());
 
-    return (
-        <>
-            <div>
-                <a href="https://vite.dev" target="_blank">
-                    <img src={viteLogo} className="logo" alt="Vite logo" />
-                </a>
-                <a href="https://react.dev" target="_blank">
-                    <img
-                        src={reactLogo}
-                        className="logo react"
-                        alt="React logo"
-                    />
-                </a>
-            </div>
-            <h1>Vite + React</h1>
-            <div className="card">
-                <button onClick={() => setCount((count) => count + 1)}>
-                    count is {count}
-                </button>
-                <p>
-                    Edit <code>src/App.tsx</code> and save to test HMR
-                </p>
-            </div>
-            <p className="read-the-docs">
-                Click on the Vite and React logos to learn more
-            </p>
-            <div className="card">
-                <a href="/auth">Log in to spotify</a>
-            </div>
-        </>
-    );
+    const routeObjects: Array<RouteObject> = [
+        {
+            path: "/",
+            element: (
+                <>
+                    <h1>Welcome!</h1>
+                    <a href="/auth">Authorize</a>
+                </>
+            )
+        },
+        {
+            path: "/auth",
+            loader: async () => {
+                const { codeVerifier, codeChallenge } = await getPKCECodes();
+                localStorage.setItem("codeVerifier", codeVerifier); // set verifier in localStorage
+
+                const url = getAuthorizationURL(codeChallenge);
+                return redirect(url);
+            }
+        },
+        {
+            path: "/auth/success",
+            element: (
+                <TestDisplayAuthSuccess
+                    stateValue={apiState}
+                    stateSetter={setApiState}
+                />
+            ),
+            loader: async ({ request }) => {
+                const urlObj = new URL(request.url);
+                const codeVerifier = localStorage.getItem("codeVerifier");
+                if (codeVerifier === null) return redirect("/"); // go home if no code
+                urlObj.searchParams.append("codeVerifier", codeVerifier);
+                return urlObj.searchParams; // return the querystring params, so they can be accessed
+            }
+        }
+    ];
+
+    const router = createBrowserRouter(routeObjects);
+
+    return <RouterProvider router={router} />;
 }
-
-export default App;
