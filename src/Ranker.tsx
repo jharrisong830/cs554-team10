@@ -285,7 +285,7 @@ const BattleComponent = ({ characterDataToSort }: { characterDataToSort: string[
                         style={{
                             height: "100%",
                             width: `${progress}%`,
-                            backgroundColor: progress === 100 ? "#4caf50" : "#2196f3",
+                            backgroundColor: progress === 100 ? "#4caf50" : "#cca0e5",
                             transition: "width 0.3s ease",
                         }}
                     ></div>
@@ -295,23 +295,23 @@ const BattleComponent = ({ characterDataToSort }: { characterDataToSort: string[
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", margin: "20px 0" }}>
                 <img src={leftChar} alt="Left Album" style={{ height: "150px", width: "150px" }} />
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                    <button onClick={() => handleSelect("tie")} style={{ padding: "10px 20px", fontSize: "16px" }}>
+                    <button onClick={() => handleSelect("tie")} style={{ padding: "10px 20px", fontSize: "16px" }} className="click">
                         Tie
                     </button>
-                    <button onClick={handleUndo} style={{ padding: "10px 20px", fontSize: "16px" }}>
+                    <button onClick={handleUndo} style={{ padding: "10px 20px", fontSize: "16px" }} className="click">
                         Undo
                     </button>
-                    <button onClick={handleReset} style={{ padding: "10px 20px", fontSize: "16px", marginLeft: "10px" }}>
+                    <button onClick={handleReset} style={{ padding: "10px 20px", fontSize: "16px"}} className="click">
                         Reset
                     </button>
                 </div>
                 <img src={rightChar} alt="Right Album" style={{ height: "150px", width: "150px" }} />
             </div>
             <div style={{ display: "flex", justifyContent: "space-around", marginTop: "20px" }}>
-                <button onClick={() => handleSelect("left")} style={{ padding: "10px 20px", fontSize: "16px" }}>
+                <button onClick={() => handleSelect("left")} style={{ padding: "10px 20px", fontSize: "16px" }} className="click">
                     {leftChar}
                 </button>
-                <button onClick={() => handleSelect("right")} style={{ padding: "10px 20px", fontSize: "16px" }}>
+                <button onClick={() => handleSelect("right")} style={{ padding: "10px 20px", fontSize: "16px" }} className="click">
                     {rightChar}
                 </button>
             </div>
