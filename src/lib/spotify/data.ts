@@ -206,3 +206,19 @@ export const getArtwork = async (
         ? responseBody.images[0].url
         : null;
 };
+
+export const search = async (
+    accessToken: string,
+    searchTerm: string,
+    type:string
+): Promise<string> => {
+    const data = await fetch(`https://api.spotify.com/v1/search?q=${searchTerm}&type=${type}`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${accessToken}`
+        }
+    });
+    const responseBody = await data.json();
+    return responseBody;
+}
+
