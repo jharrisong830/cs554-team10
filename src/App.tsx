@@ -12,10 +12,12 @@ import {
     getPKCECodes,
     getTrack,
     getAlbum,
-    getArtwork
+    getArtwork,
+    search
 } from "./lib/spotify/data";
 import { emptyAPIContextValue, Track, Album } from "./lib/spotify/types";
 import AuthSuccessPage from "./AuthSuccessPage";
+import SearchPage from "./SearchPage";
 
 export default function App() {
     const [apiState, setApiState] = useState(emptyAPIContextValue());
@@ -23,6 +25,7 @@ export default function App() {
     const [currAlbum, setCurrAlbum] = useState<Album | null>(null);
     const [currTrackImage, setCurrTrackImage] = useState<string | null>(null);
     const [currAlbumImage, setCurrAlbumImage] = useState<string | null>(null);
+    console.log(`Current access code: ${apiState.accessToken}`);
 
     useEffect(() => {
         // these funcs are only called when accessToken is not null, we can force the value with !
@@ -102,6 +105,18 @@ export default function App() {
                 urlObj.searchParams.append("codeVerifier", codeVerifier);
                 return urlObj.searchParams; // return the querystring params, so they can be accessed
             }
+        },
+        {
+            path: "/search",
+            element: (
+                <>
+                {apiState.accessToken === null ? (
+                        <Link to="/auth">Authorize</Link>
+                    ) : (
+                        <SearchPage handleSearch={(searched: string, type: string) => search(apiState.accessToken!, searched, type)}></SearchPage>
+                    )}
+                </>
+            )
         }
     ];
 
