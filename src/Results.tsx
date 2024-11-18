@@ -1,7 +1,10 @@
-import "./App.css";
+import "./App.css"
 
-const Results = ({ finalResults, history, characterDataToSort }: { finalResults: any[], history: any[], characterDataToSort: string[] }) => {
-    const listItems = finalResults.map(result => <li>{result.rank}: {result.name}</li>);
+const Results = ({ finalResults, history, songDataToSort }: { finalResults: any[], history: any[], songDataToSort: string[] }) => {
+    if (!finalResults?.length || !history?.length || !songDataToSort?.length) {
+        return <div>No data available</div>
+    }
+    const listItems = finalResults.map(result => <li key={result.name}>{result.rank}: {result.name}</li>)
     const allBattles = history.map((result, index) => {
         let nextBattle
         try {
@@ -10,10 +13,10 @@ const Results = ({ finalResults, history, characterDataToSort }: { finalResults:
             let leftRank
             let rightRank
             for(const fin of finalResults){
-                if(characterDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]] === fin.name){
+                if(songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]] === fin.name){
                     leftRank = fin.rank
                 }
-                if(characterDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]] === fin.name){
+                if(songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]] === fin.name){
                     rightRank = fin.rank
                 }
             }
@@ -28,18 +31,18 @@ const Results = ({ finalResults, history, characterDataToSort }: { finalResults:
             }
         }
         const outcomeText = nextBattle === '0'
-            ? `Won ${characterDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]]} vs. Lost ${characterDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]]}`
+            ? `Won ${songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]]} vs. Lost ${songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]]}`
             : nextBattle === '1'
-                ? `Lost ${characterDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]]} vs. Won ${characterDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]]}`
-                : `${characterDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]]} Tied vs. ${characterDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]]}`;
+                ? `Lost ${songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]]} vs. Won ${songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]]}`
+                : `${songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]]} Tied vs. ${songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]]}`
 
         return (
-            <li>
+            <li key={result.battleNumber}>
                 Battle No: {result.battleNumber}
                 <br />
                 {outcomeText}
             </li>
-        );
+        )
     })
     return (
         <div>
@@ -53,4 +56,4 @@ const Results = ({ finalResults, history, characterDataToSort }: { finalResults:
     )
 }
 
-export default Results;
+export default Results

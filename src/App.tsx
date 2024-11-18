@@ -7,7 +7,7 @@ function App() {
     "The Blacker The Berry", "You Ain't Gotta Lie (Momma Said)", "i", "Mortal Man"]
     return (
         <BattleComponent
-            characterDataToSort={kendrick_test}
+            songDataToSort={kendrick_test}
         />
     );
 }
