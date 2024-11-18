@@ -107,6 +107,13 @@ export const getPKCECodes = async (length: number = 64) => {
     };
 };
 
+/**
+ * returns a new state value containing api keys for accessing the spotify api
+ * 
+ * @param authorizationCode code received from previous step
+ * @param codeVerifier codeVerifier generated from the start of the authorization flow
+ * @returns object containing all api keys and relevant info
+ */
 export const getUserAccessCode = async (
     authorizationCode: string,
     codeVerifier: string
@@ -144,6 +151,13 @@ export const getUserAccessCode = async (
     };
 };
 
+/**
+ * returns track data from the spotify api
+ * 
+ * @param accessToken needed to access spotify api
+ * @param trackId id of the track to be fetched
+ * @returns Track object
+ */
 export const getTrack = async (
     accessToken: string,
     trackId: string
@@ -168,6 +182,13 @@ export const getTrack = async (
     };
 };
 
+/**
+ * returns album data from the spotify api
+ * 
+ * @param accessToken needed to access spotify api
+ * @param trackId id of the album to be fetched
+ * @returns Album object
+ */
 export const getAlbum = async (
     accessToken: string,
     albumId: string
@@ -190,6 +211,13 @@ export const getAlbum = async (
     };
 };
 
+/**
+ * returns a temporary url, used to display artwork for a particular album
+ * 
+ * @param accessToken needed to access spotify api
+ * @param albumId id of album for which we want to fetch artwork
+ * @returns image url as string
+ */
 export const getArtwork = async (
     accessToken: string,
     albumId: string
