@@ -7,7 +7,7 @@ export type Track = {
     spotifyId: string;
     isrc: string;
     name: string;
-    artists: Array<string>;
+    artists: Array<{ name: string, spotifyId: string }>;
     platformURL: string;
     albumId: string;
 };
@@ -16,8 +16,15 @@ export type Album = {
     type: "album";
     spotifyId: string;
     name: string;
-    artists: Array<string>;
+    artists: Array<{ name: string, spotifyId: string }>;
     platformURL: string;
+};
+
+export type Artist = {
+    type: "artist",
+    spotifyId: string;
+    name: string;
+    platformURL: string
 };
 
 export type APIContextValue = {

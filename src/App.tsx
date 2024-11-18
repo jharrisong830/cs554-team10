@@ -12,9 +12,12 @@ import {
     getPKCECodes,
     getTrack,
     getAlbum,
-    getArtwork
+    getAlbumArtwork,
+    getArtist,
+    getArtistImage,
+    getArtistAlbums
 } from "./lib/spotify/data";
-import { emptyAPIContextValue, Track, Album } from "./lib/spotify/types";
+import { emptyAPIContextValue, Track, Album, Artist } from "./lib/spotify/types";
 import AuthSuccessPage from "./AuthSuccessPage";
 import SpotifyContext from "./contexts/SpotifyContext";
 
@@ -26,6 +29,10 @@ export default function App() {
     const [currTrackImage, setCurrTrackImage] = useState<string | null>(null);
     const [currAlbumImage, setCurrAlbumImage] = useState<string | null>(null);
 
+    const [currArtist, setCurrArtist] = useState<Artist | null>(null);
+    const [currArtistImage, setCurrArtistImage] = useState<string | null>(null);
+    const [artistAlbums, setArtistAlbums] = useState<Array<Album> | null>(null);
+
     useEffect(() => {
         // these funcs are only called when accessToken is not null, we can force the value with !
         const trackWrapper = async () => {
@@ -35,7 +42,7 @@ export default function App() {
             );
             setCurrTrack(newTrack);
 
-            const newTrackImage = await getArtwork(
+            const newTrackImage = await getAlbumArtwork(
                 apiState.accessToken!,
                 newTrack.albumId
             );
@@ -49,16 +56,31 @@ export default function App() {
             );
             setCurrAlbum(newAlbum);
 
-            const newAlbumImage = await getArtwork(
+            const newAlbumImage = await getAlbumArtwork(
                 apiState.accessToken!,
                 "4HTy9WFTYooRjE9giTmzAF?si=efxmZtHvR1W8FKyo5r7_MQ"
             );
             setCurrAlbumImage(newAlbumImage);
         };
 
+        const artistWrapper = async () => {
+            const newArtist = await getArtist(apiState.accessToken!, "1oPRcJUkloHaRLYx0olBLJ");
+            setCurrArtist(newArtist);
+
+            const newArtistImage = await getArtistImage(apiState.accessToken!, "1oPRcJUkloHaRLYx0olBLJ");
+            setCurrArtistImage(newArtistImage);
+        };
+
+        const artistAlbumsWrapper = async () => {
+            const newAlbums = await getArtistAlbums(apiState.accessToken!, "1oPRcJUkloHaRLYx0olBLJ");
+            setArtistAlbums(newAlbums);
+        };
+
         if (apiState.accessToken !== null) {
             trackWrapper();
             albumWrapper();
+            artistWrapper();
+            artistAlbumsWrapper();
         }
     }, [apiState]);
 
@@ -83,6 +105,13 @@ export default function App() {
                             <p>Test album:</p>
                             <p>{JSON.stringify(currAlbum)}</p>
                             <img src={currAlbumImage ?? ""} />
+
+                            <p>Test artist:</p>
+                            <p>{JSON.stringify(currArtist)}</p>
+                            <img src={currArtistImage ?? ""} />
+
+                            <p>Test artist albums:</p>
+                            <p>{JSON.stringify(artistAlbums?.map((a) => a.name))}</p>
                         </div>
                     )}
                 </>

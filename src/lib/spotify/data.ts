@@ -2,7 +2,7 @@
  * data functions for spotify api
  */
 
-import { APIContextValue, Track, Album } from "./types";
+import { APIContextValue, Track, Album, Artist } from "./types";
 
 const SPOTIFY_CLIENT_ID = "afb9fc797fd2485abe86d74540b42c77";
 const pkcePossible =
@@ -164,9 +164,7 @@ export const getTrack = async (
 ): Promise<Track> => {
     const data = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
         method: "GET",
-        headers: {
-            Authorization: `Bearer ${accessToken}`
-        }
+        headers: { Authorization: `Bearer ${accessToken}` }
     });
 
     const responseBody = await data.json();
@@ -176,7 +174,7 @@ export const getTrack = async (
         spotifyId: responseBody.id,
         isrc: responseBody.external_ids.isrc,
         name: responseBody.name,
-        artists: responseBody.artists.map((a: any) => a.name),
+        artists: responseBody.artists.map((artist: any) => ({ name: artist.name, spotifyId: artist.id })),
         platformURL: responseBody.external_urls.spotify,
         albumId: responseBody.album.id
     };
@@ -186,7 +184,7 @@ export const getTrack = async (
  * returns album data from the spotify api
  * 
  * @param accessToken needed to access spotify api
- * @param trackId id of the album to be fetched
+ * @param albumId id of the album to be fetched
  * @returns Album object
  */
 export const getAlbum = async (
@@ -195,9 +193,7 @@ export const getAlbum = async (
 ): Promise<Album> => {
     const data = await fetch(`https://api.spotify.com/v1/albums/${albumId}`, {
         method: "GET",
-        headers: {
-            Authorization: `Bearer ${accessToken}`
-        }
+        headers: { Authorization: `Bearer ${accessToken}` }
     });
 
     const responseBody = await data.json();
@@ -206,7 +202,7 @@ export const getAlbum = async (
         type: "album",
         spotifyId: responseBody.id,
         name: responseBody.name,
-        artists: responseBody.artists.map((a: any) => a.name),
+        artists: responseBody.artists.map((artist: any) => ({ name: artist.name, spotifyId: artist.id })),
         platformURL: responseBody.external_urls.spotify
     };
 };
@@ -218,7 +214,7 @@ export const getAlbum = async (
  * @param albumId id of album for which we want to fetch artwork
  * @returns image url as string
  */
-export const getArtwork = async (
+export const getAlbumArtwork = async (
     accessToken: string,
     albumId: string
 ): Promise<string> => {
@@ -233,4 +229,87 @@ export const getArtwork = async (
         responseBody.images.length > 0
         ? responseBody.images[0].url
         : null;
+};
+
+/**
+ * returns artist data from the spotify api
+ * 
+ * @param accessToken needed to access spotify api
+ * @param artistId id of the artist to be fetched
+ * @returns Artist object
+ */
+export const getArtist = async (accessToken: string, artistId: string): Promise<Artist> => {
+    const data = await fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${accessToken}` }
+    });
+
+    const responseBody = await data.json();
+
+    return {
+        type: "artist",
+        spotifyId: responseBody.id,
+        name: responseBody.name,
+        platformURL: responseBody.external_urls.spotify
+    };
+};
+
+/**
+ * returns a temporary url, used to display an image for an artist
+ * 
+ * @param accessToken needed to access spotify api
+ * @param artistId id of artist for which we want to fetch image
+ * @returns image url as string
+ */
+export const getArtistImage = async (
+    accessToken: string,
+    artistId: string
+): Promise<string> => {
+    const data = await fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${accessToken}` }
+    });
+
+    const responseBody = await data.json();
+
+    return Object.keys(responseBody).includes("images") &&
+        responseBody.images.length > 0
+        ? responseBody.images[0].url
+        : null;
+};
+
+/**
+ * returns an array of albums associated with a particular artist
+ * 
+ * @param accessToken needed to access spotify api
+ * @param artistId id of artist for which we want to fetch albums
+ * @returns array of albums 
+ */
+export const getArtistAlbums = async (accessToken: string, artistId: string): Promise<Array<Album>> => {
+    let nextPage = `https://api.spotify.com/v1/artists/${artistId}/albums`; // setting the initial url as the first page
+    let allAlbums: Array<Album> = [];
+
+    do {
+        const data = await fetch(nextPage, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${accessToken}` }
+        });
+    
+        const responseBody = await data.json();
+
+        allAlbums.push(
+            ...responseBody.items // ... to unpack the array into varargs
+                .map((album: any) => ({
+                    type: "album",
+                    spotifyId: album.id,
+                    name: album.name,
+                    artists: album.artists.map((a: any) => a.name),
+                    platformURL: album.external_urls.spotify
+                }))
+        );
+
+        nextPage = responseBody.next; // get the next page url
+    } while (nextPage); // continue while next page is not null
+
+    return allAlbums;
 };
