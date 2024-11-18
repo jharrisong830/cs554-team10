@@ -16,9 +16,11 @@ import {
 } from "./lib/spotify/data";
 import { emptyAPIContextValue, Track, Album } from "./lib/spotify/types";
 import AuthSuccessPage from "./AuthSuccessPage";
+import SpotifyContext from "./contexts/SpotifyContext";
 
 export default function App() {
     const [apiState, setApiState] = useState(emptyAPIContextValue());
+    
     const [currTrack, setCurrTrack] = useState<Track | null>(null);
     const [currAlbum, setCurrAlbum] = useState<Album | null>(null);
     const [currTrackImage, setCurrTrackImage] = useState<string | null>(null);
@@ -66,6 +68,10 @@ export default function App() {
             element: (
                 <>
                     <h1>Welcome!</h1>
+
+                    <p>API values:</p>
+                    <p>{JSON.stringify(apiState)}</p>
+
                     {apiState.accessToken === null ? (
                         <Link to="/auth">Authorize</Link>
                     ) : (
@@ -94,7 +100,7 @@ export default function App() {
         },
         {
             path: "/auth/success",
-            element: <AuthSuccessPage stateSetter={setApiState} />,
+            element: <AuthSuccessPage />,
             loader: async ({ request }) => {
                 const urlObj = new URL(request.url);
                 const codeVerifier = localStorage.getItem("codeVerifier");
@@ -107,5 +113,9 @@ export default function App() {
 
     const router = createBrowserRouter(routeObjects);
 
-    return <RouterProvider router={router} />;
+    return (
+        <SpotifyContext.Provider value={{ stateValue: apiState, stateSetter: setApiState }}>
+            <RouterProvider router={router} />
+        </SpotifyContext.Provider>
+    );
 }
