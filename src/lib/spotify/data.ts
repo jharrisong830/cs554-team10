@@ -231,6 +231,22 @@ export const getAlbumArtwork = async (
         : null;
 };
 
+export const search = async (
+    accessToken: string,
+    searchTerm: string,
+    type:string
+): Promise<string> => {
+    const data = await fetch(`https://api.spotify.com/v1/search?q=${searchTerm}&type=${type}`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${accessToken}`
+        }
+    });
+    const responseBody = await data.json();
+    return responseBody;
+}
+
+
 /**
  * returns artist data from the spotify api
  * 
