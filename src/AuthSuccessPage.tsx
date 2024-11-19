@@ -21,7 +21,7 @@ export default function AuthSuccessPage({
                 codeVerifier
             );
             stateSetter(newState);
-            navigate("/", { replace: true });
+            navigate("/search", { replace: true });
         };
 
         fetchWrapper();

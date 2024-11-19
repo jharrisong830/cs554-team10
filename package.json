@@ -11,6 +11,11 @@
         "commit": "npm run pretty && git add -A && git commit"
     },
     "dependencies": {
+        "@emotion/react": "^11.13.3",
+        "@emotion/styled": "^11.13.0",
+        "@mui/lab": "^6.0.0-beta.15",
+        "@mui/material": "^6.1.7",
+        "@mui/styled-engine": "^6.1.7",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
         "react-router-dom": "^6.28.0",
