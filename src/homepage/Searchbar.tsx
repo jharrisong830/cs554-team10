@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
-import axios from 'axios';
+// import React, {useState} from 'react';
+// import axios from 'axios';
 
 function SearchBar() {
-  const [inputVal, setInputVal] = useState('');
+  // const [inputVal, setInputVal] = useState('');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     console.log("onSubmit works yippee :D");
   };
 
