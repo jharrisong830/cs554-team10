@@ -1,22 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
 import { useLoaderData } from "react-router-dom";
 import { APIContextValue } from "./lib/spotify/types";
 import { getUserAccessCode } from "./lib/spotify/data";
+import SpotifyContext from "./contexts/SpotifyContext";
 import { useNavigate } from "react-router-dom";
 
-export default function AuthSuccessPage({
-    stateSetter
-}: {
-    stateSetter: React.Dispatch<React.SetStateAction<APIContextValue>>;
-}) {
+export default function AuthSuccessPage() {
     const queryParams = useLoaderData() as URLSearchParams;
     const codeVerifier = queryParams.get("codeVerifier")!;
     const authorizationCode = queryParams.get("code")!;
     const navigate = useNavigate();
 
+    const { stateSetter } = useContext(SpotifyContext)!;
+
     useEffect(() => {
         const fetchWrapper = async () => {
-            const newState = await getUserAccessCode(
+            const newState: APIContextValue = await getUserAccessCode(
                 authorizationCode,
                 codeVerifier
             );
