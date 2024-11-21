@@ -11,6 +11,7 @@
         "commit": "npm run pretty && git add -A && git commit"
     },
     "dependencies": {
+        "axios": "^1.7.7",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
         "react-router-dom": "^6.28.0",

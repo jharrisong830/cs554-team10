@@ -20,6 +20,7 @@ import {
 import { emptyAPIContextValue, Track, Album, Artist } from "./lib/spotify/types";
 import AuthSuccessPage from "./AuthSuccessPage";
 import SpotifyContext from "./contexts/SpotifyContext";
+import Homepage from "./homepage/Homepage";
 
 export default function App() {
     const [apiState, setApiState] = useState(emptyAPIContextValue());
@@ -89,7 +90,7 @@ export default function App() {
             path: "/",
             element: (
                 <>
-                    <h1>Welcome!</h1>
+                    <Homepage />
 
                     <p>API values:</p>
                     <p>{JSON.stringify(apiState)}</p>
