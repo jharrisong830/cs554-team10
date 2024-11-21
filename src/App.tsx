@@ -15,12 +15,14 @@ import {
     getAlbumArtwork,
     getArtist,
     getArtistImage,
-    getArtistAlbums
+    getArtistAlbums,
+    search
 } from "./lib/spotify/data";
 import { emptyAPIContextValue, Track, Album, Artist } from "./lib/spotify/types";
 import AuthSuccessPage from "./AuthSuccessPage";
 import SpotifyContext from "./contexts/SpotifyContext";
 import Homepage from "./homepage/Homepage";
+import SearchPage from "./SearchPage";
 
 export default function App() {
     const [apiState, setApiState] = useState(emptyAPIContextValue());
@@ -138,6 +140,18 @@ export default function App() {
                 urlObj.searchParams.append("codeVerifier", codeVerifier);
                 return urlObj.searchParams; // return the querystring params, so they can be accessed
             }
+        },
+        {
+            path: "/search",
+            element: (
+                <>
+                {apiState.accessToken === null ? (
+                        <Link to="/auth">Authorize</Link>
+                    ) : (
+                        <SearchPage handleSearch={(searched: string, type: string) => search(apiState.accessToken!, searched, type)}></SearchPage>
+                    )}
+                </>
+            )
         }
     ];
 
