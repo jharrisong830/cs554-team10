@@ -203,7 +203,8 @@ export const getAlbum = async (
         spotifyId: responseBody.id,
         name: responseBody.name,
         artists: responseBody.artists.map((artist: any) => ({ name: artist.name, spotifyId: artist.id })),
-        platformURL: responseBody.external_urls.spotify
+        platformURL: responseBody.external_urls.spotify,
+        selected: "true"
     };
 };
 
@@ -266,7 +267,7 @@ export const getArtist = async (accessToken: string, artistId: string): Promise<
         type: "artist",
         spotifyId: responseBody.id,
         name: responseBody.name,
-        platformURL: responseBody.external_urls.spotify
+        platformURL: responseBody.external_urls.spotify,
     };
 };
 
@@ -320,7 +321,8 @@ export const getArtistAlbums = async (accessToken: string, artistId: string): Pr
                     spotifyId: album.id,
                     name: album.name,
                     artists: album.artists.map((a: any) => a.name),
-                    platformURL: album.external_urls.spotify
+                    platformURL: album.external_urls.spotify,
+                    selected: "true"
                 }))
         );
 

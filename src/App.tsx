@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Selection from "./Selection";
 import {
     createBrowserRouter,
     redirect,
@@ -89,6 +90,7 @@ export default function App() {
             path: "/",
             element: (
                 <>
+                    <Selection />
                     <h1>Welcome!</h1>
 
                     <p>API values:</p>
