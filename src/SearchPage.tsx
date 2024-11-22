@@ -29,7 +29,10 @@ export default function SearchPage(props: any) {
         let searchTerm: string = (
             document!.getElementById("searchTerm")! as HTMLInputElement
         ).value!;
-
+        searchTerm = searchTerm.trim()
+        if (searchTerm === ""){
+            searchTerm = "Brat"
+        }
         //validation..
         console.log(searchValue);
         console.log(searchTerm);
