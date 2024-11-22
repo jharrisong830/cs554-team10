@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Selection from "./Selection";
 import {
     createBrowserRouter,
     redirect,
@@ -16,15 +15,23 @@ import {
     getAlbumArtwork,
     getArtist,
     getArtistImage,
-    getArtistAlbums
+    getArtistAlbums,
+    search
 } from "./lib/spotify/data";
-import { emptyAPIContextValue, Track, Album, Artist } from "./lib/spotify/types";
+import {
+    emptyAPIContextValue,
+    Track,
+    Album,
+    Artist
+} from "./lib/spotify/types";
 import AuthSuccessPage from "./AuthSuccessPage";
 import SpotifyContext from "./contexts/SpotifyContext";
+import Homepage from "./homepage/Homepage";
+import SearchPage from "./SearchPage";
 
 export default function App() {
     const [apiState, setApiState] = useState(emptyAPIContextValue());
-    
+
     const [currTrack, setCurrTrack] = useState<Track | null>(null);
     const [currAlbum, setCurrAlbum] = useState<Album | null>(null);
     const [currTrackImage, setCurrTrackImage] = useState<string | null>(null);
@@ -65,15 +72,24 @@ export default function App() {
         };
 
         const artistWrapper = async () => {
-            const newArtist = await getArtist(apiState.accessToken!, "1oPRcJUkloHaRLYx0olBLJ");
+            const newArtist = await getArtist(
+                apiState.accessToken!,
+                "1oPRcJUkloHaRLYx0olBLJ"
+            );
             setCurrArtist(newArtist);
 
-            const newArtistImage = await getArtistImage(apiState.accessToken!, "1oPRcJUkloHaRLYx0olBLJ");
+            const newArtistImage = await getArtistImage(
+                apiState.accessToken!,
+                "1oPRcJUkloHaRLYx0olBLJ"
+            );
             setCurrArtistImage(newArtistImage);
         };
 
         const artistAlbumsWrapper = async () => {
-            const newAlbums = await getArtistAlbums(apiState.accessToken!, "1oPRcJUkloHaRLYx0olBLJ");
+            const newAlbums = await getArtistAlbums(
+                apiState.accessToken!,
+                "1oPRcJUkloHaRLYx0olBLJ"
+            );
             setArtistAlbums(newAlbums);
         };
 
@@ -90,11 +106,12 @@ export default function App() {
             path: "/",
             element: (
                 <>
-                    <Selection />
-                    <h1>Welcome!</h1>
+                    <Homepage />
 
                     <p>API values:</p>
                     <p>{JSON.stringify(apiState)}</p>
+
+                    <Link to="/search">Search</Link>
 
                     {apiState.accessToken === null ? (
                         <Link to="/auth">Authorize</Link>
@@ -113,7 +130,11 @@ export default function App() {
                             <img src={currArtistImage ?? ""} />
 
                             <p>Test artist albums:</p>
-                            <p>{JSON.stringify(artistAlbums?.map((a) => a.name))}</p>
+                            <p>
+                                {JSON.stringify(
+                                    artistAlbums?.map((a) => a.name)
+                                )}
+                            </p>
                         </div>
                     )}
                 </>
@@ -139,13 +160,31 @@ export default function App() {
                 urlObj.searchParams.append("codeVerifier", codeVerifier);
                 return urlObj.searchParams; // return the querystring params, so they can be accessed
             }
+        },
+        {
+            path: "/search",
+            element: (
+                <>
+                    {apiState.accessToken === null ? (
+                        <Link to="/auth">Authorize</Link>
+                    ) : (
+                        <SearchPage
+                            handleSearch={(searched: string, type: string) =>
+                                search(apiState.accessToken!, searched, type)
+                            }
+                        ></SearchPage>
+                    )}
+                </>
+            )
         }
     ];
 
     const router = createBrowserRouter(routeObjects);
 
     return (
-        <SpotifyContext.Provider value={{ stateValue: apiState, stateSetter: setApiState }}>
+        <SpotifyContext.Provider
+            value={{ stateValue: apiState, stateSetter: setApiState }}
+        >
             <RouterProvider router={router} />
         </SpotifyContext.Provider>
     );
