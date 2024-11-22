@@ -40,3 +40,10 @@
 .read-the-docs {
     color: #888;
 }
+
+.click:hover {
+    background: #cca0e5;
+    transform: scale(1.09);
+    transition-duration: 0.6s;
+    border:none;
+}
