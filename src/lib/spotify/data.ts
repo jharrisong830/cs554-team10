@@ -288,10 +288,10 @@ export const getAlbumArtwork = async (
 export const search = async (
     accessToken: string,
     searchTerm: string,
-    type: string
+    type: "track" | "album" | "artist"
 ): Promise<string> => {
     const data = await fetch(
-        `https://api.spotify.com/v1/search?q=${searchTerm}&type=${type}`,
+        `https://api.spotify.com/v1/search?q=${searchTerm}&type=${type}&limit=20`,
         {
             method: "GET",
             headers: {
@@ -300,7 +300,22 @@ export const search = async (
         }
     );
     const responseBody = await data.json();
-    return responseBody;
+
+    switch (type) {
+        case "track":
+            return responseBody.tracks.map((track: any) => ({
+                type: "track",
+                spotifyId: track.id,
+                isrc: track.external_ids.isrc,
+                name: track.name,
+                artists: track.artists.map((artist: any) => ({
+                    name: artist.name,
+                    spotifyId: artist.id
+                })),
+                platformURL: track.external_urls.spotify,
+                albumId: track.album.id
+            }));
+    }
 };
 
 /**
