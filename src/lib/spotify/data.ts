@@ -201,6 +201,8 @@ export const getAlbum = async (
 
     const responseBody = await data.json();
 
+    const albumTracks = await getAlbumTracks(accessToken, responseBody.id);
+
     return {
         type: "album",
         albumType: responseBody.album_type,
@@ -210,8 +212,46 @@ export const getAlbum = async (
             name: artist.name,
             spotifyId: artist.id
         })),
+        tracks: albumTracks,
         platformURL: responseBody.external_urls.spotify
     };
+};
+
+const getAlbumTracks = async (
+    accessToken: string,
+    albumId: string
+): Promise<Array<Track>> => {
+    let nextPage = `https://api.spotify.com/v1/albums/${albumId}/tracks`; // setting the initial url as the first page
+    let allTracks: Array<Track> = [];
+
+    do {
+        const data = await fetch(nextPage, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${accessToken}` }
+        });
+
+        const responseBody = await data.json();
+
+        allTracks.push(
+            ...responseBody.items // ... to unpack the array into varargs
+                .map((track: any) => ({
+                    type: "track",
+                    spotifyId: track.id,
+                    isrc: track.external_ids.isrc,
+                    name: track.name,
+                    artists: track.artists.map((artist: any) => ({
+                        name: artist.name,
+                        spotifyId: artist.id
+                    })),
+                    platformURL: track.external_urls.spotify,
+                    albumId: track.album.id
+                }))
+        );
+
+        nextPage = responseBody.next; // get the next page url
+    } while (nextPage); // continue while next page is not null
+
+    return allTracks;
 };
 
 /**
@@ -238,6 +278,13 @@ export const getAlbumArtwork = async (
         : null;
 };
 
+/**
+ * returns an array of tracks associated with a particular album
+ *
+ * @param accessToken needed to access spotify api
+ * @param albumId id of album for which we want to fetch tracks
+ * @returns array of tracks
+ */
 export const search = async (
     accessToken: string,
     searchTerm: string,
