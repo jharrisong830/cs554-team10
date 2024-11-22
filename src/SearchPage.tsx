@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+// import redis from 'redis';
+// const client = redis.createClient();
+// client.connect().then(() => { });
 import {
     Card,
     CardContent,
@@ -11,9 +14,9 @@ import { Link } from "react-router-dom";
 export default function SearchPage(props: any) {
     const [results, setResults] = useState<any>(null);
     const [searchValue, setSearchValue] = useState("album");
+
     const handleType = (e: any) => {
         setSearchValue(e.target.value);
-        setResults(null);
     };
 
     useEffect(() => {
@@ -22,19 +25,45 @@ export default function SearchPage(props: any) {
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
-
+        setResults(null);
         let searchTerm: string = (
             document!.getElementById("searchTerm")! as HTMLInputElement
         ).value!;
 
         //validation..
-
         console.log(searchValue);
-        const data = await props.handleSearch(searchTerm, searchValue);
-        setResults(data);
-
-        (document!.getElementById("searchTerm")! as HTMLInputElement).value =
-            "";
+        console.log(searchTerm);
+        let data
+        try {
+            const response = await fetch(`http://localhost:3000/redis/${searchTerm}`);
+            if (!response.ok) {
+                throw new Error(`Error fetching data: ${response.statusText}`);
+            }
+            data = await response.json();
+            data = JSON.parse(data)
+        } catch (error) {
+            data = await props.handleSearch(searchTerm, searchValue);
+            try {
+                const response = await fetch(`http://localhost:3000/redis/${searchTerm}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ data: data }),
+                });
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || "Error posting data");
+                }
+                const result = await response.json();
+                console.log(result)
+            } catch (error) {
+                console.error("Error posting data:", error);
+            }
+        } finally {
+            setResults(data);
+            (document!.getElementById("searchTerm")! as HTMLInputElement).value = "";
+        }
     };
 
     return (
@@ -58,7 +87,7 @@ export default function SearchPage(props: any) {
                         id="searchTerm"
                         name="searchTerm"
                         type="text"
-                        placeholder="Kanye West"
+                        placeholder="Brat"
                     />
                 </label>
 
@@ -97,8 +126,8 @@ export default function SearchPage(props: any) {
                                         component="img"
                                         image={
                                             item.images &&
-                                            item.images[0] &&
-                                            item.images[0].url
+                                                item.images[0] &&
+                                                item.images[0].url
                                                 ? item.images[0].url
                                                 : ""
                                         }
@@ -127,8 +156,8 @@ export default function SearchPage(props: any) {
                                                                     .external_urls
                                                                     .spotify
                                                                     ? item
-                                                                          .external_urls
-                                                                          .spotify
+                                                                        .external_urls
+                                                                        .spotify
                                                                     : "unknown url"
                                                             }
                                                             target="_blank"
@@ -214,8 +243,8 @@ export default function SearchPage(props: any) {
                                         component="img"
                                         image={
                                             item.images &&
-                                            item.images[0] &&
-                                            item.images[0].url
+                                                item.images[0] &&
+                                                item.images[0].url
                                                 ? item.images[0].url
                                                 : ""
                                         }
@@ -244,8 +273,8 @@ export default function SearchPage(props: any) {
                                                                     .external_urls
                                                                     .spotify
                                                                     ? item
-                                                                          .external_urls
-                                                                          .spotify
+                                                                        .external_urls
+                                                                        .spotify
                                                                     : "unknown url"
                                                             }
                                                             target="_blank"
@@ -312,8 +341,8 @@ export default function SearchPage(props: any) {
                                         component="img"
                                         image={
                                             item.album.images &&
-                                            item.album.images[0] &&
-                                            item.album.images[0].url
+                                                item.album.images[0] &&
+                                                item.album.images[0].url
                                                 ? item.album.images[0].url
                                                 : ""
                                         }
@@ -368,8 +397,8 @@ export default function SearchPage(props: any) {
                                                                     .external_urls
                                                                     .spotify
                                                                     ? item
-                                                                          .external_urls
-                                                                          .spotify
+                                                                        .external_urls
+                                                                        .spotify
                                                                     : "unknown url"
                                                             }
                                                             target="_blank"
