@@ -5,12 +5,10 @@ const client = redis.createClient();
 client.connect().then(() => {
   console.log('Connected to Redis');
 });
-
 router
-  .route('/redis/:searchTerm')
+  .route('/api/redis')
   .get(async (req, res) => {
-    const { searchTerm } = req.params;
-
+    const { searchTerm } = req.query; 
     try {
       const exists = await client.exists(searchTerm);
       if (exists) {
@@ -25,7 +23,7 @@ router
     }
   })
   .post(async (req, res) => {
-    let { searchTerm } = req.params;
+    const { searchTerm } = req.query; 
     try {
       if (!searchTerm || typeof searchTerm !== 'string' || searchTerm.trim().length < 1) {
         throw 'Invalid search term';

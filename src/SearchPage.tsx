@@ -38,7 +38,7 @@ export default function SearchPage(props: any) {
         console.log(searchTerm);
         let data
         try {
-            const response = await fetch(`http://localhost:3000/redis/${searchTerm}`);
+            const response = await fetch(`/api/redis?searchTerm=${searchTerm}`);
             if (!response.ok) {
                 throw new Error(`Error fetching data: ${response.statusText}`);
             }
@@ -47,11 +47,9 @@ export default function SearchPage(props: any) {
         } catch (error) {
             data = await props.handleSearch(searchTerm, searchValue);
             try {
-                const response = await fetch(`http://localhost:3000/redis/${searchTerm}`, {
+                const response = await fetch(`/api/redis?searchTerm=${searchTerm}`, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ data: data }),
                 });
                 if (!response.ok) {
