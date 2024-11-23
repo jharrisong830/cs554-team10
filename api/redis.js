@@ -3,20 +3,20 @@ const redisClient = redis.createClient();
 redisClient.connect();
 
 module.exports = async (req, res) => {
-    const { method, query: { searchTerm }, body } = req;
+    const { method, query: { searchTerm, searchValue }, body } = req;
 
     try {
         if (method === "GET") {
-            const cacheResult = await redisClient.get(searchTerm);
+            const cacheResult = await redisClient.get(`${searchValue}:${searchTerm}`);
             if (cacheResult) {
                 return res.status(200).json(JSON.parse(cacheResult));
             }
             return res.status(404).json({ error: "Not found in cache" });
         } else if (method === "POST") {
-            if (!searchTerm || !body || Object.keys(body).length === 0) {
+            if (!searchTerm || !searchValue || !body || Object.keys(body).length === 0) {
                 return res.status(400).json({ error: "Invalid input" });
             }
-            await redisClient.setEx(searchTerm, 3600, JSON.stringify(body));
+            await redisClient.setEx(`${searchValue}:${searchTerm}`, 3600, JSON.stringify(body));
             return res.status(200).json({ message: "Saved to Redis", data: body });
         } else {
             res.setHeader("Allow", ["GET", "POST"]);

@@ -29,7 +29,7 @@ export default function SearchPage(props: any) {
         const finalSearchTerm = trimmedSearchTerm === "" ? "Brat" : trimmedSearchTerm;
         let data;
         try {
-            const response = await fetch(`/api/redis?searchTerm=${finalSearchTerm}`);
+            const response = await fetch(`/api/redis?searchTerm=${finalSearchTerm}&searchValue=${searchValue}`);
             if (response.ok) {
                 data = await response.json();
                 data = data.data
@@ -42,7 +42,7 @@ export default function SearchPage(props: any) {
             data = await props.handleSearch(finalSearchTerm, searchValue);
             console.log(data)  
             try {
-                const redisResponse = await fetch(`/api/redis?searchTerm=${finalSearchTerm}`, {
+                const redisResponse = await fetch(`/api/redis?searchTerm=${finalSearchTerm}&searchValue=${searchValue}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ data: data }),
