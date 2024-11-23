@@ -14,6 +14,7 @@ export default function SearchPage(props: any) {
     const [searchTerm, setSearchTerm] = useState("");
 
     const handleType = (e: any) => {
+        setResults(null);
         setSearchValue(e.target.value);
     };
 
