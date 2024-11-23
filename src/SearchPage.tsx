@@ -19,47 +19,49 @@ export default function SearchPage(props: any) {
     };
 
     useEffect(() => {
-        console.log(`Search results: ${JSON.stringify(results)}`);
+        //console.log(`Search results: ${JSON.stringify(results)}`);
     }, [results]);
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         setResults(null);
-
         const trimmedSearchTerm = searchTerm.trim();
         const finalSearchTerm = trimmedSearchTerm === "" ? "Brat" : trimmedSearchTerm;
-
-        // Fetch data from Redis
         let data;
         try {
             const response = await fetch(`/api/redis?searchTerm=${finalSearchTerm}`);
-            if (!response.ok) {
-                throw new Error(`Error fetching data: ${response.statusText}`);
+            if (response.ok) {
+                data = await response.json();
+                data = data.data
+                console.log('Data fetched from Redis:', data);
+            } else {
+                throw new Error('Data not found in Redis');
             }
-            data = await response.json();
-            data = JSON.parse(data);
         } catch (error) {
+            console.log(error);
             data = await props.handleSearch(finalSearchTerm, searchValue);
+            console.log(data)  
             try {
-                const response = await fetch(`/api/redis?searchTerm=${finalSearchTerm}`, {
+                const redisResponse = await fetch(`/api/redis?searchTerm=${finalSearchTerm}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ data: data }),
                 });
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || "Error posting data");
+                if (!redisResponse.ok) {
+                    const errorData = await redisResponse.json();
+                    throw new Error(errorData.error || "Error posting data to Redis");
                 }
-                const result = await response.json();
-                console.log(result);
+                const redisResult = await redisResponse.json();
+                console.log('Data successfully posted to Redis:', redisResult);
             } catch (error) {
-                console.error("Error posting data:", error);
+                console.error("Error posting data to Redis:", error);
             }
         } finally {
             setResults(data);
-            setSearchTerm(""); // Clear search term after submission
+            setSearchTerm(""); 
         }
     };
+    
 
     return (
         <>
