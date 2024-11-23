@@ -97,6 +97,7 @@ export default function SearchPage(props: any) {
             {results != null ? (
                 searchValue == "album" ? (
                     results.albums.items.map((item: any) => {
+                        if (!item || !item.name || !item.id) return null;
                         return (
                             <div key={item.id}>
                                 <Card
@@ -114,7 +115,7 @@ export default function SearchPage(props: any) {
                                 >
                                     <CardHeader
                                         title={
-                                            item.name
+                                            item && item.name
                                                 ? item.name
                                                 : "unknown name"
                                         }
@@ -126,7 +127,7 @@ export default function SearchPage(props: any) {
                                     <CardMedia
                                         component="img"
                                         image={
-                                            item.images &&
+                                            item && item.images &&
                                                 item.images[0] &&
                                                 item.images[0].url
                                                 ? item.images[0].url
@@ -153,7 +154,7 @@ export default function SearchPage(props: any) {
                                                     <dd>
                                                         <Link
                                                             to={
-                                                                item
+                                                                item && item
                                                                     .external_urls
                                                                     .spotify
                                                                     ? item
@@ -173,7 +174,7 @@ export default function SearchPage(props: any) {
                                                         Artists:
                                                     </dt>
                                                     <dd>
-                                                        {item.artists.map(
+                                                        {item && item.artists.map(
                                                             (artist: any) => (
                                                                 <div>
                                                                     <p>
@@ -198,9 +199,9 @@ export default function SearchPage(props: any) {
                                                     <dd>
                                                         <p>
                                                             Released{" "}
-                                                            {item.release_date}{" "}
+                                                            {item && item.release_date}{" "}
                                                             ♫{" "}
-                                                            {item.total_tracks}{" "}
+                                                            {item && item.total_tracks}{" "}
                                                             Tracks
                                                         </p>
                                                     </dd>
@@ -214,6 +215,7 @@ export default function SearchPage(props: any) {
                     })
                 ) : searchValue == "artist" ? (
                     results.artists.items.map((item: any) => {
+                        if (!item || !item.name || !item.id) return null;
                         return (
                             <div key={item.id}>
                                 <Card
@@ -312,6 +314,7 @@ export default function SearchPage(props: any) {
                     })
                 ) : (
                     results.tracks.items.map((item: any) => {
+                        if (!item || !item.name || !item.id) return null;
                         return (
                             <div key={item.id}>
                                 <Card
@@ -366,7 +369,7 @@ export default function SearchPage(props: any) {
                                                         Artists:
                                                     </dt>
                                                     <dd>
-                                                        {item.artists.map(
+                                                        {item && item.artists.map(
                                                             (artist: any) => (
                                                                 <div>
                                                                     <p>
