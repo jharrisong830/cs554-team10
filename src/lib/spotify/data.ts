@@ -121,7 +121,7 @@ export const getUserAccessCode = async (
         client_id: import.meta.env.VITE_SPOTIFY_CLIENT_ID, // for PKCE
         grant_type: "authorization_code",
         code: authorizationCode,
-        redirect_uri: "http://localhost:5173/auth/success",
+        redirect_uri: import.meta.env.VITE_SPOTIFY_REDIRECT_URL,
         code_verifier: codeVerifier
     });
     const accessHeader = {
