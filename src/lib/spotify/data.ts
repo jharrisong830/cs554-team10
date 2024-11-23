@@ -4,7 +4,6 @@
 
 import { APIContextValue, Track, Album, Artist } from "./types";
 
-const SPOTIFY_CLIENT_ID = "afb9fc797fd2485abe86d74540b42c77";
 const pkcePossible =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-.~";
 
@@ -20,8 +19,8 @@ export const getAuthorizationURL = (codeChallenge: string): string => {
     const scope = "playlist-read-private user-read-private user-library-read"; // TODO: refine scopes to be minimal
     const userAuthQuery = {
         response_type: "code",
-        redirect_uri: "http://localhost:5173/auth/success",
-        client_id: SPOTIFY_CLIENT_ID,
+        redirect_uri: import.meta.env.VITE_SPOTIFY_REDIRECT_URL,
+        client_id: import.meta.env.VITE_SPOTIFY_CLIENT_ID,
         scope: scope,
         code_challenge_method: "S256",
         code_challenge: codeChallenge
@@ -119,7 +118,7 @@ export const getUserAccessCode = async (
     codeVerifier: string
 ): Promise<APIContextValue> => {
     const accessBody = new URLSearchParams({
-        client_id: SPOTIFY_CLIENT_ID, // for PKCE
+        client_id: import.meta.env.VITE_SPOTIFY_CLIENT_ID, // for PKCE
         grant_type: "authorization_code",
         code: authorizationCode,
         redirect_uri: "http://localhost:5173/auth/success",
