@@ -1,17 +1,38 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     Card,
     CardContent,
     CardMedia,
     Typography,
-    CardHeader
+    CardHeader,
 } from "@mui/material";
 import { Link } from "react-router-dom";
+const RECENT_SEARCHES_KEY = "recentSearches";
+const EXPIRY_TIME_MS = 60 * 60 * 1000; // 1 hour
+const saveRecentSearches = (searches: string[]) => {
+    const data = {
+        searches,
+        timestamp: Date.now(), 
+    };
+    localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(data));
+};
+const loadRecentSearches = (): string[] => {
+    const data = localStorage.getItem(RECENT_SEARCHES_KEY);
+    if (data) {
+        const { searches, timestamp } = JSON.parse(data);
+        if (Date.now() - timestamp < EXPIRY_TIME_MS) {
+            return searches;
+        }
+    }
+    return [];
+};
 
 export default function SearchPage(props: any) {
     const [results, setResults] = useState<any>(null);
     const [searchValue, setSearchValue] = useState("album");
     const [searchTerm, setSearchTerm] = useState("");
+    const recentSearches = useRef<string[]>(loadRecentSearches());
+    const cache = useRef<Map<string, any>>(new Map());
 
     const handleType = (e: any) => {
         setResults(null);
@@ -19,60 +40,78 @@ export default function SearchPage(props: any) {
     };
 
     useEffect(() => {
-        //console.log(`Search results: ${JSON.stringify(results)}`);
-    }, [results]);
+        console.log("Recent Searches:", recentSearches.current);
+    }, []);
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         setResults(null);
         const trimmedSearchTerm = searchTerm.trim();
         const finalSearchTerm = trimmedSearchTerm === "" ? "Brat" : trimmedSearchTerm;
+        const cacheKey = `${searchValue}:${finalSearchTerm}`;
+        if (cache.current.has(cacheKey)) {
+            console.log("Data retrieved from client-side cache");
+            setResults(cache.current.get(cacheKey));
+            updateRecentSearches(cacheKey);
+            setSearchTerm("");
+            return;
+        }
+
         let data;
         try {
             const response = await fetch(`/api/redis?searchTerm=${finalSearchTerm}&searchValue=${searchValue}`);
             if (response.ok) {
                 data = await response.json();
-                data = data.data
-                console.log('Data fetched from Redis:', data);
+                data = data.data;
+                console.log("Data fetched from Redis:", data);
             } else {
-                throw new Error('Data not found in Redis');
+                throw new Error("Data not found in Redis");
             }
         } catch (error) {
-            console.log(error);
+            console.log("Redis fetch error:", error);
             data = await props.handleSearch(finalSearchTerm, searchValue);
-            console.log(data)  
+            console.log("Data fetched from API:", data);
+
             try {
-                const redisResponse = await fetch(`/api/redis?searchTerm=${finalSearchTerm}&searchValue=${searchValue}`, {
+                await fetch(`/api/redis?searchTerm=${finalSearchTerm}&searchValue=${searchValue}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ data: data }),
                 });
-                if (!redisResponse.ok) {
-                    const errorData = await redisResponse.json();
-                    throw new Error(errorData.error || "Error posting data to Redis");
-                }
-                const redisResult = await redisResponse.json();
-                console.log('Data successfully posted to Redis:', redisResult);
-            } catch (error) {
-                console.error("Error posting data to Redis:", error);
+                console.log("Data successfully posted to Redis");
+            } catch (redisError) {
+                console.error("Error posting data to Redis:", redisError);
             }
-        } finally {
-            setResults(data);
-            setSearchTerm(""); 
         }
+
+        cache.current.set(cacheKey, data);
+        updateRecentSearches(cacheKey);
+        setResults(data);
+        setSearchTerm("");
     };
-    
+
+    const updateRecentSearches = (searchTerm: string) => {
+        const recent = recentSearches.current;
+        const termToStore = searchTerm.includes(":")
+            ? searchTerm.split(":")[1].trim()
+            : searchTerm;
+        const index = recent.indexOf(termToStore);
+        if (index > -1) {
+            recent.splice(index, 1);
+        }
+        recent.push(termToStore);
+        if (recent.length > 10) {
+            recent.shift();
+        }
+        saveRecentSearches(recent);
+    };
 
     return (
         <>
             <form id="simple-form" onSubmit={handleSubmit}>
                 <label>
                     Type of Search:
-                    <select
-                        value={searchValue}
-                        name="searchType"
-                        onChange={handleType}
-                    >
+                    <select value={searchValue} name="searchType" onChange={handleType}>
                         <option value="album">Album</option>
                         <option value="artist">Artist</option>
                         <option value="track">Track</option>
@@ -85,10 +124,16 @@ export default function SearchPage(props: any) {
                         name="searchTerm"
                         type="text"
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)} // Use controlled component for search term
+                        onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Brat"
+                        list="recent-searches" // Attach the dropdown list
                     />
                 </label>
+                <datalist id="recent-searches">
+                    {recentSearches.current.map((term, index) => (
+                        <option key={index} value={term} />
+                    ))}
+                </datalist>
                 <input type="submit" value="Submit" />
             </form>
 
