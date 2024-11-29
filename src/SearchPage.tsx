@@ -9,7 +9,6 @@ import {
 import { Link } from "react-router-dom"; 
 const RECENT_SEARCHES_KEY = "recentSearches";
 const EXPIRY_TIME_MS = 60 * 60 * 1000; //1 Hour
-const REDISURL = import.meta.env.VITE_REDIS_URL
 const API_URL =
     process.env.NODE_ENV === "production"
         ? "https://cs554-team10.vercel.app/api/redis"
@@ -51,7 +50,6 @@ export default function SearchPage(props: any) {
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         console.log(API_URL)
-        console.log(REDISURL)
         setResults(null);
         const trimmedSearchTerm = searchTerm.trim();
         const finalSearchTerm = trimmedSearchTerm === "" ? "Brat" : trimmedSearchTerm;
