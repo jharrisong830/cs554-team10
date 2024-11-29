@@ -1,10 +1,10 @@
 import express from 'express';
 const router = express.Router();
 import { config } from 'dotenv';
-config();
 import Redis from "ioredis";
-const REDISURL = process.env.REDIS_URL;
+const REDISURL = import.meta.env.VITE_REDIS_URL
 const client = new Redis(REDISURL);
+config();
 
 router
   .route('/api/redis')
