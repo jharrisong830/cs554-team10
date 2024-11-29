@@ -2,15 +2,14 @@ import express from 'express';
 const router = express.Router();
 import { config } from 'dotenv';
 import Redis from "ioredis";
-const REDISURL = import.meta.env.VITE_REDIS_URL
-const client = new Redis(REDISURL);
 config();
+const REDISURL = process.env.REDIS_URL;
+const client = new Redis(REDISURL);
 
 router
   .route('/api/redis')
   .get(async (req, res) => {
-    const { searchTerm } = req.query; 
-    const { searchValue } = req.query; 
+    const { method, query: { searchTerm, searchValue }, body } = req;
     try {
       const exists = await client.exists(`${searchValue}:${searchTerm}`);
       if (exists) {
@@ -25,8 +24,7 @@ router
     }
   })
   .post(async (req, res) => {
-    const { searchTerm } = req.query; 
-    const { searchValue } = req.query; 
+    const { method, query: { searchTerm, searchValue }, body } = req;
     try {
       if (!searchTerm || typeof searchTerm !== 'string' || searchTerm.trim().length < 1) {
         throw 'Invalid search term';

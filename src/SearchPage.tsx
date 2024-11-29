@@ -49,7 +49,6 @@ export default function SearchPage(props: any) {
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
-        console.log(API_URL)
         setResults(null);
         const trimmedSearchTerm = searchTerm.trim();
         const finalSearchTerm = trimmedSearchTerm === "" ? "Brat" : trimmedSearchTerm;
@@ -65,7 +64,12 @@ export default function SearchPage(props: any) {
         data = await props.handleSearch(finalSearchTerm, searchValue);
         try {
             // Fetch data from Redis via API
-            const response = await fetch(`${API_URL}?searchTerm=${finalSearchTerm}&searchValue=${searchValue}`);
+            const response = await fetch(`${API_URL}?searchTerm=${finalSearchTerm}&searchValue=${searchValue}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                }
+            })
             if (response.ok) {
                 const result = await response.json();
                 data = result.data;

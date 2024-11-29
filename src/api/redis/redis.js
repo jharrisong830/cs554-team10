@@ -1,9 +1,9 @@
-/// <reference types="vite/types/importMeta.d.ts" />
 import Redis from "ioredis";
 const REDISURL = import.meta.env.VITE_REDIS_URL
 const client = new Redis(REDISURL);
 
 export default async function handler(req, res) {
+    res.setHeader('Content-Type', 'application/json');
     const { method, query: { searchTerm, searchValue }, body } = req;
     try {
         const cacheKey = `${searchValue}:${searchTerm}`;
@@ -43,7 +43,7 @@ export default async function handler(req, res) {
                 return res.status(500).json({ error: 'Error saving data to Redis' });
             }
         }
-        return res.status(405).json({ error: `Method ${REDISURL} ${method} ${cacheKey} not allowed` });
+        return res.status(406).json({ error: `Method ${REDISURL} ${method} ${cacheKey} not allowed` });
     } catch (error) {
         console.error("Redis error:", error);
         return res.status(500).json({ error: "Internal Server Error" });
