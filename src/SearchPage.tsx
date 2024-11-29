@@ -49,6 +49,7 @@ export default function SearchPage(props: any) {
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
+        console.log(API_URL)
         setResults(null);
         const trimmedSearchTerm = searchTerm.trim();
         const finalSearchTerm = trimmedSearchTerm === "" ? "Brat" : trimmedSearchTerm;

@@ -10,6 +10,7 @@ export default async function handler(req, res) {
 
         if (method === "GET") {
             try {
+                console.log(1)
                 const exists = await client.exists(cacheKey);
                 if (exists) {
                     console.log(`Show ${cacheKey} from cache`);
@@ -30,6 +31,7 @@ export default async function handler(req, res) {
 
         if (method === "POST") {
             try {
+                console.log(2)
                 if (!searchTerm || typeof searchTerm !== 'string' || searchTerm.trim().length < 1) {
                     throw 'Invalid search term';
                 }
