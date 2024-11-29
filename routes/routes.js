@@ -1,10 +1,11 @@
 import express from 'express';
-import redis from 'redis';
 const router = express.Router();
-const client = redis.createClient();
-client.connect().then(() => {
-  console.log('Connected to Redis');
-});
+import { config } from 'dotenv';
+config();
+import Redis from "ioredis";
+const REDISURL = process.env.REDIS_URL;
+const client = new Redis(REDISURL);
+
 router
   .route('/api/redis')
   .get(async (req, res) => {
@@ -34,13 +35,14 @@ router
       return res.status(400).json({ error: e });
     }
     const redisData = req.body;
+    const redisSet = JSON.stringify(redisData)
     if (!redisData || Object.keys(redisData).length === 0) {
       return res
         .status(400)
         .json({ error: 'There are no fields in the request body' });
     }
     try {
-      await client.set(`${searchValue}:${searchTerm}`, JSON.stringify(redisData), { EX: 3600 });
+      await client.setex(`${searchValue}:${searchTerm}`, 3600, redisSet);
       return res.status(200).json(redisData);
     } catch (e) {
       console.log(e);

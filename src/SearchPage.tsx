@@ -6,9 +6,14 @@ import {
     Typography,
     CardHeader,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"; 
 const RECENT_SEARCHES_KEY = "recentSearches";
-const EXPIRY_TIME_MS = 60 * 60 * 1000; // 1 hour
+const EXPIRY_TIME_MS = 60 * 60 * 1000; //1 Hour
+const API_URL =
+    process.env.NODE_ENV === "production"
+        ? "https://cs554-team10.vercel.app/api/redis"
+        : "/api/redis";
+
 const saveRecentSearches = (searches: string[]) => {
     const data = {
         searches,
@@ -32,8 +37,7 @@ export default function SearchPage(props: any) {
     const [searchValue, setSearchValue] = useState("album");
     const [searchTerm, setSearchTerm] = useState("");
     const recentSearches = useRef<string[]>(loadRecentSearches());
-    const cache = useRef<Map<string, any>>(new Map());
-
+    // const cache = useRef<Map<string, any>>(new Map());
     const handleType = (e: any) => {
         setResults(null);
         setSearchValue(e.target.value);
@@ -49,20 +53,21 @@ export default function SearchPage(props: any) {
         const trimmedSearchTerm = searchTerm.trim();
         const finalSearchTerm = trimmedSearchTerm === "" ? "Brat" : trimmedSearchTerm;
         const cacheKey = `${searchValue}:${finalSearchTerm}`;
-        if (cache.current.has(cacheKey)) {
-            console.log("Data retrieved from client-side cache");
-            setResults(cache.current.get(cacheKey));
-            updateRecentSearches(cacheKey);
-            setSearchTerm("");
-            return;
-        }
-
+        // if (cache.current.has(cacheKey)) {
+        //     console.log("Data retrieved from client-side cache");
+        //     setResults(cache.current.get(cacheKey));
+        //     updateRecentSearches(cacheKey);
+        //     setSearchTerm("");
+        //     return;
+        // }
         let data;
+        data = await props.handleSearch(finalSearchTerm, searchValue);
         try {
-            const response = await fetch(`/api/redis?searchTerm=${finalSearchTerm}&searchValue=${searchValue}`);
+            // Fetch data from Redis via API
+            const response = await fetch(`${API_URL}?searchTerm=${finalSearchTerm}&searchValue=${searchValue}`);
             if (response.ok) {
-                data = await response.json();
-                data = data.data;
+                const result = await response.json();
+                data = result.data;
                 console.log("Data fetched from Redis:", data);
             } else {
                 throw new Error("Data not found in Redis");
@@ -70,21 +75,19 @@ export default function SearchPage(props: any) {
         } catch (error) {
             console.log("Redis fetch error:", error);
             data = await props.handleSearch(finalSearchTerm, searchValue);
-            console.log("Data fetched from API:", data);
-
+            console.log("Data fetched from external API:", data);
             try {
-                await fetch(`/api/redis?searchTerm=${finalSearchTerm}&searchValue=${searchValue}`, {
+                await fetch(`${API_URL}?searchTerm=${finalSearchTerm}&searchValue=${searchValue}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ data: data }),
+                    body: JSON.stringify({ data }),
                 });
-                console.log("Data successfully posted to Redis");
+                console.log("Data successfully saved to Redis");
             } catch (redisError) {
-                console.error("Error posting data to Redis:", redisError);
+                console.error("Error saving data to Redis:", redisError);
             }
         }
-
-        cache.current.set(cacheKey, data);
+        // cache.current.set(cacheKey, data);
         updateRecentSearches(cacheKey);
         setResults(data);
         setSearchTerm("");
