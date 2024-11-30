@@ -21,7 +21,9 @@ const saveRecentSearches = (searches: string[]) => {
     };
     localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(data));
 };
+
 const loadRecentSearches = (): string[] => {
+    if (typeof window === "undefined") return []; // Ensure this runs only on the client
     const data = localStorage.getItem(RECENT_SEARCHES_KEY);
     if (data) {
         const { searches, timestamp } = JSON.parse(data);
@@ -31,6 +33,7 @@ const loadRecentSearches = (): string[] => {
     }
     return [];
 };
+
 
 export default function SearchPage(props: any) {
     const [results, setResults] = useState<any>(null);
