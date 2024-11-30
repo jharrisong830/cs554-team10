@@ -6,7 +6,7 @@ import {
     Typography,
     CardHeader,
 } from "@mui/material";
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 const RECENT_SEARCHES_KEY = "recentSearches";
 const EXPIRY_TIME_MS = 60 * 60 * 1000; //1 Hour
 const API_URL =
@@ -17,7 +17,7 @@ const API_URL =
 const saveRecentSearches = (searches: string[]) => {
     const data = {
         searches,
-        timestamp: Date.now(), 
+        timestamp: Date.now(),
     };
     localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(data));
 };
@@ -51,50 +51,40 @@ export default function SearchPage(props: any) {
         e.preventDefault();
         setResults(null);
         const trimmedSearchTerm = searchTerm.trim();
-        const finalSearchTerm = trimmedSearchTerm === "" ? "Brat" : trimmedSearchTerm;
+        const finalSearchTerm = trimmedSearchTerm || "Brat";
         const cacheKey = `${searchValue}:${finalSearchTerm}`;
-        // if (cache.current.has(cacheKey)) {
-        //     console.log("Data retrieved from client-side cache");
-        //     setResults(cache.current.get(cacheKey));
-        //     updateRecentSearches(cacheKey);
-        //     setSearchTerm("");
-        //     return;
-        // }
-        let data;
-        data = await props.handleSearch(finalSearchTerm, searchValue);
+
         try {
-            // Fetch data from Redis via API
-            const response = await fetch(`${API_URL}?searchTerm=${finalSearchTerm}&searchValue=${searchValue}`, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                }
-            })
-            if (response.ok) {
-                const result = await response.json();
-                data = result.data;
-                console.log("Data fetched from Redis:", data);
-            } else {
-                throw new Error("Data not found in Redis");
-            }
+            const fetchRedisData = async () => {
+                const response = await fetch(`${API_URL}?searchTerm=${finalSearchTerm}&searchValue=${searchValue}`, {
+                    method: "GET",
+                    headers: { Accept: "application/json" },
+                });
+                if (!response.ok) throw new Error("Data not found in Redis");
+                return response.json();
+            };
+
+            const result = await fetchRedisData();
+            setResults(result.data);
+            updateRecentSearches(cacheKey);
         } catch (error) {
-            console.log("Redis fetch error:", error);
-            data = await props.handleSearch(finalSearchTerm, searchValue);
-            console.log("Data fetched from external API:", data);
+            console.error("Redis fetch error:", error);
+            const externalData = await props.handleSearch(finalSearchTerm, searchValue);
+            setResults(externalData);
+            console.log("Data fetched from external API:", externalData);
+
             try {
                 await fetch(`${API_URL}?searchTerm=${finalSearchTerm}&searchValue=${searchValue}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ data }),
+                    body: JSON.stringify({ data: externalData }),
                 });
                 console.log("Data successfully saved to Redis");
             } catch (redisError) {
                 console.error("Error saving data to Redis:", redisError);
             }
         }
-        // cache.current.set(cacheKey, data);
-        updateRecentSearches(cacheKey);
-        setResults(data);
+
         setSearchTerm("");
     };
 
