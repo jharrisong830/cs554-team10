@@ -3,7 +3,7 @@ import Searchbar from "./Searchbar";
 function Homepage() {
     return (
         <>
-            <h1>Welcome to [unnamed battle ranker]!</h1>
+            <h1>Welcome to [unnamed battle ranker]!!</h1>
             <Searchbar />
             <h2>What is [unnamed battle ranker]?</h2>
             <h4>
