@@ -1,6 +1,43 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import Results from "./Results";
+const EXPIRY_TIME_MS = 60 * 60 * 1000 * 24; // 1 day
+const loadCurrResults = "loadCurrent";
+type CurrSortType = {
+    battleNumber: number;
+    progress: number;
+    leftIndex: number;
+    leftInnerIndex: number;
+    rightIndex: number;
+    rightInnerIndex: number;
+    choices: string;
+    sortedIndexList: number[][];
+    recordDataList: number[];
+    parentIndexList: number[];
+    tiedDataList: number[];
+    pointer: number;
+    sortedNumber: number;
+    history: any[]
+    totalBattles: number;
+};
+const saveResults = (sorting: CurrSortType | null) => {
+    const data = {
+        sorting,
+        timestamp: Date.now(),
+    };
+    localStorage.setItem(loadCurrResults, JSON.stringify(data));
+};
+
+const loadResults = (): CurrSortType | null => {
+    const data = localStorage.getItem(loadCurrResults);
+    if (data) {
+        const { sorting, timestamp } = JSON.parse(data);
+        if (Date.now() - timestamp < EXPIRY_TIME_MS) {
+            return sorting;
+        }
+    }
+    return null;
+};
 
 const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
     const [battleNumber, setBattleNumber] = useState(1);
@@ -9,7 +46,6 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
     const [loading, setLoading] = useState(true);
     const [leftSong, setLeftSong] = useState("");
     const [rightSong, setRightSong] = useState("");
-
     const sortedIndexList = useRef<number[][]>([]);
     const recordDataList = useRef<number[]>([]);
     const parentIndexList = useRef<number[]>([]);
@@ -18,14 +54,13 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
     const pointer = useRef(0);
     const sortedNumber = useRef(0);
     const totalBattles = useRef(0);
-
     const leftIndex = useRef(0);
     const leftInnerIndex = useRef(0);
     const rightIndex = useRef(0);
     const rightInnerIndex = useRef(0);
     const [showResults, setShowResults] = useState(false);
     const history = useRef<any[]>([]);
-
+    const currSort = useRef<CurrSortType | null>(loadResults());
     useEffect(() => {
         start();
     }, [songDataToSort]);
@@ -33,6 +68,72 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
     const start = async () => {
         setLoading(true);
         try {
+            if (currSort.current) {
+                const {
+                    battleNumber: prevBattleNumber,
+                    progress: prevProgress,
+                    leftIndex: prevLeftIndex,
+                    leftInnerIndex: prevLeftInnerIndex,
+                    rightIndex: prevRightIndex,
+                    rightInnerIndex: prevRightInnerIndex,
+                    choices: prevChoices,
+                    sortedIndexList: prevSortedIndexList,
+                    recordDataList: prevRecordDataList,
+                    parentIndexList: prevParentIndexList,
+                    tiedDataList: prevTiedDataList,
+                    pointer: prevPointer,
+                    sortedNumber: prevSortedNo,
+                    history: prevHistory,
+                    totalBattles: prevTotalBattles
+                } = currSort.current;
+                setBattleNumber(prevBattleNumber);
+                setProgress(prevProgress);
+                leftIndex.current = prevLeftIndex;
+                leftInnerIndex.current = prevLeftInnerIndex;
+                rightIndex.current = prevRightIndex;
+                rightInnerIndex.current = prevRightInnerIndex;
+                setChoices(prevChoices);
+                sortedIndexList.current = prevSortedIndexList;
+                recordDataList.current = prevRecordDataList;
+                parentIndexList.current = prevParentIndexList;
+                tiedDataList.current = prevTiedDataList;
+                pointer.current = prevPointer;
+                sortedNumber.current = prevSortedNo;
+                history.current = prevHistory
+                totalBattles.current = prevTotalBattles
+                if (leftIndex.current < 0) {
+                    setProgress(100);
+                    let rankNum = 1;
+                    let tiedRankNum = 1;
+                    const finalSortedIndexes = sortedIndexList.current[0].slice(0);
+                    finalSongs.current = [];
+                    songDataToSort.forEach((_, idx) => {
+                        const songIndex = finalSortedIndexes[idx];
+                        const song = songDataToSort[songIndex];
+                        finalSongs.current.push({ rank: rankNum, name: song });
+        
+                        if (idx < songDataToSort.length - 1) {
+                            if (
+                                tiedDataList.current[songIndex] ===
+                                finalSortedIndexes[idx + 1]
+                            ) {
+                                tiedRankNum++;
+                            } else {
+                                rankNum += tiedRankNum;
+                                tiedRankNum = 1;
+                            }
+                        }
+                    });
+                    console.log(finalSongs);
+                    console.log("Done");
+                    setShowResults(true);
+                }
+                else{
+                    updateSongs();
+                }
+                setLoading(false);
+                return;
+            }
             songDataToSort = songDataToSort
                 .map((a) => [Math.random(), a] as [number, string])
                 .sort((a, b) => a[0] - b[0])
@@ -85,15 +186,14 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
             sortedIndexList.current[leftIndex.current][leftInnerIndex.current];
         const rightSongIndex =
             sortedIndexList.current[rightIndex.current][
-                rightInnerIndex.current
+            rightInnerIndex.current
             ];
 
         setLeftSong(songDataToSort[leftSongIndex]);
         setRightSong(songDataToSort[rightSongIndex]);
-
         setProgress(
             Math.floor(
-                (sortedNumber.current * 100) / (totalBattles.current / 2)
+                (sortedNumber.current * 100) / (totalBattles.current)
             )
         );
     };
@@ -102,13 +202,13 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
         if (side === "left") {
             recordDataList.current[pointer.current] =
                 sortedIndexList.current[leftIndex.current][
-                    leftInnerIndex.current
+                leftInnerIndex.current
                 ];
             leftInnerIndex.current += 1;
         } else {
             recordDataList.current[pointer.current] =
                 sortedIndexList.current[rightIndex.current][
-                    rightInnerIndex.current
+                rightInnerIndex.current
                 ];
             rightInnerIndex.current += 1;
         }
@@ -117,6 +217,7 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
     };
 
     const saveCurrentStateToHistory = () => {
+        console.log(history)
         history.current.push({
             battleNumber,
             progress,
@@ -146,7 +247,7 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
                 recordData("left");
                 while (
                     tiedDataList.current[
-                        recordDataList.current[pointer.current - 1]
+                    recordDataList.current[pointer.current - 1]
                     ] != -1
                 ) {
                     recordData("left");
@@ -159,7 +260,7 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
                 recordData("right");
                 while (
                     tiedDataList.current[
-                        recordDataList.current[pointer.current - 1]
+                    recordDataList.current[pointer.current - 1]
                     ] != -1
                 ) {
                     recordData("right");
@@ -172,7 +273,7 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
                 recordData("left");
                 while (
                     tiedDataList.current[
-                        recordDataList.current[pointer.current - 1]
+                    recordDataList.current[pointer.current - 1]
                     ] != -1
                 ) {
                     recordData("left");
@@ -181,12 +282,12 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
                     recordDataList.current[pointer.current - 1]
                 ] =
                     sortedIndexList.current[rightIndex.current][
-                        rightInnerIndex.current
+                    rightInnerIndex.current
                     ];
                 recordData("right");
                 while (
                     tiedDataList.current[
-                        recordDataList.current[pointer.current - 1]
+                    recordDataList.current[pointer.current - 1]
                     ] != -1
                 ) {
                     recordData("right");
@@ -264,6 +365,26 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
             setBattleNumber(battleNumber + 1);
             updateSongs();
         }
+        let obj = {
+            battleNumber: battleNumber+1,
+            progress,
+            leftIndex: leftIndex.current,
+            leftInnerIndex: leftInnerIndex.current,
+            rightIndex: rightIndex.current,
+            rightInnerIndex: rightInnerIndex.current,
+            choices,
+            sortedIndexList: JSON.parse(
+                JSON.stringify(sortedIndexList.current)
+            ),
+            recordDataList: [...recordDataList.current],
+            parentIndexList: [...parentIndexList.current],
+            tiedDataList: [...tiedDataList.current],
+            pointer: pointer.current,
+            sortedNumber: sortedNumber.current,
+            history: history.current,
+            totalBattles: totalBattles.current
+        }
+        saveResults(obj)
     };
 
     const handleUndo = () => {
@@ -309,6 +430,8 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
         setProgress(0);
         setChoices("");
         setLoading(true);
+        saveResults(null)
+        currSort.current = null
         sortedIndexList.current = [];
         recordDataList.current = [];
         parentIndexList.current = [];
