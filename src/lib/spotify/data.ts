@@ -333,7 +333,7 @@ export const getArtistAlbums = async (
             ...responseBody.items // ... to unpack the array into varargs
                 .map((album: any) => ({
                     type: "album",
-                    albumType: album.album_type,
+                    albumType: album.album_group,
                     spotifyId: album.id,
                     name: album.name,
                     artists: album.artists.map((a: any) => a.name),

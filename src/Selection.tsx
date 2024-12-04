@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import {
     getTrack,
-    getAlbum,
     getAlbumArtwork,
     getArtist,
     getArtistImage,
@@ -13,15 +12,14 @@ import SpotifyContext from "./contexts/SpotifyContext";
 export default function Selection() {
     const {stateValue} = useContext(SpotifyContext)!;
     const [currTrack, setCurrTrack] = useState<Track | null>(null);
-    const [currAlbum, setCurrAlbum] = useState<Album | null>(null);
     const [currTrackImage, setCurrTrackImage] = useState<string | null>(null);
-    const [currAlbumImage, setCurrAlbumImage] = useState<string | null>(null);
 
     const [currArtist, setCurrArtist] = useState<Artist | null>(null);
     const [currArtistImage, setCurrArtistImage] = useState<string | null>(null);
     const [artistAlbums, setArtistAlbums] = useState<Array<Album> | null>(null);
 
     const [selectedAlbums, setSelectedAlbums] = useState<Array<Album> | null>(null); // store entire albums with true/false
+    const [finalAlbums, setFinalAlbums] = useState<Array<Album> | null>(null); // what is passed to ranker
 
     useEffect(() => {
         stateValue
@@ -32,12 +30,14 @@ export default function Selection() {
                 "26QLJMK8G0M06sk7h7Fkse?si=f4e3764ddc3148a0"
             );
             setCurrTrack(newTrack);
+            console.log(currTrack);
 
             const newTrackImage = await getAlbumArtwork(
                 stateValue.accessToken!,
                 newTrack.albumId
             );
             setCurrTrackImage(newTrackImage);
+            console.log(currTrackImage)
         };
 
         const artistWrapper = async () => {
@@ -61,6 +61,15 @@ export default function Selection() {
         }    
     }, [stateValue]);
 
+    const handleSubmit = (e: { preventDefault: () => void; }) => {
+        e.preventDefault();
+        if (selectedAlbums !== undefined) {
+            let finAlbums = selectedAlbums?.filter(x => x.selected === "true")!;
+            setFinalAlbums(finAlbums);
+            console.log(finalAlbums);
+        }
+    }
+
     let artistButtons;
 
     const changeButtonColor = (album: Album) => {
@@ -68,11 +77,11 @@ export default function Selection() {
             let newAlbums: Array<Album>;
             if (album.selected !== "true") {
                 newAlbums = selectedAlbums?.filter(x => x.name === album.name ? x.selected = "true" : x.selected = x.selected);
-                // have to push album with that name into selected albums
             } else {
                 newAlbums = selectedAlbums?.filter(x => x.name !== album.name ? x.selected = x.selected : x.selected = "false");
             }
             setSelectedAlbums(newAlbums);
+            console.log(newAlbums);
         }
     }
 
@@ -80,6 +89,8 @@ export default function Selection() {
         artistButtons = artistAlbums.map((album) => (
             <button onClick={() => changeButtonColor(album)} style={{ padding: "10px 20px", fontSize: "16px" }} key={album.name} className={album.selected}>
                 {album.name}
+                <br/>
+                {album.albumType}
             </button>
         ))
     }    
@@ -93,9 +104,26 @@ export default function Selection() {
                     {artistButtons}
                 </div>
             </div>
-            <p>{selectedAlbums?.map(album => album.name + " | ")}</p>
+            <form
+                method='POST '
+                name='formName'
+                className='center'
+                onSubmit={handleSubmit}
+            >
+                <label>
+                <h2>Submit songs for ranking: </h2>
+                <input
+                    id="songsList"
+                    autoComplete='off'
+                    type='submit'
+                    value="Submit"
+                    name='songsList'
+                />
+                </label>
+                <br/>
+                <br/>
+            </form>
         </div>
-
     )
 
 
