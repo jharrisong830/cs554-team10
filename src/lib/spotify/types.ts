@@ -18,8 +18,9 @@ export type Album = {
     spotifyId: string;
     name: string;
     artists: Array<{ name: string; spotifyId: string }>;
+    tracks: Array<Track>;
     platformURL: string;
-    selected: string
+    selected: string;
 };
 
 export type Artist = {

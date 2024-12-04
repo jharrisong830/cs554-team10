@@ -1,78 +1,106 @@
 import "./App.css";
+import { toPng } from "html-to-image";
 
 const Results = ({
-    finalResults,
-    history,
-    songDataToSort
+  finalResults,
+  history,
+  songDataToSort,
 }: {
-    finalResults: any[];
-    history: any[];
-    songDataToSort: string[];
+  finalResults: any[];
+  history: any[];
+  songDataToSort: string[];
 }) => {
-    if (!finalResults?.length || !history?.length || !songDataToSort?.length) {
-        return <div>No data available</div>;
-    }
-    const listItems = finalResults.map((result) => (
-        <li key={result.name}>
-            {result.rank}: {result.name}
-        </li>
-    ));
-    const allBattles = history.map((result, index) => {
-        let nextBattle;
-        try {
-            nextBattle = history[index + 1].choices.slice(-1);
-        } catch (e) {
-            let leftRank;
-            let rightRank;
-            for (const fin of finalResults) {
-                if (
-                    songDataToSort[
-                        result.sortedIndexList[result.leftIndex][
-                            result.leftInnerIndex
-                        ]
-                    ] === fin.name
-                ) {
-                    leftRank = fin.rank;
-                }
-                if (
-                    songDataToSort[
-                        result.sortedIndexList[result.rightIndex][
-                            result.rightInnerIndex
-                        ]
-                    ] === fin.name
-                ) {
-                    rightRank = fin.rank;
-                }
-            }
-            if (leftRank < rightRank) {
-                nextBattle = "0";
-            } else if (leftRank > rightRank) {
-                nextBattle = "1";
-            } else {
-                nextBattle = "2";
-            }
+  const handleExport = async () => {
+    const node = document.getElementById("results-container");
+    if (node) {
+      try {
+        const imageData = await toPng(node);
+        const base64Image = imageData.split(",")[1]; 
+        const response = await fetch("/api/process-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: base64Image }),
+        });
+        
+        const data = await response.json();
+        if (data.image) {
+          const link = document.createElement("a");
+          link.download = "processed-results.jpg"; 
+          link.href = `data:image/jpeg;base64,${data.image}`;
+          link.click(); 
         }
-        const outcomeText =
-            nextBattle === "0"
-                ? `Won ${songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]]} vs. Lost ${songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]]}`
-                : nextBattle === "1"
-                  ? `Lost ${songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]]} vs. Won ${songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]]}`
-                  : `${songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]]} Tied vs. ${songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]]}`;
+      } catch (error) {
+        console.error("Error exporting image:", error);
+      }
+    }
+  };
 
-        return (
-            <li key={result.battleNumber}>
-                Battle No: {result.battleNumber}
-                <br />
-                {outcomeText}
-            </li>
-        );
-    });
+  if (!finalResults?.length || !history?.length || !songDataToSort?.length) {
+    return <div>No data available</div>;
+  }
+  const listItems = finalResults.map((result) => (
+    <li key={result.name}>
+      {result.rank}: {result.name}
+    </li>
+  ));
+  const allBattles = history.map((result, index) => {
+    let nextBattle;
+    try {
+      nextBattle = history[index + 1].choices.slice(-1);
+    } catch (e) {
+      let leftRank;
+      let rightRank;
+      for (const fin of finalResults) {
+        if (
+          songDataToSort[
+            result.sortedIndexList[result.leftIndex][result.leftInnerIndex]
+          ] === fin.name
+        ) {
+          leftRank = fin.rank;
+        }
+        if (
+          songDataToSort[
+            result.sortedIndexList[result.rightIndex][result.rightInnerIndex]
+          ] === fin.name
+        ) {
+          rightRank = fin.rank;
+        }
+      }
+      if (leftRank < rightRank) {
+        nextBattle = "0";
+      } else if (leftRank > rightRank) {
+        nextBattle = "1";
+      } else {
+        nextBattle = "2";
+      }
+    }
+
+    const outcomeText =
+      nextBattle === "0"
+        ? `Won ${songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]]} vs. Lost ${songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]]}`
+        : nextBattle === "1"
+        ? `Lost ${songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]]} vs. Won ${songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]]}`
+        : `${songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]]} Tied vs. ${songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]]}`;
+
     return (
-        <div>
-            <ol style={{ listStyle: "none" }}>{listItems}</ol>
-            <ol style={{ listStyle: "none" }}>{allBattles}</ol>
-        </div>
+      <li key={result.battleNumber}>
+        Battle No: {result.battleNumber}
+        <br />
+        {outcomeText}
+      </li>
     );
+  });
+
+  return (
+    <div>
+      <div id="results-container" style={{ padding: "10px", background: "white" }}>
+        <ol style={{ listStyle: "none" }}>{listItems}</ol>
+        <ol style={{ listStyle: "none" }}>{allBattles}</ol>
+      </div>
+      {/* Button to export the results as an image */}
+      <button onClick={handleExport}>Save Results as Image</button>
+    </div>
+  );
 };
 
 export default Results;
