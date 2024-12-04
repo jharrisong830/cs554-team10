@@ -212,7 +212,8 @@ export const getAlbum = async (
             spotifyId: artist.id
         })),
         tracks: albumTracks,
-        platformURL: responseBody.external_urls.spotify
+        platformURL: responseBody.external_urls.spotify,
+        selected: "true"
     };
 };
 
