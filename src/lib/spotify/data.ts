@@ -324,7 +324,7 @@ export const getArtist = async (
         type: "artist",
         spotifyId: responseBody.id,
         name: responseBody.name,
-        platformURL: responseBody.external_urls.spotify
+        platformURL: responseBody.external_urls.spotify,
     };
 };
 
@@ -378,11 +378,12 @@ export const getArtistAlbums = async (
             ...responseBody.items // ... to unpack the array into varargs
                 .map((album: any) => ({
                     type: "album",
-                    albumType: album.album_type,
+                    albumType: album.album_group,
                     spotifyId: album.id,
                     name: album.name,
                     artists: album.artists.map((a: any) => a.name),
-                    platformURL: album.external_urls.spotify
+                    platformURL: album.external_urls.spotify,
+                    selected: "true"
                 }))
         );
 
