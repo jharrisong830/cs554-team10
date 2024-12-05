@@ -23,7 +23,7 @@ function Tier({ initialLetter, initialColor }: TierProps) {
         newFontSize = Math.min(boxWidth, boxHeight) / ((letterLength + 1)*0.6);
       } 
       else{
-        newFontSize = 30/0.6
+        newFontSize = 30/0.
       }
       setFontSize(newFontSize);
     }
@@ -50,15 +50,22 @@ function Tier({ initialLetter, initialColor }: TierProps) {
       <Box
         ref={boxRef}
         sx={{
-          display: 'grid',
           placeItems: 'center',
           fontSize: `${fontSize}px`,
-          fontWeight: 'bold',
-          width: '60px',
-          height: '60px',
           backgroundColor: color,
           cursor: 'pointer',
           position: 'relative',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "80px",
+          height: "80px",
+          border: "2px solid #ccc",
+          borderRadius: "8px",
+          marginRight: "10px",
+          color: "#fff",
+          fontWeight: "bold",
+          textAlign: "center",
         }}
         onClick={handleClick}
       >
@@ -89,10 +96,11 @@ function Tier({ initialLetter, initialColor }: TierProps) {
         value={color}
         onChange={handleColorChange}
         style={{
-          width: '60px', 
+          width: '80px', 
           height: '20px', 
           border: 'none',
           cursor: 'pointer',
+          position: 'relative',
         }}
       />
     </div>
