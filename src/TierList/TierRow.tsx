@@ -21,7 +21,7 @@ function TierRow({ rowId, letter, color, items }: TierRowProps) {
       style={{
         display: "flex",
         alignItems: "center",
-        border: "2px solid #ccc",
+        border: `2px solid ${color || "#ccc"}`,
         borderRadius: "8px",
         padding: "10px",
         marginBottom: "10px",
@@ -42,7 +42,6 @@ function TierRow({ rowId, letter, color, items }: TierRowProps) {
               flexWrap: "wrap",
               gap: "10px",
               padding: "10px",
-              justifyContent: "left",
             }}
           >
             {items.map((item, index) => (
@@ -51,6 +50,7 @@ function TierRow({ rowId, letter, color, items }: TierRowProps) {
                   <div
                     ref={provided.innerRef}
                     {...provided.dragHandleProps}
+                    {...provided.draggableProps}
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
@@ -58,17 +58,13 @@ function TierRow({ rowId, letter, color, items }: TierRowProps) {
                       width: "60px",
                       height: "60px",
                       borderRadius: "8px",
-                      margin: "0 5px",
-                      boxSizing: "border-box",
                       cursor: "grab",
                     }}
                   >
                     <TierItem
                       id={item.id}
                       imageUrl={item.imageUrl || ""}
-                      altText={item.altText || "No description"}
-                      index={index}
-                    />
+                      altText={item.altText || "No description"} index={0} />
                   </div>
                 )}
               </Draggable>
