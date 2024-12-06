@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import TierRow from "./TierRow";
 import TierBase from "./TierBase";
@@ -17,6 +17,21 @@ interface TierBoardProps {
 function TierBoard({ initialRows, baseItems }: TierBoardProps) {
     const [rows, setRows] = useState(initialRows);
     const [base, setBase] = useState(baseItems);
+    function onSubmitRow(event: FormEvent<HTMLFormElement>): void {
+        event.preventDefault();
+        const lastRow = rows[rows.length - 1]; 
+        const lastRowId = lastRow ? parseInt(lastRow.rowId.replace("row", "")) : 0;
+        const newRowId = `row${lastRowId + 1}`;
+        setRows([
+            ...rows,
+            {
+                rowId: newRowId,
+                items: [],
+                letter: "Default",
+                color: "#000000",
+            },
+        ]);
+    }
 
     const handleDragEnd = (result: DropResult) => {
         const { source, destination } = result;
@@ -90,20 +105,25 @@ function TierBoard({ initialRows, baseItems }: TierBoardProps) {
 
 
     return (
-        <DragDropContext onDragEnd={handleDragEnd}>
-            <div>
-                {rows.map((row) => (
-                    <TierRow
-                        key={row.rowId}
-                        rowId={row.rowId}
-                        items={row.items}
-                        color={row.color}
-                        letter={row.letter}
-                    />
-                ))}
-                <TierBase items={base} />
-            </div>
-        </DragDropContext>
+        <><div className='card'>
+            <form className='form' id='add-author' onSubmit={onSubmitRow}>
+                <button className='button add-button' type='submit'>
+                    Add Row
+                </button>
+            </form>
+        </div><DragDropContext onDragEnd={handleDragEnd}>
+                <div>
+                    {rows.map((row) => (
+                        <TierRow
+                            key={row.rowId}
+                            rowId={row.rowId}
+                            items={row.items}
+                            color={row.color}
+                            letter={row.letter} />
+                    ))}
+                    <TierBase items={base} />
+                </div>
+            </DragDropContext></>
     );
 
 }
