@@ -1,80 +1,86 @@
 import { Droppable, Draggable } from "react-beautiful-dnd";
-import Tier from "./Tier";
-import TierItem from "./TierItem";
-
 interface TierItemProps {
   id: string;
   imageUrl?: string;
   altText: string;
 }
-
 interface TierRowProps {
-  rowId: string;
-  letter?: string;
-  color?: string;
-  items: TierItemProps[];
+    rowId: string;
+    items: TierItemProps[];
+    color: string;
+    letter: string;
 }
 
-function TierRow({ rowId, letter, color, items }: TierRowProps) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        border: `2px solid ${color || "#ccc"}`,
-        borderRadius: "8px",
-        padding: "10px",
-        marginBottom: "10px",
-      }}
-    >
-      {letter && color && (
-        <div>
-          <Tier initialLetter={letter} initialColor={color} />
-        </div>
-      )}
-      <Droppable droppableId={rowId} direction="horizontal">
-        {(provided) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: "10px",
-              padding: "10px",
-            }}
-          >
-            {items.map((item, index) => (
-              <Draggable key={item.id} draggableId={item.id} index={index}>
+function TierRow({ rowId, items, color, letter }: TierRowProps) {
+    return (
+        <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+            <div
+                style={{
+                    backgroundColor: color,
+                    color: "white",
+                    padding: "10px",
+                    marginRight: "10px",
+                    borderRadius: "4px",
+                    fontWeight: "bold",
+                }}
+            >
+                {letter}
+            </div>
+            <Droppable droppableId={rowId} direction="horizontal">
                 {(provided) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.dragHandleProps}
-                    {...provided.draggableProps}
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      width: "60px",
-                      height: "60px",
-                      borderRadius: "8px",
-                      cursor: "grab",
-                    }}
-                  >
-                    <TierItem
-                      id={item.id}
-                      imageUrl={item.imageUrl || ""}
-                      altText={item.altText || "No description"} index={0} />
-                  </div>
+                    <div
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            border: "2px solid #ccc",
+                            padding: "10px",
+                            borderRadius: "4px",
+                            minHeight: "80px",
+                            flex: 1, 
+                        }}
+                    >
+                        {items.map((item, index) => (
+                            <Draggable key={item.id} draggableId={item.id} index={index}>
+                                {(provided) => (
+                                    <div
+                                        ref={provided.innerRef}
+                                        {...provided.draggableProps}
+                                        {...provided.dragHandleProps}
+                                        style={{
+                                            ...provided.draggableProps.style,
+                                            margin: "0 8px",
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            alignItems: "center",
+                                            border: "1px solid #ccc",
+                                            borderRadius: "4px",
+                                            padding: "8px",
+                                            backgroundColor: "black",
+                                        }}
+                                    >
+                                        <img
+                                            src={item.imageUrl}
+                                            alt={item.altText}
+                                            style={{
+                                                width: "50px",
+                                                height: "50px",
+                                                objectFit: "cover",
+                                                marginBottom: "5px",
+                                            }}
+                                        />
+                                        <span>{item.altText}</span>
+                                    </div>
+                                )}
+                            </Draggable>
+                        ))}
+                        {provided.placeholder}
+                    </div>
                 )}
-              </Draggable>
-            ))}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </div>
-  );
+            </Droppable>
+        </div>
+    );
 }
 
 export default TierRow;

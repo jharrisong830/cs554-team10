@@ -12,14 +12,15 @@ interface TierItemProps {
 interface TierBoardProps {
     initialRows: { rowId: string; items: TierItemProps[]; color: string; letter: string }[];
     baseItems: TierItemProps[];
+    title: string;
 }
 
-function TierBoard({ initialRows, baseItems }: TierBoardProps) {
+function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
     const [rows, setRows] = useState(initialRows);
     const [base, setBase] = useState(baseItems);
     function onSubmitRow(event: FormEvent<HTMLFormElement>): void {
         event.preventDefault();
-        const lastRow = rows[rows.length - 1]; 
+        const lastRow = rows[rows.length - 1];
         const lastRowId = lastRow ? parseInt(lastRow.rowId.replace("row", "")) : 0;
         const newRowId = `row${lastRowId + 1}`;
         setRows([
@@ -104,26 +105,57 @@ function TierBoard({ initialRows, baseItems }: TierBoardProps) {
     };
 
 
+    const handleRemove = (id: string) => {
+        const updatedRows = rows.filter((item) => item.rowId !== id);
+        setRows(updatedRows);
+    };
+
     return (
-        <><div className='card'>
-            <form className='form' id='add-author' onSubmit={onSubmitRow}>
-                <button className='button add-button' type='submit'>
-                    Add Row
-                </button>
-            </form>
-        </div><DragDropContext onDragEnd={handleDragEnd}>
+        <div
+            style={{
+                display: "flex",
+                flexDirection: "column", // Ensure heading is at the top
+                alignItems: "center",
+                border: `2px solid ${"#ccc"}`,
+                borderRadius: "8px",
+                padding: "10px",
+                marginBottom: "10px",
+            }}
+        >
+            {/* Add Heading */}
+            <h1 style={{
+                marginBottom: "20px", border: `2px solid ${"#ccc"}`,
+                borderRadius: "8px",
+                padding: "10px",
+            }}>
+                {title} Album Tier List Maker
+            </h1>
+
+            <div className='card'>
+                <form className='form' id='add-author' onSubmit={onSubmitRow}>
+                    <button className='button add-button' type='submit'>
+                        Add Row
+                    </button>
+                </form>
+            </div>
+
+            <DragDropContext onDragEnd={handleDragEnd}>
                 <div>
                     {rows.map((row) => (
-                        <TierRow
-                            key={row.rowId}
-                            rowId={row.rowId}
-                            items={row.items}
-                            color={row.color}
-                            letter={row.letter} />
+                        <div key={row.rowId}>
+                            <TierRow
+                                rowId={row.rowId}
+                                items={row.items}
+                                color={row.color}
+                                letter={row.letter}
+                            />
+                            <button onClick={() => handleRemove(row.rowId)}>Remove</button>
+                        </div>
                     ))}
                     <TierBase items={base} />
                 </div>
-            </DragDropContext></>
+            </DragDropContext>
+        </div>
     );
 
 }
