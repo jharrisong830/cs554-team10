@@ -288,17 +288,31 @@ export const getAlbumArtwork = async (
 export const search = async (
     accessToken: string,
     searchTerm: string,
-    type: string
+    type: string,
+    page: number
 ): Promise<string> => {
-    const data = await fetch(
-        `https://api.spotify.com/v1/search?q=${searchTerm}&type=${type}`,
-        {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${accessToken}`
+    let data:any = [];
+    if (page) {
+        data = await fetch(
+            `https://api.spotify.com/v1/search?offset=${(page-1) * 20}&q=${searchTerm}&type=${type}`,
+            {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
             }
-        }
-    );
+        );
+    } else {
+        data = await fetch(
+            `https://api.spotify.com/v1/search?q=${searchTerm}&type=${type}`,
+            {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            }
+        );
+    }
     const responseBody = await data.json();
     return responseBody;
 };
