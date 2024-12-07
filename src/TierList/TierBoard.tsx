@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import TierRow from "./TierRow";
 import TierBase from "./TierBase";
@@ -15,9 +15,53 @@ interface TierBoardProps {
     title: string;
 }
 
+interface TierRowProps {
+    rowId: string;
+    items: TierItemProps[];
+    color: string;
+    letter: string;
+}
+
+const saveTierList = (items: TierItemProps[], rows: TierRowProps[], title: string) => {
+    const data = {
+        items,
+        rows,
+        timestamp: Date.now(),
+    };
+    console.log(data)
+    localStorage.setItem(title, JSON.stringify(data));
+};
+
+const EXPIRY_TIME_MS = 60 * 60 * 24000; //24 Hour
+const loadTierList = (title: string): {items:TierItemProps[], rows:TierRowProps[]} => {
+    let items: TierItemProps[] = []
+    let rows: TierRowProps[] = []
+    if (typeof window === "undefined") return {items, rows}; // Ensure this runs only on the client
+    const data = localStorage.getItem(title);
+    if (data) {
+        const { items, rows, timestamp } = JSON.parse(data);
+        if (Date.now() - timestamp < EXPIRY_TIME_MS) {
+            return {items, rows}
+        }
+    }
+    return {items, rows};
+};
+
+
 function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
     const [rows, setRows] = useState(initialRows);
     const [base, setBase] = useState(baseItems);
+    useEffect(() => {
+        const data = loadTierList(title);
+        if (data.rows.length > 0 && data.items.length > 0) {
+            setRows(data.rows);
+            setBase(data.items);
+        }
+    }, [title]);
+
+    useEffect(() => {
+        saveTierList(base, rows, title)
+    }, [rows, base])
     function onSubmitRow(event: FormEvent<HTMLFormElement>): void {
         event.preventDefault();
         const lastRow = rows[rows.length - 1];
@@ -31,7 +75,7 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
                 letter: "Default",
                 color: "#000000",
             },
-        ]);
+        ]); 
     }
 
     const handleDragEnd = (result: DropResult) => {
