@@ -1,8 +1,9 @@
 import { Droppable, Draggable } from "react-beautiful-dnd";
+import Tier from "./Tier";
 interface TierItemProps {
-  id: string;
-  imageUrl?: string;
-  altText: string;
+    id: string;
+    imageUrl?: string;
+    altText: string;
 }
 interface TierRowProps {
     rowId: string;
@@ -16,7 +17,6 @@ function TierRow({ rowId, items, color, letter }: TierRowProps) {
         <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
             <div
                 style={{
-                    backgroundColor: color,
                     color: "white",
                     padding: "10px",
                     marginRight: "10px",
@@ -24,7 +24,11 @@ function TierRow({ rowId, items, color, letter }: TierRowProps) {
                     fontWeight: "bold",
                 }}
             >
-                {letter}
+                {letter && color && (
+                    <div>
+                        <Tier initialLetter={letter} initialColor={color} />
+                    </div>
+                )}
             </div>
             <Droppable droppableId={rowId} direction="horizontal">
                 {(provided) => (
@@ -38,7 +42,7 @@ function TierRow({ rowId, items, color, letter }: TierRowProps) {
                             padding: "10px",
                             borderRadius: "4px",
                             minHeight: "80px",
-                            flex: 1, 
+                            flex: 1,
                         }}
                     >
                         {items.map((item, index) => (
