@@ -212,7 +212,7 @@ export default function SearchPage(props: any) {
                                                         </Link>
                                                     </dd>
                                                 </p>
-                                                <p>
+                                                <div>
                                                     <dt className="artists">
                                                         Artists:
                                                     </dt>
@@ -227,14 +227,14 @@ export default function SearchPage(props: any) {
                                                             </div>
                                                         ))}
                                                     </dd>
-                                                </p>
-                                                <p>
+                                                </div>
+                                                <div>
                                                     <dd>
                                                         <p>
                                                             Released {item?.release_date} ♫ {item?.total_tracks} Tracks
                                                         </p>
                                                     </dd>
-                                                </p>
+                                                </div>
                                             </dl>
                                         </Typography>
                                     </CardContent>
