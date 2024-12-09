@@ -217,7 +217,7 @@ export const getAlbum = async (
     };
 };
 
-const getAlbumTracks = async (
+export const getAlbumTracks = async (
     accessToken: string,
     albumId: string
 ): Promise<Array<Track>> => {
@@ -231,22 +231,10 @@ const getAlbumTracks = async (
         });
 
         const responseBody = await data.json();
-
-        allTracks.push(
-            ...responseBody.items // ... to unpack the array into varargs
-                .map((track: any) => ({
-                    type: "track",
-                    spotifyId: track.id,
-                    isrc: track.external_ids.isrc,
-                    name: track.name,
-                    artists: track.artists.map((artist: any) => ({
-                        name: artist.name,
-                        spotifyId: artist.id
-                    })),
-                    platformURL: track.external_urls.spotify,
-                    albumId: track.album.id
-                }))
-        );
+        for (const item of responseBody.items) {
+            const track = await getTrack(accessToken, item.id);
+            allTracks.push(track);
+        }
 
         nextPage = responseBody.next; // get the next page url
     } while (nextPage); // continue while next page is not null
