@@ -200,8 +200,6 @@ export const getAlbum = async (
 
     const responseBody = await data.json();
 
-    const albumTracks = await getAlbumTracks(accessToken, responseBody.id);
-
     return {
         type: "album",
         albumType: responseBody.album_type,
@@ -211,7 +209,6 @@ export const getAlbum = async (
             name: artist.name,
             spotifyId: artist.id
         })),
-        tracks: albumTracks,
         platformURL: responseBody.external_urls.spotify,
         selected: "true"
     };
@@ -220,9 +217,9 @@ export const getAlbum = async (
 export const getAlbumTracks = async (
     accessToken: string,
     albumId: string
-): Promise<Array<Track>> => {
+): Promise<Array<{ type: "track", name: string, spotifyId: string, selected: string }>> => {
     let nextPage = `https://api.spotify.com/v1/albums/${albumId}/tracks`; // setting the initial url as the first page
-    let allTracks: Array<Track> = [];
+    let allTracks: Array<{ type: "track", name: string, spotifyId: string, selected: string }> = [];
 
     do {
         const data = await fetch(nextPage, {
@@ -237,14 +234,8 @@ export const getAlbumTracks = async (
                 .map((track: any) => ({
                     type: "track",
                     spotifyId: track.id,
-                    isrc: track.external_ids.isrc,
                     name: track.name,
-                    artists: track.artists.map((artist: any) => ({
-                        name: artist.name,
-                        spotifyId: artist.id
-                    })),
-                    platformURL: track.external_urls.spotify,
-                    albumId: track.album.id
+                    selected: "true"
                 }))
         );
 
