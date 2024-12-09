@@ -26,7 +26,7 @@ import {
 } from "./lib/spotify/types";
 import AuthSuccessPage from "./AuthSuccessPage";
 import SpotifyContext from "./contexts/SpotifyContext";
-import Homepage from "./homepage/Homepage";
+import Homepage from "./Homepage";
 import SearchPage from "./SearchPage";
 
 export default function App() {
@@ -104,41 +104,7 @@ export default function App() {
     const routeObjects: Array<RouteObject> = [
         {
             path: "/",
-            element: (
-                <>
-                    <Homepage />
-
-                    <p>API values:</p>
-                    <p>{JSON.stringify(apiState)}</p>
-
-                    <Link to="/search">Search</Link>
-
-                    {apiState.accessToken === null ? (
-                        <Link to="/auth">Authorize</Link>
-                    ) : (
-                        <div>
-                            <p>Test track:</p>
-                            <p>{JSON.stringify(currTrack)}</p>
-                            <img src={currTrackImage ?? ""} />
-
-                            <p>Test album:</p>
-                            <p>{JSON.stringify(currAlbum)}</p>
-                            <img src={currAlbumImage ?? ""} />
-
-                            <p>Test artist:</p>
-                            <p>{JSON.stringify(currArtist)}</p>
-                            <img src={currArtistImage ?? ""} />
-
-                            <p>Test artist albums:</p>
-                            <p>
-                                {JSON.stringify(
-                                    artistAlbums?.map((a) => a.name)
-                                )}
-                            </p>
-                        </div>
-                    )}
-                </>
-            )
+            element: <Homepage />
         },
         {
             path: "/auth",
