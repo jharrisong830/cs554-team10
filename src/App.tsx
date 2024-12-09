@@ -28,6 +28,7 @@ import AuthSuccessPage from "./AuthSuccessPage";
 import SpotifyContext from "./contexts/SpotifyContext";
 import Homepage from "./homepage/Homepage";
 import SearchPage from "./SearchPage";
+import Selection from "./Selection";
 
 export default function App() {
     const [apiState, setApiState] = useState(emptyAPIContextValue());
@@ -113,8 +114,15 @@ export default function App() {
 
                     <Link to="/search">Search</Link>
 
+                    <br/>
+
+                    <Link to="/selection">Select Songs to Rank</Link>
+
                     {apiState.accessToken === null ? (
-                        <Link to="/auth">Authorize</Link>
+                       <div>
+                            <br/>
+                            <Link to="/auth">Authorize</Link>
+                        </div>
                     ) : (
                         <div>
                             <p>Test track:</p>
@@ -166,7 +174,10 @@ export default function App() {
             element: (
                 <>
                     {apiState.accessToken === null ? (
-                        <Link to="/auth">Authorize</Link>
+                        <div>
+                            <br/>
+                            <Link to="/auth">Authorize</Link>
+                        </div>
                     ) : (
                         <SearchPage
                             handleSearch={(searched: string, type: string) =>
@@ -174,6 +185,19 @@ export default function App() {
                             }
                         ></SearchPage>
                     )}
+                </>
+            )
+        },
+        {
+            path: "/selection",
+            element: (
+                <>
+                    {apiState.accessToken === null ? (
+                        <div>
+                            <br/>
+                            <Link to="/auth">Authorize</Link>
+                        </div>
+                    ) : (<Selection/>)}
                 </>
             )
         }
