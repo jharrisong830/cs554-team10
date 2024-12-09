@@ -28,23 +28,23 @@ const saveTierList = (items: TierItemProps[], rows: TierRowProps[], title: strin
         rows,
         timestamp: Date.now(),
     };
-    console.log(data)
+    //console.log(data)
     localStorage.setItem(title, JSON.stringify(data));
 };
 
 const EXPIRY_TIME_MS = 60 * 60 * 24000; //24 Hour
-const loadTierList = (title: string): {items:TierItemProps[], rows:TierRowProps[]} => {
+const loadTierList = (title: string): { items: TierItemProps[], rows: TierRowProps[] } => {
     let items: TierItemProps[] = []
     let rows: TierRowProps[] = []
-    if (typeof window === "undefined") return {items, rows}; // Ensure this runs only on the client
+    if (typeof window === "undefined") return { items, rows }; // Ensure this runs only on the client
     const data = localStorage.getItem(title);
     if (data) {
         const { items, rows, timestamp } = JSON.parse(data);
         if (Date.now() - timestamp < EXPIRY_TIME_MS) {
-            return {items, rows}
+            return { items, rows }
         }
     }
-    return {items, rows};
+    return { items, rows };
 };
 
 
@@ -75,7 +75,7 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
                 letter: "Default",
                 color: "#000000",
             },
-        ]); 
+        ]);
     }
 
     const handleDragEnd = (result: DropResult) => {
@@ -151,7 +151,12 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
 
     const handleRemove = (id: string) => {
         const updatedRows = rows.filter((item) => item.rowId !== id);
+        const filteredOutRow = rows.filter((item) => item.rowId === id);
+        const itemsInRow = filteredOutRow.map((item) => item.items).flat();
+        const updatedBase = [...base, ...itemsInRow];
         setRows(updatedRows);
+        setBase(updatedBase);
+
     };
 
     return (

@@ -73,8 +73,14 @@ export default function Selection() {
 
     const handleButton = (className: string) => {
         if(className) {
-
+            
         }
+    }
+
+    const handleTracks = async (album: Album) => {
+        let trackList = await getAlbumTracks(stateValue.accessToken!, album.spotifyId)
+        album.tracks = trackList
+        return album;
     }
 
     let artistButtons;
@@ -95,6 +101,7 @@ export default function Selection() {
     let albumButtons;
     let singleButtons;
     let featuredButtons;
+    let albums;
 
     if (artistAlbums !== null) {
         console.log(artistAlbums)
@@ -106,9 +113,12 @@ export default function Selection() {
             </button>
         ))
         albumButtons = artistButtons?.filter(x => x.props.children[2] === "album");
-        let songs = artistAlbums.filter(x => x.albumType === "album");
-        let newSongs = songs.map(x => getAlbumTracks(stateValue.accessToken!, x.spotifyId));
-        console.log(newSongs);
+        albums = artistAlbums.filter(x => x.albumType === "album");
+        console.log(albums)
+        if (albums !== null){
+            albums = albums.map(x => handleTracks(x));
+        }
+        console.log(albums)
         singleButtons = artistButtons?.filter(x => x.props.children[2] === "single");
         featuredButtons = artistButtons?.filter(x => x.props.children[2] === "appears_on");
     }    

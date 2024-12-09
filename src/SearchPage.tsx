@@ -4,9 +4,10 @@ import {
     CardContent,
     CardMedia,
     Typography,
-    CardHeader,
+    CardHeader
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import { Button } from "react-bootstrap";
 const RECENT_SEARCHES_KEY = "recentSearches";
 const EXPIRY_TIME_MS = 60 * 60 * 1000; //1 Hour
 const API_URL =
@@ -237,6 +238,18 @@ export default function SearchPage(props: any) {
                                                 </div>
                                             </dl>
                                         </Typography>
+                                        <Button // @ts-ignore 
+                                            as={Link} to="/ranker" 
+                                            variant="primary"
+                                        >
+                                            Rank
+                                        </Button>
+                                        <Button // @ts-ignore 
+                                            as={Link} to="/tierlist" 
+                                            variant="primary"
+                                        >
+                                            Tier List
+                                        </Button>
                                     </CardContent>
                                 </Card>
                             </div>
@@ -311,6 +324,18 @@ export default function SearchPage(props: any) {
                                                 </p>
                                             </dl>
                                         </Typography>
+                                        <Button // @ts-ignore 
+                                            as={Link} to="/ranker" 
+                                            variant="primary"
+                                        >
+                                            Rank
+                                        </Button>
+                                        <Button // @ts-ignore 
+                                            as={Link} to="/tierlist" 
+                                            variant="primary"
+                                        >
+                                            Tier List
+                                        </Button>
                                     </CardContent>
                                 </Card>
                             </div>
@@ -393,6 +418,18 @@ export default function SearchPage(props: any) {
                                                 </p>
                                             </dl>
                                         </Typography>
+                                        <Button // @ts-ignore 
+                                            as={Link} to="/ranker" 
+                                            variant="primary"
+                                        >
+                                            Rank
+                                        </Button>
+                                        <Button // @ts-ignore 
+                                            as={Link} to="/tierlist" 
+                                            variant="primary"
+                                        >
+                                            Tier List
+                                        </Button>
                                     </CardContent>
                                 </Card>
                             </div>
