@@ -180,8 +180,8 @@ export default function App() {
                         </div>
                     ) : (
                         <SearchPage
-                            handleSearch={(searched: string, type: string) =>
-                                search(apiState.accessToken!, searched, type)
+                            handleSearch={(searched: string, type: string, page?:number) =>
+                                search(apiState.accessToken!, searched, type, (page ? page: 1))
                             }
                         ></SearchPage>
                     )}

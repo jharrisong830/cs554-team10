@@ -39,10 +39,12 @@ export default function SearchPage(props: any) {
     const [results, setResults] = useState<any>(null);
     const [searchValue, setSearchValue] = useState("album");
     const [searchTerm, setSearchTerm] = useState("");
+    const [newPage, setPage] = useState(1);
     const recentSearches = useRef<string[]>(loadRecentSearches());
     // const cache = useRef<Map<string, any>>(new Map());
     const handleType = (e: any) => {
         setResults(null);
+        setPage(1);
         setSearchValue(e.target.value);
     };
 
@@ -50,9 +52,26 @@ export default function SearchPage(props: any) {
         console.log("Recent Searches:", recentSearches.current);
     }, []);
 
+    useEffect(() => {
+        console.log("Events useEffect triggered");
+        async function fetchPage() {
+            try {
+
+                if (results != null) {
+                    const data = await props.handleSearch(searchTerm, searchValue, newPage);
+                    setResults(data);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        fetchPage();
+    }, [newPage]);
+
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         setResults(null);
+        setPage(1);
         const trimmedSearchTerm = searchTerm.trim();
         const finalSearchTerm = trimmedSearchTerm || "Brat";
         const cacheKey = `${searchValue}:${finalSearchTerm}`;
@@ -88,7 +107,7 @@ export default function SearchPage(props: any) {
             }
         }
 
-        setSearchTerm("");
+        //setSearchTerm("");
     };
 
     const updateRecentSearches = (searchTerm: string) => {
@@ -193,7 +212,7 @@ export default function SearchPage(props: any) {
                                                         </Link>
                                                     </dd>
                                                 </p>
-                                                <p>
+                                                <div>
                                                     <dt className="artists">
                                                         Artists:
                                                     </dt>
@@ -208,14 +227,14 @@ export default function SearchPage(props: any) {
                                                             </div>
                                                         ))}
                                                     </dd>
-                                                </p>
-                                                <p>
+                                                </div>
+                                                <div>
                                                     <dd>
                                                         <p>
                                                             Released {item?.release_date} ♫ {item?.total_tracks} Tracks
                                                         </p>
                                                     </dd>
-                                                </p>
+                                                </div>
                                             </dl>
                                         </Typography>
                                     </CardContent>
@@ -383,6 +402,10 @@ export default function SearchPage(props: any) {
             ) : (
                 <h2>Search for an artist, track, or album!</h2>
             )}
+            {results != null && ((results.albums && results.albums.offset > 0) || (results.tracks && results.tracks.offset > 0) || (results.artists && results.artists.offset > 0))  ? <button onClick={() => setPage(newPage-1)}>Previous Page</button> : ""}
+        <p>Current page: {newPage}</p>
+        {results != null && ((results.albums && results.albums.next != null) || (results.tracks && results.tracks.next != null) || (results.artists && results.artists.next != null)) ?<button onClick={() => setPage(newPage+1)}>Next Page</button>: ""}
+        
         </>
     );
 }
