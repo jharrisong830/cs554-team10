@@ -176,6 +176,30 @@ export default function App() {
                     )}
                 </>
             )
+        },
+        {
+            path: "/ranker",
+            element: (
+                <>
+                    {apiState.accessToken === null ? (
+                        <Link to="/auth">Authorize</Link>
+                    ) : (
+                        <h1>Ranker page here</h1>
+                    )}
+                </>
+            )
+        },
+        {
+            path: "/tierlist",
+            element: (
+                <>
+                    {apiState.accessToken === null ? (
+                        <Link to="/auth">Authorize</Link>
+                    ) : (
+                        <h1>Tier list page here</h1>
+                    )}
+                </>
+            )
         }
     ];
 
