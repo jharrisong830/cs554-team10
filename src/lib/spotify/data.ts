@@ -217,7 +217,7 @@ export const getAlbum = async (
     };
 };
 
-const getAlbumTracks = async (
+export const getAlbumTracks = async (
     accessToken: string,
     albumId: string
 ): Promise<Array<Track>> => {

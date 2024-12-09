@@ -4,7 +4,8 @@ import {
     getAlbumArtwork,
     getArtist,
     getArtistImage,
-    getArtistAlbums
+    getArtistAlbums,
+    getAlbumTracks
 } from "./lib/spotify/data";
 import { Track, Album, Artist } from "./lib/spotify/types";
 import SpotifyContext from "./contexts/SpotifyContext";
@@ -70,6 +71,12 @@ export default function Selection() {
         }
     }
 
+    const handleButton = (className: string) => {
+        if(className) {
+
+        }
+    }
+
     let artistButtons;
 
     const changeButtonColor = (album: Album) => {
@@ -85,7 +92,12 @@ export default function Selection() {
         }
     }
 
+    let albumButtons;
+    let singleButtons;
+    let featuredButtons;
+
     if (artistAlbums !== null) {
+        console.log(artistAlbums)
         artistButtons = artistAlbums.map((album) => (
             <button onClick={() => changeButtonColor(album)} style={{ padding: "10px 20px", fontSize: "16px" }} key={album.name} className={album.selected}>
                 {album.name}
@@ -93,15 +105,42 @@ export default function Selection() {
                 {album.albumType}
             </button>
         ))
+        albumButtons = artistButtons?.filter(x => x.props.children[2] === "album");
+        let songs = artistAlbums.filter(x => x.albumType === "album");
+        let newSongs = songs.map(x => getAlbumTracks(stateValue.accessToken!, x.spotifyId));
+        console.log(newSongs);
+        singleButtons = artistButtons?.filter(x => x.props.children[2] === "single");
+        featuredButtons = artistButtons?.filter(x => x.props.children[2] === "appears_on");
     }    
 
     return (
         <div>
             <h1>{JSON.stringify(currArtist?.name)}</h1>
             <img src={currArtistImage ?? ""} />
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", margin: "20px 0"}}>
+            <div style={{ display: "flex", verticalAlign: "top", justifyContent: "center", gap: "10px", margin: "20px 0"}}>
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                    {artistButtons}
+                    <button onClick={() => handleButton("albumButtons")} style={{ padding: "10px 20px", fontSize: "16px" }}>
+                        Albums:
+                    </button>
+                    <div className="albumButtons" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                        {albumButtons}
+                    </div>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <button onClick={() => handleButton("singleButtons")} style={{ padding: "10px 20px", fontSize: "16px" }}>
+                        Singles:
+                    </button>
+                    <div className="singleButtons" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                        {singleButtons}
+                    </div>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <button onClick={() => handleButton("featuredButtons")} style={{ padding: "10px 20px", fontSize: "16px" }}>
+                        Appears On:
+                    </button>
+                    <div className="featuredButtons" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                        {featuredButtons}
+                    </div>
                 </div>
             </div>
             <form
