@@ -1,19 +1,15 @@
 import { useState, useEffect, useContext } from "react";
 import {
-    getTrack,
-    getAlbumArtwork,
     getArtist,
     getArtistImage,
     getArtistAlbums,
     getAlbumTracks
 } from "./lib/spotify/data";
-import { Track, Album, Artist } from "./lib/spotify/types";
+import { Album, Artist } from "./lib/spotify/types";
 import SpotifyContext from "./contexts/SpotifyContext";
 
 export default function Selection() {
     const {stateValue} = useContext(SpotifyContext)!;
-    const [currTrack, setCurrTrack] = useState<Track | null>(null);
-    const [currTrackImage, setCurrTrackImage] = useState<string | null>(null);
 
     const [currArtist, setCurrArtist] = useState<Artist | null>(null);
     const [currArtistImage, setCurrArtistImage] = useState<string | null>(null);
@@ -25,21 +21,6 @@ export default function Selection() {
     useEffect(() => {
         stateValue
         // these funcs are only called when accessToken is not null, we can force the value with !
-        const trackWrapper = async () => {
-            const newTrack = await getTrack(
-                stateValue.accessToken!,
-                "26QLJMK8G0M06sk7h7Fkse?si=f4e3764ddc3148a0"
-            );
-            setCurrTrack(newTrack);
-            console.log(currTrack);
-
-            const newTrackImage = await getAlbumArtwork(
-                stateValue.accessToken!,
-                newTrack.albumId
-            );
-            setCurrTrackImage(newTrackImage);
-            console.log(currTrackImage)
-        };
 
         const artistWrapper = async () => {
             const newArtist = await getArtist(stateValue.accessToken!, "4kqFrZkeqDfOIEqTWqbOOV");
@@ -56,7 +37,6 @@ export default function Selection() {
         };
 
         if (stateValue.accessToken !== null) {
-            trackWrapper();
             artistWrapper();
             artistAlbumsWrapper();
         }    
@@ -71,14 +51,31 @@ export default function Selection() {
         }
     }
 
-    const handleButton = (className: string) => {
-        if(className) {
-            
-        }
-    }
+    // const handleButton = (button: string, status: boolean) => {
+    //     if(status) {
+    //         if (button === "album") {
+    //             setAlbumDropdown(false);
+    //         } else if (button === "single") {
+    //             setSingleDropdown(false);
+    //         } else {
+    //             setFeaturedDropdown(false);
+    //         }
+    //     } else {
+    //         if (button === "album") {
+    //             setAlbumDropdown(true);
+    //         } else if (button === "single") {
+    //             setSingleDropdown(true);
+    //         } else {
+    //             setFeaturedDropdown(true);
+    //         }
+    //     }
+    // }
 
     const handleTracks = async (album: Album) => {
         let trackList = await getAlbumTracks(stateValue.accessToken!, album.spotifyId)
+        if(album.selected === "false") {
+            trackList = trackList.filter(track => track.selected === "true" ? track.selected = "false" : track.selected = track.selected);
+        }
         album.tracks = trackList
         return album;
     }
@@ -94,8 +91,26 @@ export default function Selection() {
                 newAlbums = selectedAlbums?.filter(x => x.name !== album.name ? x.selected = x.selected : x.selected = "false");
             }
             setSelectedAlbums(newAlbums);
-            console.log(newAlbums);
         }
+        console.log(selectedAlbums)
+    }
+
+    // set all albums/tracks in that dropdown to false
+    const setAllDropdown = (type: string) => {
+        let filteredAlbums;
+        if (type === "album") {
+            filteredAlbums = selectedAlbums?.filter(x => x.albumType === "album");
+        } else if (type === "single") {
+            filteredAlbums = selectedAlbums?.filter(x => x.albumType === "single");
+        } else {
+            filteredAlbums = selectedAlbums?.filter(x => x.albumType === "appears_on");
+        }
+        filteredAlbums?.map((album) => changeButtonColor(album));
+    }
+
+    const handleAlbums = async (album, albumButtons) => {
+        let button = albumButtons.filter((button) => button.key === album.name);
+        console.log(button);
     }
 
     let albumButtons;
@@ -104,7 +119,6 @@ export default function Selection() {
     let albums;
 
     if (artistAlbums !== null) {
-        console.log(artistAlbums)
         artistButtons = artistAlbums.map((album) => (
             <button onClick={() => changeButtonColor(album)} style={{ padding: "10px 20px", fontSize: "16px" }} key={album.name} className={album.selected}>
                 {album.name}
@@ -114,11 +128,12 @@ export default function Selection() {
         ))
         albumButtons = artistButtons?.filter(x => x.props.children[2] === "album");
         albums = artistAlbums.filter(x => x.albumType === "album");
-        console.log(albums)
         if (albums !== null){
             albums = albums.map(x => handleTracks(x));
         }
-        console.log(albums)
+        if(albumButtons !== null && albums !== null) {
+            albums.map(album => handleAlbums(album, albumButtons));
+        }
         singleButtons = artistButtons?.filter(x => x.props.children[2] === "single");
         featuredButtons = artistButtons?.filter(x => x.props.children[2] === "appears_on");
     }    
@@ -129,7 +144,7 @@ export default function Selection() {
             <img src={currArtistImage ?? ""} />
             <div style={{ display: "flex", verticalAlign: "top", justifyContent: "center", gap: "10px", margin: "20px 0"}}>
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                    <button onClick={() => handleButton("albumButtons")} style={{ padding: "10px 20px", fontSize: "16px" }}>
+                    <button onClick={() => setAllDropdown("album")} style={{ padding: "10px 20px", fontSize: "16px" }}>
                         Albums:
                     </button>
                     <div className="albumButtons" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -137,7 +152,7 @@ export default function Selection() {
                     </div>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                    <button onClick={() => handleButton("singleButtons")} style={{ padding: "10px 20px", fontSize: "16px" }}>
+                    <button onClick={() => setAllDropdown("single")} style={{ padding: "10px 20px", fontSize: "16px" }}>
                         Singles:
                     </button>
                     <div className="singleButtons" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -145,7 +160,7 @@ export default function Selection() {
                     </div>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                    <button onClick={() => handleButton("featuredButtons")} style={{ padding: "10px 20px", fontSize: "16px" }}>
+                    <button onClick={() => setAllDropdown("featured")} style={{ padding: "10px 20px", fontSize: "16px" }}>
                         Appears On:
                     </button>
                     <div className="featuredButtons" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -174,6 +189,4 @@ export default function Selection() {
             </form>
         </div>
     )
-
-
 }
