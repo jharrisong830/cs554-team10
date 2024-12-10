@@ -10,6 +10,7 @@ export type Track = {
     artists: Array<{ name: string; spotifyId: string }>;
     platformURL: string;
     albumId: string;
+    selected: boolean;
 };
 
 export type Album = {
@@ -19,7 +20,8 @@ export type Album = {
     name: string;
     artists: Array<{ name: string; spotifyId: string }>;
     platformURL: string;
-    selected: string;
+    selected: boolean;
+    tracks: Array<{name: string; spotifyId: string; selected: boolean}>;
 };
 
 export type Artist = {

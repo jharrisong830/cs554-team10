@@ -16,7 +16,7 @@ const pkcePossible =
  * @returns authorization endpoint used to get user authorization code
  */
 export const getAuthorizationURL = (codeChallenge: string): string => {
-    const scope = "playlist-read-private user-read-private user-library-read"; // TODO: refine scopes to be minimal
+    const scope = "playlist-read-private playlist-modify-private playlist-modify-public"; // TODO: refine scopes to be minimal
     const userAuthQuery = {
         response_type: "code",
         redirect_uri: import.meta.env.VITE_SPOTIFY_REDIRECT_URL,
@@ -178,7 +178,8 @@ export const getTrack = async (
             spotifyId: artist.id
         })),
         platformURL: responseBody.external_urls.spotify,
-        albumId: responseBody.album.id
+        albumId: responseBody.album.id,
+        selected: true
     };
 };
 
@@ -210,16 +211,17 @@ export const getAlbum = async (
             spotifyId: artist.id
         })),
         platformURL: responseBody.external_urls.spotify,
-        selected: "true"
+        selected: true,
+        tracks: []
     };
 };
 
 export const getAlbumTracks = async (
     accessToken: string,
     albumId: string
-): Promise<Array<{ type: "track", name: string, spotifyId: string, selected: string }>> => {
+): Promise<Array<{ type: "track", name: string, spotifyId: string, selected: boolean }>> => {
     let nextPage = `https://api.spotify.com/v1/albums/${albumId}/tracks`; // setting the initial url as the first page
-    let allTracks: Array<{ type: "track", name: string, spotifyId: string, selected: string }> = [];
+    let allTracks: Array<{ type: "track", name: string, spotifyId: string, selected: boolean }> = [];
 
     do {
         const data = await fetch(nextPage, {
@@ -235,7 +237,7 @@ export const getAlbumTracks = async (
                     type: "track",
                     spotifyId: track.id,
                     name: track.name,
-                    selected: "true"
+                    selected: true
                 }))
         );
 
@@ -389,7 +391,7 @@ export const getArtistAlbums = async (
                     name: album.name,
                     artists: album.artists.map((a: any) => a.name),
                     platformURL: album.external_urls.spotify,
-                    selected: "true"
+                    selected: true
                 }))
         );
 

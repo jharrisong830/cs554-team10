@@ -5,7 +5,7 @@ import {
     getArtistAlbums,
     getAlbumTracks
 } from "./lib/spotify/data";
-import { Album, Artist, Track } from "./lib/spotify/types";
+import { Album, Artist } from "./lib/spotify/types";
 import SpotifyContext from "./contexts/SpotifyContext";
 
 export default function Selection() {
@@ -68,7 +68,9 @@ export default function Selection() {
                 }
                 : album
         );
-        setSelectedAlbums(updatedAlbums);
+        if (updatedAlbums !== undefined) {
+            setSelectedAlbums(updatedAlbums);
+        }
     };
 
     const toggleAllTracks = (albumId: string, selectAll: boolean) => {
@@ -81,10 +83,12 @@ export default function Selection() {
                 }
                 : album
         );
-        setSelectedAlbums(updatedAlbums);
+        if (updatedAlbums !== undefined) {
+            setSelectedAlbums(updatedAlbums);
+        }
     };
 
-    const renderTracks = (tracks: Array<Track>, albumId: string) => {
+    const renderTracks = (tracks: Array<{name: string; spotifyId: string; selected: boolean}>, albumId: string) => {
         return tracks.map((track) => (
             <div key={track.spotifyId} style={{ marginLeft: "20px", marginBottom: "5px" }}>
                 <button
@@ -173,7 +177,9 @@ export default function Selection() {
                 ? { ...album, selected: !album.selected }
                 : album
         );
-        setSelectedAlbums(updatedAlbums);
+        if (updatedAlbums !== undefined) {
+            setSelectedAlbums(updatedAlbums);
+        }
     };
     
 
@@ -203,7 +209,9 @@ export default function Selection() {
         const updatedAlbums = selectedAlbums?.map((album) =>
             album.albumType === type ? { ...album, selected: bool, tracks: album.tracks.map((track) => ({ ...track, selected: bool })) } : album
         );
-        setSelectedAlbums(updatedAlbums);
+        if (updatedAlbums !== undefined) {
+            setSelectedAlbums(updatedAlbums);
+        }
     };
     //console.log(selectedAlbums)
     return (
