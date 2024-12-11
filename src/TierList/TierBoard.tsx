@@ -14,31 +14,31 @@ const saveTierList = (items: TierItemProps[], rows: TierRowProps[], title: strin
     localStorage.setItem(title, JSON.stringify(data));
 };
 
-const EXPIRY_TIME_MS = 60 * 60 * 24000; //24 Hour
-const loadTierList = (title: string): { items: TierItemProps[], rows: TierRowProps[] } => {
-    let items: TierItemProps[] = []
-    let rows: TierRowProps[] = []
-    if (typeof window === "undefined") return { items, rows }; // Ensure this runs only on the client
-    const data = localStorage.getItem(title);
-    if (data) {
-        const { items, rows, timestamp } = JSON.parse(data);
-        if (Date.now() - timestamp < EXPIRY_TIME_MS) {
-            return { items, rows }
-        }
-    }
-    return { items, rows };
-};
+//const EXPIRY_TIME_MS = 60 * 60 * 24000; //24 Hour
+// const loadTierList = (title: string): { items: TierItemProps[], rows: TierRowProps[] } => {
+//     let items: TierItemProps[] = []
+//     let rows: TierRowProps[] = []
+//     if (typeof window === "undefined") return { items, rows }; // Ensure this runs only on the client
+//     const data = localStorage.getItem(title);
+//     if (data) {
+//         const { items, rows, timestamp } = JSON.parse(data);
+//         if (Date.now() - timestamp < EXPIRY_TIME_MS) {
+//             return { items, rows }
+//         }
+//     }
+//     return { items, rows };
+// };
 
 
 function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
     const [rows, setRows] = useState(initialRows);
     const [base, setBase] = useState(baseItems);
     useEffect(() => {
-        const data = loadTierList(title);
-        if (data.rows.length > 0 && data.items.length > 0) {
-            setRows(data.rows);
-            setBase(data.items);
-        }
+        // const data = loadTierList(title);
+        // if (data.rows.length > 0 && data.items.length > 0) {
+        //     setRows(data.rows);
+        //     setBase(data.items);
+        // }
     }, [title]);
 
     useEffect(() => {

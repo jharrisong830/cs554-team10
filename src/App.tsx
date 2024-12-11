@@ -29,6 +29,8 @@ import SpotifyContext from "./contexts/SpotifyContext";
 import Homepage from "./homepage/Homepage";
 import SearchPage from "./SearchPage";
 import Selection from "./Selection";
+import RankerPage from "./RankerPage";
+import TierListPage from "./TierList/TierListPage";
 
 export default function App() {
     const [apiState, setApiState] = useState(emptyAPIContextValue());
@@ -195,7 +197,7 @@ export default function App() {
                     {apiState.accessToken === null ? (
                         <Link to="/auth">Authorize</Link>
                     ) : (
-                        <h1>Ranker page here</h1>
+                        <RankerPage />
                     )}
                 </>
             )
@@ -207,7 +209,7 @@ export default function App() {
                     {apiState.accessToken === null ? (
                         <Link to="/auth">Authorize</Link>
                     ) : (
-                        <h1>Tier list page here</h1>
+                        <TierListPage />
                     )}
                 </>
             )
@@ -228,7 +230,7 @@ export default function App() {
     ];
 
     const router = createBrowserRouter(routeObjects);
-
+    
     return (
         <SpotifyContext.Provider
             value={{ stateValue: apiState, stateSetter: setApiState }}

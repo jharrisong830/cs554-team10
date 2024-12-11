@@ -7,14 +7,13 @@ import {
 } from "./lib/spotify/data";
 import { Album, Artist, SongData, TierItemProps } from "./lib/spotify/types";
 import SpotifyContext from "./contexts/SpotifyContext";
-//import BattleComponent from "./Ranker";
 import { SongDataArray } from "./lib/spotify/types";
-import TierBoard from "./TierList/TierBoard";
+import { useNavigate } from "react-router-dom";
 function morphSongDataToTierItemProps(songs: SongData[]): TierItemProps[] {
     return songs.map((song) => ({
-        id: song.spotifyId, // Use spotifyId as the unique identifier
-        imageUrl: song.images[0]?.url, // Use the first image URL (if available)
-        altText: song.name, // Use the song's name as alt text
+        id: song.spotifyId,
+        imageUrl: song.images[0]?.url,
+        altText: song.name, 
     }));
 }
 
@@ -28,9 +27,7 @@ export default function Selection() {
     const hasFetchedData = useRef(false);
     const [allAlbums, setAllAlbums] = useState(true);
     const [allSingles, setAllSingles] = useState(true);
-    const [showRanker, setShowRanker] = useState(false)
-    const [songDataToSort, setSongDataToSort] = useState<SongDataArray>([]);
-    const [tierItems, setTierItems] = useState<TierItemProps[]>([]);
+    const navigate = useNavigate();
     const row = {
         rowId: "1",
         items: [],
@@ -193,30 +190,6 @@ export default function Selection() {
         }
     };
 
-
-    const handleSubmit = (e: { preventDefault: () => void }) => {
-        e.preventDefault();
-        const finAlbums = selectedAlbums?.map((album) => {
-            const selectedTracks = album.tracks.filter((track) => track.selected);
-            return { ...album, tracks: selectedTracks };
-        }).filter((album) => album.tracks.length > 0);
-        const allTracksWithAlbumData = finAlbums?.flatMap((album) =>
-            album.tracks.map((track) => ({
-                ...track,
-                platformURLAlbum: album.platformURL,
-                albumName: album.name,
-                images: album.images
-            }))
-        );
-        const dataToSort: SongDataArray = allTracksWithAlbumData ?? [];
-        const items: TierItemProps[] = morphSongDataToTierItemProps(dataToSort)
-        console.log(dataToSort)
-        console.log(songDataToSort)
-        setShowRanker(true)
-        setSongDataToSort(dataToSort)
-        setTierItems(items)
-    };
-
     const setAllDropdown = (type: string) => {
         let bool: boolean;
         if (type === "album") {
@@ -233,16 +206,44 @@ export default function Selection() {
             setSelectedAlbums(updatedAlbums);
         }
     };
+    const handleSubmit = (e: { preventDefault: () => void }) => {
+        e.preventDefault();
+        const finAlbums = selectedAlbums?.map((album) => {
+            const selectedTracks = album.tracks.filter((track) => track.selected);
+            return { ...album, tracks: selectedTracks };
+        }).filter((album) => album.tracks.length > 0);
+        const allTracksWithAlbumData = finAlbums?.flatMap((album) =>
+            album.tracks.map((track) => ({
+                ...track,
+                platformURLAlbum: album.platformURL,
+                albumName: album.name,
+                images: album.images
+            }))
+        );
+        const songDataToSort: SongDataArray = allTracksWithAlbumData ?? [];
+        console.log(songDataToSort)
+        navigate("/ranker", { state: { songDataToSort } });
+    };
+    const handleSubmit2 = (e: { preventDefault: () => void }) => {
+        e.preventDefault();
+        const finAlbums = selectedAlbums?.map((album) => {
+            const selectedTracks = album.tracks.filter((track) => track.selected);
+            return { ...album, tracks: selectedTracks };
+        }).filter((album) => album.tracks.length > 0);
+        const allTracksWithAlbumData = finAlbums?.flatMap((album) =>
+            album.tracks.map((track) => ({
+                ...track,
+                platformURLAlbum: album.platformURL,
+                albumName: album.name,
+                images: album.images
+            }))
+        );
+        const songDataToSort: SongDataArray = allTracksWithAlbumData ?? [];
+        const tierItems: TierItemProps[] = morphSongDataToTierItemProps(songDataToSort)
+        navigate("/tierlist", { state: { tierItems, currArtist, row } });
+    };
     if (!selectedAlbums) {
         return <h1>{currArtist?.name ?? "Loading..."}</h1>
-    }
-    if (showRanker) {
-        return (
-            <div>
-            {/* <BattleComponent songDataToSort={songDataToSort}></BattleComponent> */}
-            <TierBoard baseItems={tierItems} title={currArtist?.name ?? "Unknown"} initialRows={[row]}></TierBoard>
-            </div>
-        );
     }
     return (
         <div>
@@ -260,10 +261,16 @@ export default function Selection() {
                     </div>
                 ))}
             </div>
-            <form onSubmit={handleSubmit} className="center">
+            {/* <form onSubmit={handleSubmit} className="center">
                 <h2>Submit songs for ranking:</h2>
                 <input type="submit" value="Submit" />
-            </form>
+            </form> */}
+            <div>
+                <button onClick={handleSubmit}>Go to Ranker</button>
+            </div>
+            <div>
+                <button onClick={handleSubmit2}>Go to TierList</button>
+            </div>
         </div>
     );
 }
