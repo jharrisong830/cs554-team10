@@ -400,3 +400,51 @@ export const getArtistAlbums = async (
 
     return allAlbums;
 };
+
+export const fetchTracksForAlbums = async (
+    accessToken: string,
+    albums: Album[]
+): Promise<Album[]> => {
+    const chunkSize = 20;
+    let albumsWithTracks: Album[] = [];
+
+    for (let i = 0; i < albums.length; i += chunkSize) {
+        const chunk = albums.slice(i, i + chunkSize); // Take a chunk of albums
+        const idsParam = chunk.map((album) => album.spotifyId).join(","); // Comma-separated IDs
+        const url = `https://api.spotify.com/v1/albums?ids=${idsParam}`;
+
+        const response = await fetch(url, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error fetching albums: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        const chunkWithTracks = data.albums.map((album: any) => {
+            const originalAlbum = chunk.find((a) => a.spotifyId === album.id); // Match original album
+
+            return {
+                ...originalAlbum, // Preserve original metadata
+                tracks: album.tracks.items.map((track: any): Track => ({
+                    type: "track",
+                    spotifyId: track.id,
+                    name: track.name,
+                    selected: true,
+                    isrc: track.external_ids?.isrc || null, // Fetch ISRC if available
+                    artists: track.artists.map((artist: any) => artist.name), // Extract artist names
+                    platformURL: track.external_urls.spotify, // Spotify URL for the track
+                    albumId: album.id, // Add album ID for reference
+                })),
+            } as Album;
+        });
+
+        albumsWithTracks = albumsWithTracks.concat(chunkWithTracks);
+    }
+
+    return albumsWithTracks;
+};
+

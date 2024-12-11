@@ -3,7 +3,8 @@ import {
     getArtist,
     getArtistImage,
     getArtistAlbums,
-    getAlbumTracks
+    getAlbumTracks,
+    fetchTracksForAlbums
 } from "./lib/spotify/data";
 import { Album, Artist } from "./lib/spotify/types";
 import SpotifyContext from "./contexts/SpotifyContext";
@@ -19,25 +20,18 @@ export default function Selection() {
     const hasFetchedData = useRef(false);
     const [allAlbums, setAllAlbums] = useState(true);
     const [allSingles, setAllSingles] = useState(true);
-    const [allAppears, setAllAppears] = useState(true);
     useEffect(() => {
-        const fetchTracksForAlbum = async (album: Album): Promise<Album> => {
-            const trackList = await getAlbumTracks(stateValue.accessToken!, album.spotifyId);
-            return { ...album, tracks: trackList };
-        };
-
         const fetchAllData = async () => {
             if (hasFetchedData.current || !stateValue.accessToken) return;
-
+    
             try {
                 const [artist, artistImage, albums] = await Promise.all([
-                    getArtist(stateValue.accessToken, "4kqFrZkeqDfOIEqTWqbOOV"),
-                    getArtistImage(stateValue.accessToken, "4kqFrZkeqDfOIEqTWqbOOV"),
-                    getArtistAlbums(stateValue.accessToken, "4kqFrZkeqDfOIEqTWqbOOV"),
+                    getArtist(stateValue.accessToken, "2YZyLoL8N0Wb9xBt1NhZWg"),
+                    getArtistImage(stateValue.accessToken, "2YZyLoL8N0Wb9xBt1NhZWg"),
+                    getArtistAlbums(stateValue.accessToken, "2YZyLoL8N0Wb9xBt1NhZWg"),
                 ]);
-
-                const albumsWithTracks = await Promise.all(albums.map(fetchTracksForAlbum));
-
+                const albumsWithNoAppearsOn = albums.filter((album) => album.albumType !== 'appears_on')
+                const albumsWithTracks = await fetchTracksForAlbums(stateValue.accessToken, albumsWithNoAppearsOn);
                 setCurrArtist(artist);
                 setCurrArtistImage(artistImage);
                 setSelectedAlbums(albumsWithTracks.map((album) => ({ ...album, selected: true })));
@@ -46,7 +40,7 @@ export default function Selection() {
                 console.error("Error fetching Spotify data:", error);
             }
         };
-
+    
         fetchAllData();
     }, [stateValue.accessToken]);
 
@@ -88,7 +82,7 @@ export default function Selection() {
         }
     };
 
-    const renderTracks = (tracks: Array<{name: string; spotifyId: string; selected: boolean}>, albumId: string) => {
+    const renderTracks = (tracks: Array<{ name: string; spotifyId: string; selected: boolean }>, albumId: string) => {
         return tracks.map((track) => (
             <div key={track.spotifyId} style={{ marginLeft: "20px", marginBottom: "5px" }}>
                 <button
@@ -170,7 +164,7 @@ export default function Selection() {
             </div>
         ));
     };
-    
+
     const toggleAlbumSelection = (albumId: string) => {
         const updatedAlbums = selectedAlbums?.map((album) =>
             album.spotifyId === albumId
@@ -181,11 +175,11 @@ export default function Selection() {
             setSelectedAlbums(updatedAlbums);
         }
     };
-    
+
 
     const handleSubmit = (e: { preventDefault: () => void }) => {
         e.preventDefault();
-    
+
         const finAlbums = selectedAlbums?.map((album) => {
             const selectedTracks = album.tracks.filter((track) => track.selected);
             return { ...album, tracks: selectedTracks };
@@ -193,7 +187,7 @@ export default function Selection() {
         setFinalAlbums(finAlbums ?? []);
         console.log(finAlbums);
     };
-    
+
     const setAllDropdown = (type: string) => {
         let bool: boolean;
         if (type === "album") {
@@ -202,9 +196,6 @@ export default function Selection() {
         } else if (type === "single") {
             bool = !allSingles;
             setAllSingles(!allSingles);
-        } else {
-            bool = !allAppears;
-            setAllAppears(!allAppears);
         }
         const updatedAlbums = selectedAlbums?.map((album) =>
             album.albumType === type ? { ...album, selected: bool, tracks: album.tracks.map((track) => ({ ...track, selected: bool })) } : album
@@ -213,13 +204,16 @@ export default function Selection() {
             setSelectedAlbums(updatedAlbums);
         }
     };
-    //console.log(selectedAlbums)
+    if (!selectedAlbums) {
+        return <h1>{currArtist?.name ?? "Loading..."}</h1>
+    }
+    console.log(selectedAlbums)
     return (
         <div>
             <h1>{currArtist?.name ?? "Loading..."}</h1>
             <img src={currArtistImage ?? ""} alt="Artist" />
             <div style={{ display: "flex", justifyContent: "center", gap: "10px", margin: "20px 0" }}>
-                {["album", "single", "appears_on"].map((type) => (
+                {["album", "single"].map((type) => (
                     <div key={type} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                         <button onClick={() => setAllDropdown(type)} style={{ padding: "10px 20px", fontSize: "16px" }}>
                             {type.charAt(0).toUpperCase() + type.slice(1)}:
