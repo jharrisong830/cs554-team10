@@ -5,10 +5,20 @@ import {
     getArtistAlbums,
     fetchTracksForAlbums
 } from "./lib/spotify/data";
-import { Album, Artist } from "./lib/spotify/types";
+import { Album, Artist, SongData, TierItemProps } from "./lib/spotify/types";
 import SpotifyContext from "./contexts/SpotifyContext";
-import BattleComponent from "./Ranker";
+//import BattleComponent from "./Ranker";
 import { SongDataArray } from "./lib/spotify/types";
+import TierBoard from "./TierList/TierBoard";
+function morphSongDataToTierItemProps(songs: SongData[]): TierItemProps[] {
+    return songs.map((song) => ({
+        id: song.spotifyId, // Use spotifyId as the unique identifier
+        imageUrl: song.images[0]?.url, // Use the first image URL (if available)
+        altText: song.name, // Use the song's name as alt text
+    }));
+}
+
+
 export default function Selection() {
     const { stateValue } = useContext(SpotifyContext)!;
     const [currArtist, setCurrArtist] = useState<Artist | null>(null);
@@ -20,6 +30,13 @@ export default function Selection() {
     const [allSingles, setAllSingles] = useState(true);
     const [showRanker, setShowRanker] = useState(false)
     const [songDataToSort, setSongDataToSort] = useState<SongDataArray>([]);
+    const [tierItems, setTierItems] = useState<TierItemProps[]>([]);
+    const row = {
+        rowId: "1",
+        items: [],
+        color: "red",
+        letter: "A",
+    }
     useEffect(() => {
         const fetchAllData = async () => {
             if (hasFetchedData.current || !stateValue.accessToken) return;
@@ -179,12 +196,10 @@ export default function Selection() {
 
     const handleSubmit = (e: { preventDefault: () => void }) => {
         e.preventDefault();
-        console.log(selectedAlbums)
         const finAlbums = selectedAlbums?.map((album) => {
             const selectedTracks = album.tracks.filter((track) => track.selected);
             return { ...album, tracks: selectedTracks };
         }).filter((album) => album.tracks.length > 0);
-        console.log(finAlbums)
         const allTracksWithAlbumData = finAlbums?.flatMap((album) =>
             album.tracks.map((track) => ({
                 ...track,
@@ -194,9 +209,12 @@ export default function Selection() {
             }))
         );
         const dataToSort: SongDataArray = allTracksWithAlbumData ?? [];
+        const items: TierItemProps[] = morphSongDataToTierItemProps(dataToSort)
         console.log(dataToSort)
+        console.log(songDataToSort)
         setShowRanker(true)
         setSongDataToSort(dataToSort)
+        setTierItems(items)
     };
 
     const setAllDropdown = (type: string) => {
@@ -221,7 +239,8 @@ export default function Selection() {
     if (showRanker) {
         return (
             <div>
-            <BattleComponent songDataToSort={songDataToSort}></BattleComponent>
+            {/* <BattleComponent songDataToSort={songDataToSort}></BattleComponent> */}
+            <TierBoard baseItems={tierItems} title={currArtist?.name ?? "Unknown"} initialRows={[row]}></TierBoard>
             </div>
         );
     }

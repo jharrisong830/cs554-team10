@@ -2,25 +2,8 @@ import { FormEvent, useEffect, useState } from "react";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import TierRow from "./TierRow";
 import TierBase from "./TierBase";
+import { TierBoardProps, TierItemProps, TierRowProps } from "../lib/spotify/types";
 
-interface TierItemProps {
-    id: string;
-    imageUrl?: string;
-    altText: string;
-}
-
-interface TierBoardProps {
-    initialRows: { rowId: string; items: TierItemProps[]; color: string; letter: string }[];
-    baseItems: TierItemProps[];
-    title: string;
-}
-
-interface TierRowProps {
-    rowId: string;
-    items: TierItemProps[];
-    color: string;
-    letter: string;
-}
 
 const saveTierList = (items: TierItemProps[], rows: TierRowProps[], title: string) => {
     const data = {
@@ -28,7 +11,6 @@ const saveTierList = (items: TierItemProps[], rows: TierRowProps[], title: strin
         rows,
         timestamp: Date.now(),
     };
-    //console.log(data)
     localStorage.setItem(title, JSON.stringify(data));
 };
 

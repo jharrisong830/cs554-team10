@@ -1,15 +1,7 @@
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import { toPng } from "html-to-image";
+import { TierBaseProps } from "../lib/spotify/types";
 
-interface TierItemProps {
-    id: string;
-    imageUrl?: string;
-    altText: string;
-}
-
-interface TierBaseProps {
-    items: TierItemProps[];
-}
 
 function TierBase({ items }: TierBaseProps) {
     const handleExport = async () => {

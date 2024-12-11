@@ -24,6 +24,34 @@ export type SongData = {
 
 export type SongDataArray = SongData[];
 
+export type TierItemProps = {
+    id: string;
+    imageUrl?: string;
+    altText: string;
+}
+
+export type TierBaseProps = {
+    items: TierItemProps[];
+}
+
+export type TierBoardProps = {
+    initialRows: { rowId: string; items: TierItemProps[]; color: string; letter: string }[];
+    baseItems: TierItemProps[];
+    title: string;
+}
+
+export type TierRowProps = {
+    rowId: string;
+    items: TierItemProps[];
+    color: string;
+    letter: string;
+}
+
+export type TierProps = {
+    initialLetter: string;
+    initialColor: string;
+  }
+
 export type CurrSortType = {
     battleNumber: number;
     progress: number;
