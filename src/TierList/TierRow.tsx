@@ -1,16 +1,6 @@
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import Tier from "./Tier";
-interface TierItemProps {
-    id: string;
-    imageUrl?: string;
-    altText: string;
-}
-interface TierRowProps {
-    rowId: string;
-    items: TierItemProps[];
-    color: string;
-    letter: string;
-}
+import { TierRowProps } from "../lib/spotify/types";
 
 function TierRow({ rowId, items, color, letter }: TierRowProps) {
     return (

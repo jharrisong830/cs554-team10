@@ -1,10 +1,6 @@
 import { Box } from '@mui/material';
 import React, { useState, useEffect, useRef } from 'react';
-
-interface TierProps {
-  initialLetter: string;
-  initialColor: string;
-}
+import { TierProps } from '../lib/spotify/types';
 
 function Tier({ initialLetter, initialColor }: TierProps) {
   const [letter, setLetter] = useState(initialLetter);

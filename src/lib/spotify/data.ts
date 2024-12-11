@@ -16,7 +16,7 @@ const pkcePossible =
  * @returns authorization endpoint used to get user authorization code
  */
 export const getAuthorizationURL = (codeChallenge: string): string => {
-    const scope = "playlist-read-private user-read-private user-library-read"; // TODO: refine scopes to be minimal
+    const scope = "playlist-read-private playlist-modify-private playlist-modify-public"; // TODO: refine scopes to be minimal
     const userAuthQuery = {
         response_type: "code",
         redirect_uri: import.meta.env.VITE_SPOTIFY_REDIRECT_URL,
@@ -178,7 +178,8 @@ export const getTrack = async (
             spotifyId: artist.id
         })),
         platformURL: responseBody.external_urls.spotify,
-        albumId: responseBody.album.id
+        albumId: responseBody.album.id,
+        selected: true
     };
 };
 
@@ -200,8 +201,6 @@ export const getAlbum = async (
 
     const responseBody = await data.json();
 
-    const albumTracks = await getAlbumTracks(accessToken, responseBody.id);
-
     return {
         type: "album",
         albumType: responseBody.album_type,
@@ -211,18 +210,19 @@ export const getAlbum = async (
             name: artist.name,
             spotifyId: artist.id
         })),
-        tracks: albumTracks,
+        images: responseBody.images,
         platformURL: responseBody.external_urls.spotify,
-        selected: "true"
+        selected: true,
+        tracks: []
     };
 };
 
 export const getAlbumTracks = async (
     accessToken: string,
     albumId: string
-): Promise<Array<Track>> => {
+): Promise<Array<{ type: "track", name: string, spotifyId: string, selected: boolean }>> => {
     let nextPage = `https://api.spotify.com/v1/albums/${albumId}/tracks`; // setting the initial url as the first page
-    let allTracks: Array<Track> = [];
+    let allTracks: Array<{ type: "track", name: string, spotifyId: string, selected: boolean }> = [];
 
     do {
         const data = await fetch(nextPage, {
@@ -231,10 +231,16 @@ export const getAlbumTracks = async (
         });
 
         const responseBody = await data.json();
-        for (const item of responseBody.items) {
-            const track = await getTrack(accessToken, item.id);
-            allTracks.push(track);
-        }
+
+        allTracks.push(
+            ...responseBody.items // ... to unpack the array into varargs
+                .map((track: any) => ({
+                    type: "track",
+                    spotifyId: track.id,
+                    name: track.name,
+                    selected: true
+                }))
+        );
 
         nextPage = responseBody.next; // get the next page url
     } while (nextPage); // continue while next page is not null
@@ -384,9 +390,10 @@ export const getArtistAlbums = async (
                     albumType: album.album_group,
                     spotifyId: album.id,
                     name: album.name,
+                    images: album.images,
                     artists: album.artists.map((a: any) => a.name),
                     platformURL: album.external_urls.spotify,
-                    selected: "true"
+                    selected: true
                 }))
         );
 
@@ -395,3 +402,51 @@ export const getArtistAlbums = async (
 
     return allAlbums;
 };
+
+export const fetchTracksForAlbums = async (
+    accessToken: string,
+    albums: Album[]
+): Promise<Album[]> => {
+    const chunkSize = 20;
+    let albumsWithTracks: Album[] = [];
+
+    for (let i = 0; i < albums.length; i += chunkSize) {
+        const chunk = albums.slice(i, i + chunkSize); // Take a chunk of albums
+        const idsParam = chunk.map((album) => album.spotifyId).join(","); // Comma-separated IDs
+        const url = `https://api.spotify.com/v1/albums?ids=${idsParam}`;
+
+        const response = await fetch(url, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error fetching albums: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        const chunkWithTracks = data.albums.map((album: any) => {
+            const originalAlbum = chunk.find((a) => a.spotifyId === album.id); // Match original album
+
+            return {
+                ...originalAlbum, // Preserve original metadata
+                tracks: album.tracks.items.map((track: any): Track => ({
+                    type: "track",
+                    spotifyId: track.id,
+                    name: track.name,
+                    selected: true,
+                    isrc: track.external_ids?.isrc || null, // Fetch ISRC if available
+                    artists: track.artists.map((artist: any) => artist.name), // Extract artist names
+                    platformURL: track.external_urls.spotify, // Spotify URL for the track
+                    albumId: album.id, // Add album ID for reference
+                })),
+            } as Album;
+        });
+
+        albumsWithTracks = albumsWithTracks.concat(chunkWithTracks);
+    }
+
+    return albumsWithTracks;
+};
+
