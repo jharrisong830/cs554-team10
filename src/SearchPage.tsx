@@ -6,7 +6,7 @@ import {
     Typography,
     CardHeader
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
 const RECENT_SEARCHES_KEY = "recentSearches";
 const EXPIRY_TIME_MS = 60 * 60 * 1000; //1 Hour
@@ -48,6 +48,8 @@ export default function SearchPage(props: any) {
         setPage(1);
         setSearchValue(e.target.value);
     };
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         console.log("Recent Searches:", recentSearches.current);
@@ -239,16 +241,13 @@ export default function SearchPage(props: any) {
                                             </dl>
                                         </Typography>
                                         <Button // @ts-ignore 
-                                            as={Link} to="/ranker" 
+                                            as={Link} to="/selection" 
                                             variant="primary"
+                                            onClick={() => {
+                                                navigate("/selection", { state: { type: "album", id: item.id } });
+                                            }}
                                         >
-                                            Rank
-                                        </Button>
-                                        <Button // @ts-ignore 
-                                            as={Link} to="/tierlist" 
-                                            variant="primary"
-                                        >
-                                            Tier List
+                                            Go to Selection
                                         </Button>
                                     </CardContent>
                                 </Card>
@@ -325,16 +324,13 @@ export default function SearchPage(props: any) {
                                             </dl>
                                         </Typography>
                                         <Button // @ts-ignore 
-                                            as={Link} to="/ranker" 
+                                            as={Link} to="/selection" 
                                             variant="primary"
+                                            onClick={() => {
+                                                navigate("/selection", { state: { type: "artist", id: item.id } });
+                                            }}
                                         >
-                                            Rank
-                                        </Button>
-                                        <Button // @ts-ignore 
-                                            as={Link} to="/tierlist" 
-                                            variant="primary"
-                                        >
-                                            Tier List
+                                            Go to Selection
                                         </Button>
                                     </CardContent>
                                 </Card>
@@ -419,16 +415,13 @@ export default function SearchPage(props: any) {
                                             </dl>
                                         </Typography>
                                         <Button // @ts-ignore 
-                                            as={Link} to="/ranker" 
+                                            as={Link}
                                             variant="primary"
+                                            onClick={() => {
+                                                navigate("/selection", { state: { type: "track", id: item.id } });
+                                            }}
                                         >
-                                            Rank
-                                        </Button>
-                                        <Button // @ts-ignore 
-                                            as={Link} to="/tierlist" 
-                                            variant="primary"
-                                        >
-                                            Tier List
+                                            Go to Selection
                                         </Button>
                                     </CardContent>
                                 </Card>
