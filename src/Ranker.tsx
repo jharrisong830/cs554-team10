@@ -1,25 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import Results from "./Results";
-const EXPIRY_TIME_MS = 60 * 60 * 1000 * 24; // 1 day
+//const EXPIRY_TIME_MS = 60 * 60 * 1000; // 1 hour
 const loadCurrResults = "loadCurrent";
-type CurrSortType = {
-    battleNumber: number;
-    progress: number;
-    leftIndex: number;
-    leftInnerIndex: number;
-    rightIndex: number;
-    rightInnerIndex: number;
-    choices: string;
-    sortedIndexList: number[][];
-    recordDataList: number[];
-    parentIndexList: number[];
-    tiedDataList: number[];
-    pointer: number;
-    sortedNumber: number;
-    history: any[]
-    totalBattles: number;
-};
+import { SongData, SongDataArray, CurrSortType } from "./lib/spotify/types";
 const saveResults = (sorting: CurrSortType | null) => {
     const data = {
         sorting,
@@ -28,18 +12,18 @@ const saveResults = (sorting: CurrSortType | null) => {
     localStorage.setItem(loadCurrResults, JSON.stringify(data));
 };
 
-const loadResults = (): CurrSortType | null => {
-    const data = localStorage.getItem(loadCurrResults);
-    if (data) {
-        const { sorting, timestamp } = JSON.parse(data);
-        if (Date.now() - timestamp < EXPIRY_TIME_MS) {
-            return sorting;
-        }
-    }
-    return null;
-};
+// const loadResults = (): CurrSortType | null => {
+//     const data = localStorage.getItem(loadCurrResults);
+//     if (data) {
+//         const { sorting, timestamp } = JSON.parse(data);
+//         if (Date.now() - timestamp < EXPIRY_TIME_MS) {
+//             return sorting;
+//         }
+//     }
+//     return null;
+// };
 
-const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
+const BattleComponent = ({ songDataToSort }: { songDataToSort: SongDataArray }) => {
     const [battleNumber, setBattleNumber] = useState(1);
     const [progress, setProgress] = useState(0);
     const [choices, setChoices] = useState("");
@@ -59,8 +43,12 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
     const rightIndex = useRef(0);
     const rightInnerIndex = useRef(0);
     const [showResults, setShowResults] = useState(false);
+    const [rightImage, setRightImage] = useState("");
+    const [leftImage, setLeftImage] = useState("");
+    const [leftAlbum, setLeftAlbum] = useState("");
+    const [rightAlbum, setRightAlbum] = useState("");
     const history = useRef<any[]>([]);
-    const currSort = useRef<CurrSortType | null>(loadResults());
+    const currSort = useRef<CurrSortType | null>();
     useEffect(() => {
         start();
     }, [songDataToSort]);
@@ -107,11 +95,16 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
                     let tiedRankNum = 1;
                     const finalSortedIndexes = sortedIndexList.current[0].slice(0);
                     finalSongs.current = [];
+                    console.log(songDataToSort)
                     songDataToSort.forEach((_, idx) => {
                         const songIndex = finalSortedIndexes[idx];
                         const song = songDataToSort[songIndex];
-                        finalSongs.current.push({ rank: rankNum, name: song });
-        
+                        const images = song.images; 
+                        finalSongs.current.push({ 
+                            rank: rankNum, 
+                            name: song.name, 
+                            images: images 
+                        });
                         if (idx < songDataToSort.length - 1) {
                             if (
                                 tiedDataList.current[songIndex] ===
@@ -123,7 +116,7 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
                                 tiedRankNum = 1;
                             }
                         }
-                    });
+                    });                    
                     console.log(finalSongs);
                     console.log("Done");
                     setShowResults(true);
@@ -135,7 +128,7 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
                 return;
             }
             songDataToSort = songDataToSort
-                .map((a) => [Math.random(), a] as [number, string])
+                .map((a) => [Math.random(), a] as [number, SongData])
                 .sort((a, b) => a[0] - b[0])
                 .map((a) => a[1]);
 
@@ -189,8 +182,22 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
             rightInnerIndex.current
             ];
 
-        setLeftSong(songDataToSort[leftSongIndex]);
-        setRightSong(songDataToSort[rightSongIndex]);
+        setLeftSong((songDataToSort[leftSongIndex]).name);
+        setRightSong((songDataToSort[rightSongIndex]).name);
+        if((songDataToSort[leftSongIndex]).albumName){
+            setLeftAlbum((songDataToSort[leftSongIndex]).albumName);
+        }
+        else{
+            setLeftAlbum("Single")
+        }
+        if((songDataToSort[rightSongIndex]).albumName){
+            setRightAlbum((songDataToSort[rightSongIndex]).albumName);
+        }
+        else{
+            setRightAlbum("Single")
+        }
+        setLeftImage(((songDataToSort[leftSongIndex]).images[0]).url);
+        setRightImage(((songDataToSort[rightSongIndex]).images[0]).url);
         setProgress(
             Math.floor(
                 (sortedNumber.current * 100) / (totalBattles.current)
@@ -343,7 +350,7 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
             finalSongs.current = [];
             songDataToSort.forEach((_, idx) => {
                 const songIndex = finalSortedIndexes[idx];
-                const song = songDataToSort[songIndex];
+                const song = songDataToSort[songIndex].name;
                 finalSongs.current.push({ rank: rankNum, name: song });
 
                 if (idx < songDataToSort.length - 1) {
@@ -499,9 +506,11 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
                     margin: "20px 0"
                 }}
             >
+                <h3>{leftAlbum}</h3>
+                <br></br>
                 <img
-                    src={leftSong}
-                    alt="Left Album"
+                    src={leftImage}
+                    alt={leftSong}
                     style={{ height: "150px", width: "150px" }}
                 />
                 <div
@@ -533,9 +542,11 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: string[] }) => {
                         Reset
                     </button>
                 </div>
+                <h3>{rightAlbum}</h3>
+                <br></br>
                 <img
-                    src={rightSong}
-                    alt="Right Album"
+                    src={rightImage}
+                    alt={rightSong}
                     style={{ height: "150px", width: "150px" }}
                 />
             </div>

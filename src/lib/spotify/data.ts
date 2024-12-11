@@ -210,6 +210,7 @@ export const getAlbum = async (
             name: artist.name,
             spotifyId: artist.id
         })),
+        images: responseBody.images,
         platformURL: responseBody.external_urls.spotify,
         selected: true,
         tracks: []
@@ -389,6 +390,7 @@ export const getArtistAlbums = async (
                     albumType: album.album_group,
                     spotifyId: album.id,
                     name: album.name,
+                    images: album.images,
                     artists: album.artists.map((a: any) => a.name),
                     platformURL: album.external_urls.spotify,
                     selected: true

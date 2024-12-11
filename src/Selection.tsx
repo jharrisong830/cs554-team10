@@ -3,27 +3,27 @@ import {
     getArtist,
     getArtistImage,
     getArtistAlbums,
-    getAlbumTracks,
     fetchTracksForAlbums
 } from "./lib/spotify/data";
 import { Album, Artist } from "./lib/spotify/types";
 import SpotifyContext from "./contexts/SpotifyContext";
-
+import BattleComponent from "./Ranker";
+import { SongDataArray } from "./lib/spotify/types";
 export default function Selection() {
     const { stateValue } = useContext(SpotifyContext)!;
-
     const [currArtist, setCurrArtist] = useState<Artist | null>(null);
     const [currArtistImage, setCurrArtistImage] = useState<string | null>(null);
     const [selectedAlbums, setSelectedAlbums] = useState<Array<Album> | null>(null);
-    const [finalAlbums, setFinalAlbums] = useState<Array<Album> | null>(null);
     const [trackDropdowns, setTrackDropdowns] = useState<{ [key: string]: boolean }>({});
     const hasFetchedData = useRef(false);
     const [allAlbums, setAllAlbums] = useState(true);
     const [allSingles, setAllSingles] = useState(true);
+    const [showRanker, setShowRanker] = useState(false)
+    const [songDataToSort, setSongDataToSort] = useState<SongDataArray>([]);
     useEffect(() => {
         const fetchAllData = async () => {
             if (hasFetchedData.current || !stateValue.accessToken) return;
-    
+
             try {
                 const [artist, artistImage, albums] = await Promise.all([
                     getArtist(stateValue.accessToken, "2YZyLoL8N0Wb9xBt1NhZWg"),
@@ -40,7 +40,7 @@ export default function Selection() {
                 console.error("Error fetching Spotify data:", error);
             }
         };
-    
+
         fetchAllData();
     }, [stateValue.accessToken]);
 
@@ -168,7 +168,7 @@ export default function Selection() {
     const toggleAlbumSelection = (albumId: string) => {
         const updatedAlbums = selectedAlbums?.map((album) =>
             album.spotifyId === albumId
-                ? { ...album, selected: !album.selected }
+                ? { ...album, selected: !album.selected, tracks: album.tracks.map((track) => ({ ...track, selected: !track.selected })) }
                 : album
         );
         if (updatedAlbums !== undefined) {
@@ -179,13 +179,24 @@ export default function Selection() {
 
     const handleSubmit = (e: { preventDefault: () => void }) => {
         e.preventDefault();
-
+        console.log(selectedAlbums)
         const finAlbums = selectedAlbums?.map((album) => {
             const selectedTracks = album.tracks.filter((track) => track.selected);
             return { ...album, tracks: selectedTracks };
         }).filter((album) => album.tracks.length > 0);
-        setFinalAlbums(finAlbums ?? []);
-        console.log(finAlbums);
+        console.log(finAlbums)
+        const allTracksWithAlbumData = finAlbums?.flatMap((album) =>
+            album.tracks.map((track) => ({
+                ...track,
+                platformURLAlbum: album.platformURL,
+                albumName: album.name,
+                images: album.images
+            }))
+        );
+        const dataToSort: SongDataArray = allTracksWithAlbumData ?? [];
+        console.log(dataToSort)
+        setShowRanker(true)
+        setSongDataToSort(dataToSort)
     };
 
     const setAllDropdown = (type: string) => {
@@ -207,7 +218,13 @@ export default function Selection() {
     if (!selectedAlbums) {
         return <h1>{currArtist?.name ?? "Loading..."}</h1>
     }
-    console.log(selectedAlbums)
+    if (showRanker) {
+        return (
+            <div>
+            <BattleComponent songDataToSort={songDataToSort}></BattleComponent>
+            </div>
+        );
+    }
     return (
         <div>
             <h1>{currArtist?.name ?? "Loading..."}</h1>

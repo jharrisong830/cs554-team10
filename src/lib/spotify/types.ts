@@ -13,6 +13,35 @@ export type Track = {
     selected: boolean;
 };
 
+export type SongData = {
+    platformURLAlbum: string;
+    albumName: string;
+    name: string;
+    spotifyId: string;
+    selected: boolean;
+    images: { url: string; height: number; width: number; }[]
+};
+
+export type SongDataArray = SongData[];
+
+export type CurrSortType = {
+    battleNumber: number;
+    progress: number;
+    leftIndex: number;
+    leftInnerIndex: number;
+    rightIndex: number;
+    rightInnerIndex: number;
+    choices: string;
+    sortedIndexList: number[][];
+    recordDataList: number[];
+    parentIndexList: number[];
+    tiedDataList: number[];
+    pointer: number;
+    sortedNumber: number;
+    history: any[]
+    totalBattles: number;
+};
+
 export type Album = {
     type: "album";
     albumType: "album" | "single" | "compilation" | "appears_on";
@@ -21,6 +50,7 @@ export type Album = {
     artists: Array<{ name: string; spotifyId: string }>;
     platformURL: string;
     selected: boolean;
+    images: { url: string; height: number; width: number; }[]
     tracks: Array<{name: string; spotifyId: string; selected: boolean}>;
 };
 
