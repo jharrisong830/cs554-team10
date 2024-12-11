@@ -17,6 +17,9 @@ import AuthSuccessPage from "./AuthSuccessPage";
 import SpotifyContext from "./contexts/SpotifyContext";
 import Homepage from "./Homepage";
 import SearchPage from "./SearchPage";
+import Selection from "./Selection";
+import RankerPage from "./RankerPage";
+import TierListPage from "./TierList/TierListPage";
 
 export default function App() {
     const [apiState, setApiState] = useState(emptyAPIContextValue());
@@ -52,7 +55,10 @@ export default function App() {
             element: (
                 <>
                     {apiState.accessToken === null ? (
-                        <Link to="/auth">Authorize</Link>
+                        <div>
+                            <br/>
+                            <Link to="/auth">Authorize</Link>
+                        </div>
                     ) : (
                         <SearchPage
                             handleSearch={(searched: string, type: string, page?:number) =>
@@ -70,7 +76,7 @@ export default function App() {
                     {apiState.accessToken === null ? (
                         <Link to="/auth">Authorize</Link>
                     ) : (
-                        <h1>Ranker page here</h1>
+                        <RankerPage />
                     )}
                 </>
             )
@@ -82,15 +88,28 @@ export default function App() {
                     {apiState.accessToken === null ? (
                         <Link to="/auth">Authorize</Link>
                     ) : (
-                        <h1>Tier list page here</h1>
+                        <TierListPage />
                     )}
+                </>
+            )
+        },
+        {
+            path: "/selection",
+            element: (
+                <>
+                    {apiState.accessToken === null ? (
+                        <div>
+                            <br/>
+                            <Link to="/auth">Authorize</Link>
+                        </div>
+                    ) : (<Selection/>)}
                 </>
             )
         }
     ];
 
     const router = createBrowserRouter(routeObjects);
-
+    
     return (
         <SpotifyContext.Provider
             value={{ stateValue: apiState, stateSetter: setApiState }}

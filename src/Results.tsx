@@ -1,5 +1,6 @@
 import "./App.css";
 import { toPng } from "html-to-image";
+import { SongDataArray } from "./lib/spotify/types";
 
 const Results = ({
   finalResults,
@@ -8,7 +9,7 @@ const Results = ({
 }: {
   finalResults: any[];
   history: any[];
-  songDataToSort: string[];
+  songDataToSort: SongDataArray;
 }) => {
   const handleExport = async () => {
     const node = document.getElementById("results-container");
@@ -54,14 +55,14 @@ const Results = ({
         if (
           songDataToSort[
             result.sortedIndexList[result.leftIndex][result.leftInnerIndex]
-          ] === fin.name
+          ].name === fin.name
         ) {
           leftRank = fin.rank;
         }
         if (
           songDataToSort[
             result.sortedIndexList[result.rightIndex][result.rightInnerIndex]
-          ] === fin.name
+          ].name === fin.name
         ) {
           rightRank = fin.rank;
         }
@@ -77,10 +78,10 @@ const Results = ({
 
     const outcomeText =
       nextBattle === "0"
-        ? `Won ${songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]]} vs. Lost ${songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]]}`
+        ? `Won ${songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]].name} vs. Lost ${songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]].name}`
         : nextBattle === "1"
-        ? `Lost ${songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]]} vs. Won ${songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]]}`
-        : `${songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]]} Tied vs. ${songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]]}`;
+        ? `Lost ${songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]].name} vs. Won ${songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]].name}`
+        : `${songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]].name} Tied vs. ${songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]].name}`;
 
     return (
       <li key={result.battleNumber}>
@@ -93,7 +94,7 @@ const Results = ({
 
   return (
     <div>
-      <div id="results-container" style={{ padding: "10px", background: "white" }}>
+      <div id="results-container" style={{ padding: "10px" }}>
         <ol style={{ listStyle: "none" }}>{listItems}</ol>
         <ol style={{ listStyle: "none" }}>{allBattles}</ol>
       </div>
