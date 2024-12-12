@@ -1,0 +1,15 @@
+[] overall font
+[] background color
+[] TierList Folder
+[] Homepage(being edited)
+    [] remove search bar
+    [] move search, select songs to rank, and authorize to the top
+    [] turn homepage technologies into buttons that go to the documentation website
+    [] add tailwind and redis to the technologies list
+    [] make technologies one single row at the bottom
+[] SearchPage
+    [] restyle the form
+    [] 
+[] Selection(being edited)
+[] Results
+[] Ranker

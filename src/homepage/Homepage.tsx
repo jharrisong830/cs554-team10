@@ -1,10 +1,8 @@
 import "../App.css";
-import Searchbar from "./Searchbar";
 function Homepage() {
     return (
         <>
-            <h1>Welcome to [unnamed battle ranker]!!</h1>
-            <Searchbar />
+            <h1 style={{ textDecoration:"underline", fontWeight:"bolder" }}>Welcome to [unnamed battle ranker]!!</h1>
             <h2>What is [unnamed battle ranker]?</h2>
             <h4>
                 People are obsessed with ranking literally anything. Whether it
@@ -16,17 +14,17 @@ function Homepage() {
                 preferences. You can customize what you're ranking in the
                 artist's discography by filtering albums or songs.
             </h4>
-            <br />
-            <br />
-            <br />
-            <br />
+            <hr />
             <h4>The tools we used:</h4>
-            <ul>
-                <li>React</li>
-                <li>Spotify API</li>
-                <li>ImageMagick</li>
-                <li>Vercel</li>
-            </ul>
+            <nav>
+                <a href="https://react.dev/" className="navbarButtons">React</a>
+                <a href="https://developer.spotify.com/documentation/web-api" className="navbarButtons">Spotify API</a>
+                <a href="https://imagemagick.org/script/index.php" className="navbarButtons">ImageMagick</a>
+                <a href="https://vercel.com/" className="navbarButtons">Vercel</a>
+                <a href="https://tailwindcss.com/" className="navbarButtons">Tailwind</a>
+                <a href="https://www.typescriptlang.org/" className="navbarButtons">TypeScript</a>
+                <a href="https://redis.io/" className="navbarButtons">Redis</a>
+            </nav>
         </>
     );
 }
