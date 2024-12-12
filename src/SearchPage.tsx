@@ -35,7 +35,6 @@ const loadRecentSearches = (): string[] => {
     return [];
 };
 
-
 export default function SearchPage(props: any) {
     const [results, setResults] = useState<any>(null);
     const [searchValue, setSearchValue] = useState("album");
@@ -50,6 +49,11 @@ export default function SearchPage(props: any) {
     };
 
     const navigate = useNavigate();
+
+    const handleSelectionNav = (id: string) => {
+        console.log(id);
+        navigate("/selection", { state: { id } });
+    };
 
     useEffect(() => {
         console.log("Recent Searches:", recentSearches.current);
@@ -240,15 +244,6 @@ export default function SearchPage(props: any) {
                                                 </div>
                                             </dl>
                                         </Typography>
-                                        <Button // @ts-ignore 
-                                            as={Link} to="/selection" 
-                                            variant="primary"
-                                            onClick={() => {
-                                                navigate("/selection", { state: { type: "album", id: item.id } });
-                                            }}
-                                        >
-                                            Go to Selection
-                                        </Button>
                                     </CardContent>
                                 </Card>
                             </div>
@@ -327,7 +322,7 @@ export default function SearchPage(props: any) {
                                             as={Link} to="/selection" 
                                             variant="primary"
                                             onClick={() => {
-                                                navigate("/selection", { state: { type: "artist", id: item.id } });
+                                                handleSelectionNav(item.id);
                                             }}
                                         >
                                             Go to Selection
@@ -414,15 +409,6 @@ export default function SearchPage(props: any) {
                                                 </p>
                                             </dl>
                                         </Typography>
-                                        <Button // @ts-ignore 
-                                            as={Link}
-                                            variant="primary"
-                                            onClick={() => {
-                                                navigate("/selection", { state: { type: "track", id: item.id } });
-                                            }}
-                                        >
-                                            Go to Selection
-                                        </Button>
                                     </CardContent>
                                 </Card>
                             </div>
