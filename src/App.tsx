@@ -16,7 +16,9 @@ import {
     getArtist,
     getArtistImage,
     getArtistAlbums,
-    search
+    search,
+    getArtist2,
+    getArtistAlbumsWithImage
 } from "./lib/spotify/data";
 import {
     emptyAPIContextValue,
@@ -28,6 +30,7 @@ import AuthSuccessPage from "./AuthSuccessPage";
 import SpotifyContext from "./contexts/SpotifyContext";
 import Homepage from "./homepage/Homepage";
 import SearchPage from "./SearchPage";
+import ArtistPage from "./ArtistPage";
 
 export default function App() {
     const [apiState, setApiState] = useState(emptyAPIContextValue());
@@ -176,6 +179,11 @@ export default function App() {
                     )}
                 </>
             )
+        },
+        {
+            path: "/artist/:id",
+            element: <ArtistPage handleArtist={(token: string, artistId: string) => 
+                getArtist2(token, artistId)} handleAlbums={(token:string, artistId: string) => getArtistAlbumsWithImage(token, artistId)}></ArtistPage>
         }
     ];
 

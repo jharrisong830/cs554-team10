@@ -16,7 +16,7 @@ const pkcePossible =
  * @returns authorization endpoint used to get user authorization code
  */
 export const getAuthorizationURL = (codeChallenge: string): string => {
-    const scope = "playlist-read-private user-read-private user-library-read"; // TODO: refine scopes to be minimal
+    const scope = "playlist-read-private playlist-modify-private playlist-modify-public"; // TODO: refine scopes to be minimal
     const userAuthQuery = {
         response_type: "code",
         redirect_uri: import.meta.env.VITE_SPOTIFY_REDIRECT_URL,
@@ -230,13 +230,13 @@ const getAlbumTracks = async (
         });
 
         const responseBody = await data.json();
-
+        console.log(responseBody);
         allTracks.push(
             ...responseBody.items // ... to unpack the array into varargs
                 .map((track: any) => ({
                     type: "track",
                     spotifyId: track.id,
-                    isrc: track.external_ids.isrc,
+                    //isrc: track.external_ids.isrc,
                     name: track.name,
                     artists: track.artists.map((artist: any) => ({
                         name: artist.name,
@@ -327,6 +327,7 @@ export const getArtist = async (
     accessToken: string,
     artistId: string
 ): Promise<Artist> => {
+    console.log(accessToken);
     const data = await fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
         method: "GET",
         headers: { Authorization: `Bearer ${accessToken}` }
@@ -342,6 +343,21 @@ export const getArtist = async (
     };
 };
 
+
+export const getArtist2 = async (
+    accessToken: string,
+    artistId: string
+): Promise<Artist> => {
+    console.log("response");
+    const data = await fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${accessToken}` }
+    });
+
+    const responseBody = await data.json();
+    console.log(responseBody);
+    return responseBody;
+};
 /**
  * returns a temporary url, used to display an image for an artist
  *
@@ -387,7 +403,6 @@ export const getArtistAlbums = async (
         });
 
         const responseBody = await data.json();
-
         allAlbums.push(
             ...responseBody.items // ... to unpack the array into varargs
                 .map((album: any) => ({
@@ -402,6 +417,35 @@ export const getArtistAlbums = async (
 
         nextPage = responseBody.next; // get the next page url
     } while (nextPage); // continue while next page is not null
+    return allAlbums;
+};
+
+export const getArtistAlbumsWithImage = async (
+    accessToken: string,
+    artistId: string
+): Promise<Array<Album>> => {
+    let nextPage = `https://api.spotify.com/v1/artists/${artistId}/albums`; // setting the initial url as the first page
+    let allAlbums: Array<Album> = [];
+
+
+        const data = await fetch(nextPage, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${accessToken}` }
+        });
+
+        const responseBody = await data.json();
+        allAlbums.push(
+            ...responseBody.items // ... to unpack the array into varargs
+                .map((album: any) => ({
+                    type: "album",
+                    albumType: album.album_type,
+                    spotifyId: album.id,
+                    name: album.name,
+                    artists: album.artists.map((a: any) => a.name),
+                    platformURL: album.external_urls.spotify,
+                    image: (album.images && album.images[0] && album.images[0].url) ? album.images[0].url : "Not found"
+                }))
+        );
 
     return allAlbums;
 };
