@@ -202,6 +202,7 @@ export default function SearchPage(props: any) {
                                                         >
                                                             Go to Spotify Listing
                                                         </Link>
+                                                        <Link to={`/artist/${item.id}`}  state= {{token:stateValue.accessToken}}>Go to listing on this site</Link>
                                                     </dd>
                                                 </p>
                                                 <p>
