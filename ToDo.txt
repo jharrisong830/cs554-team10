@@ -1,15 +1,21 @@
-[] overall font
-[] background color
+[X] background color
 [] TierList Folder
-[] Homepage(being edited)
-    [] remove search bar
-    [] move search, select songs to rank, and authorize to the top
-    [] turn homepage technologies into buttons that go to the documentation website
-    [] add tailwind and redis to the technologies list
-    [] make technologies one single row at the bottom
+[X] Homepage(being edited)
+    [X] remove search bar
+    [X] move search, select songs to rank, and authorize to one row
+    [X] turn homepage technologies into buttons 
+    [X] link technologies buttons to go to the documentation websites
+    [X] add tailwind, typescript, and redis to the technologies list
+    [X] make technologies one single row at the bottom
 [] SearchPage
     [] restyle the form
-    [] 
+    [X] if unauthorized
+        [X] turn authorize into a button
+        [X] add text to say to authorize
 [] Selection(being edited)
+    [] restyle the form
+    [X] if unauthorized
+        [X] turn authorize into a button
+        [X] add text to say to authorize
 [] Results
 [] Ranker

@@ -160,8 +160,9 @@ export default function App() {
                 <>
                     {apiState.accessToken === null ? (
                         <div>
+                            <h1>Click below to authorize:</h1>
                             <br/>
-                            <Link to="/auth">Authorize</Link>
+                            <Link to="/auth" className="navbarButtons">Authorize</Link>
                         </div>
                     ) : (
                         <SearchPage
@@ -178,7 +179,11 @@ export default function App() {
             element: (
                 <>
                     {apiState.accessToken === null ? (
-                        <Link to="/auth">Authorize</Link>
+                        <div>
+                            <h1>Click below to authorize:</h1>
+                            <br/>
+                            <Link to="/auth" className="navbarButtons">Authorize</Link>
+                        </div>
                     ) : (
                         <RankerPage />
                     )}
@@ -190,7 +195,11 @@ export default function App() {
             element: (
                 <>
                     {apiState.accessToken === null ? (
-                        <Link to="/auth">Authorize</Link>
+                        <div>
+                            <h1>Click below to authorize:</h1>
+                            <br/>
+                            <Link to="/auth" className="navbarButtons">Authorize</Link>
+                        </div>
                     ) : (
                         <TierListPage />
                     )}
@@ -203,8 +212,9 @@ export default function App() {
                 <>
                     {apiState.accessToken === null ? (
                         <div>
+                            <h1>Click below to authorize:</h1>
                             <br/>
-                            <Link to="/auth">Authorize</Link>
+                            <Link to="/auth" className="navbarButtons">Authorize</Link>
                         </div>
                     ) : (<Selection/>)}
                 </>
