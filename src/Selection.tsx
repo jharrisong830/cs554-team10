@@ -54,7 +54,7 @@ export default function Selection() {
                 const result = await fetchRedisData();
                 setCurrArtist(result.data.artist);
                 setCurrArtistImage(result.data.artistImage);
-                setCurrArtistImage(result.data.tracks);
+                setSelectedAlbums(result.data.tracks);
                 hasFetchedData.current = true;
             }
             catch (error) {
