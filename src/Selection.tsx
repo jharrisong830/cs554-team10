@@ -8,7 +8,7 @@ import {
 import { Album, Artist, SongData, TierItemProps } from "./lib/spotify/types";
 import SpotifyContext from "./contexts/SpotifyContext";
 import { SongDataArray } from "./lib/spotify/types";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 function morphSongDataToTierItemProps(songs: SongData[]): TierItemProps[] {
     return songs.map((song) => ({
         id: song.spotifyId,
@@ -28,6 +28,7 @@ export default function Selection() {
     const [allAlbums, setAllAlbums] = useState(true);
     const [allSingles, setAllSingles] = useState(true);
     const navigate = useNavigate();
+    let {state} = useLocation();
     const row = {
         rowId: "1",
         items: [],
@@ -40,9 +41,9 @@ export default function Selection() {
 
             try {
                 const [artist, artistImage, albums] = await Promise.all([
-                    getArtist(stateValue.accessToken, "2YZyLoL8N0Wb9xBt1NhZWg"),
-                    getArtistImage(stateValue.accessToken, "2YZyLoL8N0Wb9xBt1NhZWg"),
-                    getArtistAlbums(stateValue.accessToken, "2YZyLoL8N0Wb9xBt1NhZWg"),
+                    getArtist(stateValue.accessToken, state.id),
+                    getArtistImage(stateValue.accessToken, state.id),
+                    getArtistAlbums(stateValue.accessToken, state.id),
                 ]);
                 const albumsWithNoAppearsOn = albums.filter((album) => album.albumType !== 'appears_on')
                 const albumsWithTracks = await fetchTracksForAlbums(stateValue.accessToken, albumsWithNoAppearsOn);

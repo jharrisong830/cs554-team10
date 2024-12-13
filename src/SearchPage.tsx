@@ -6,7 +6,6 @@ import {
     Typography,
     CardHeader
 } from "@mui/material";
-import { Link } from "react-router-dom";
 import SpotifyContext from "./contexts/SpotifyContext";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
@@ -224,15 +223,7 @@ export default function SearchPage(props: any) {
                                                 </p>
                                             </dl>
                                         </Typography>
-                                        <Button // @ts-ignore 
-                                            as={Link} to="/selection" 
-                                            variant="primary"
-                                            onClick={() => {
-                                                navigate("/selection", { state: { type: "artist", id: item.id } });
-                                            }}
-                                        >
-                                            Go to Selection
-                                        </Button>
+                                        <Link to={"/selection"}  state= {{type: "artist", id: item.id}}>Go to Selection</Link>
                                     </CardContent>
                                 </Card>
                             </div>
