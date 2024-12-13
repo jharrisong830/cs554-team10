@@ -10,7 +10,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const buffer = Buffer.from(image, "base64");
       const processedImageBuffer = await sharp(buffer)
         .resize({ width: 1080 })
-        .png({ quality: 120 })
+        .png({ quality: 100 })
         .toBuffer();
       const base64Image = processedImageBuffer.toString("base64");
       res.status(200).json({ image: base64Image });
