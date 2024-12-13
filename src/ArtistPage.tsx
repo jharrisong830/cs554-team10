@@ -47,6 +47,7 @@ export default function ArtistPage(props: any) {
           return response.json();
         };
         const result = await fetchRedisData();
+        console.log(result.data)
         setResults(result.data.data);
         setAlbumResults(result.data.data2);
       } catch (error) {
@@ -57,11 +58,15 @@ export default function ArtistPage(props: any) {
           setResults(data);
           const data2 = await props.handleAlbums(loc.state.token, id.id);
           setAlbumResults(data2);
+          const redis = {
+            data: data,
+            data2: data2,
+          }
           try {
             await fetch(`${API_URL}?searchTerm=${finalSearchTerm}&searchValue=${id.id}`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ data: data, data2: data2 }),
+              body: JSON.stringify({ data: redis, }),
             });
             console.log("Data successfully saved to Redis");
           } catch (redisError) {
