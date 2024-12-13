@@ -7,8 +7,7 @@ import {
     CardHeader
 } from "@mui/material";
 import SpotifyContext from "./contexts/SpotifyContext";
-import { Link, useNavigate } from "react-router-dom";
-import { Button } from "react-bootstrap";
+import { Link} from "react-router-dom";
 const RECENT_SEARCHES_KEY = "recentSearches";
 const EXPIRY_TIME_MS = 60 * 60 * 1000; //1 Hour
 const API_URL =
@@ -49,8 +48,6 @@ export default function SearchPage(props: any) {
     console.log(stateValue);
 
    
-
-    const navigate = useNavigate();
 
     useEffect(() => {
         console.log("Recent Searches:", recentSearches.current);

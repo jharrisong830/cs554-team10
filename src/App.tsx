@@ -10,12 +10,6 @@ import "./App.css";
 import {
     getAuthorizationURL,
     getPKCECodes,
-    getTrack,
-    getAlbum,
-    getAlbumArtwork,
-    getArtist,
-    getArtistImage,
-    getArtistAlbums,
     search,
     getArtist2,
     getArtistAlbumsWithImage
