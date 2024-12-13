@@ -16,6 +16,7 @@ const saveResults = (sorting: CurrSortType | null, key: string) => {
 };
 
 const loadResults = (key: string): CurrSortType | null => {
+    if (typeof window === "undefined") return null; // Ensure this runs only on the client
     const data = localStorage.getItem(key);
     if (data) {
         const { sorting, timestamp } = JSON.parse(data);

@@ -25,7 +25,6 @@ const loadTierList = (key: string): { items: TierItemProps[]; rows: TierRowProps
     let items: TierItemProps[] = [];
     let rows: TierRowProps[] = [];
     if (typeof window === "undefined") return { items, rows }; // Ensure this runs only on the client
-
     const data = localStorage.getItem(key);
     if (data) {
         const { items: savedItems, rows: savedRows, timestamp } = JSON.parse(data);
