@@ -82,11 +82,7 @@ export default function App() {
             path: "/ranker",
             element: (
                 <>
-                    {apiState.accessToken === null ? (
-                        <Link to="/auth">Authorize</Link>
-                    ) : (
-                        <RankerPage />
-                    )}
+                <RankerPage />
                 </>
             )
         },
@@ -94,11 +90,7 @@ export default function App() {
             path: "/tierlist",
             element: (
                 <>
-                    {apiState.accessToken === null ? (
-                        <Link to="/auth">Authorize</Link>
-                    ) : (
-                        <TierListPage />
-                    )}
+                <TierListPage />    
                 </>
             )
         },

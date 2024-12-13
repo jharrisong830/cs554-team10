@@ -1,27 +1,31 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import Results from "./Results";
-//const EXPIRY_TIME_MS = 60 * 60 * 1000; // 1 hour
-const loadCurrResults = "loadCurrent";
+const EXPIRY_TIME_MS = 60 * 60 * 1000; // 1 hour
 import { SongData, SongDataArray, CurrSortType } from "./lib/spotify/types";
-const saveResults = (sorting: CurrSortType | null) => {
+const generateKey = (names: string[]): string => {
+    return `results_${names.join("_")}`;
+};
+
+const saveResults = (sorting: CurrSortType | null, key: string) => {
     const data = {
         sorting,
         timestamp: Date.now(),
     };
-    localStorage.setItem(loadCurrResults, JSON.stringify(data));
+    localStorage.setItem(key, JSON.stringify(data));
 };
 
-// const loadResults = (): CurrSortType | null => {
-//     const data = localStorage.getItem(loadCurrResults);
-//     if (data) {
-//         const { sorting, timestamp } = JSON.parse(data);
-//         if (Date.now() - timestamp < EXPIRY_TIME_MS) {
-//             return sorting;
-//         }
-//     }
-//     return null;
-// };
+const loadResults = (key: string): CurrSortType | null => {
+    if (typeof window === "undefined") return null; // Ensure this runs only on the client
+    const data = localStorage.getItem(key);
+    if (data) {
+        const { sorting, timestamp } = JSON.parse(data);
+        if (Date.now() - timestamp < EXPIRY_TIME_MS) {
+            return sorting;
+        }
+    }
+    return null;
+};
 
 const BattleComponent = ({ songDataToSort }: { songDataToSort: SongDataArray }) => {
     const [battleNumber, setBattleNumber] = useState(1);
@@ -49,7 +53,12 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: SongDataArray }) 
     const [rightAlbum, setRightAlbum] = useState("");
     const history = useRef<any[]>([]);
     const currSort = useRef<CurrSortType | null>();
+    const key = generateKey(songDataToSort.map((song) => song.name));
     useEffect(() => {
+        const savedSort = loadResults(key);
+        if (savedSort) {
+            currSort.current = savedSort;
+        }
         start();
     }, [songDataToSort]);
 
@@ -351,7 +360,8 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: SongDataArray }) 
             songDataToSort.forEach((_, idx) => {
                 const songIndex = finalSortedIndexes[idx];
                 const song = songDataToSort[songIndex].name;
-                finalSongs.current.push({ rank: rankNum, name: song });
+                const images = songDataToSort[songIndex].images
+                finalSongs.current.push({ rank: rankNum, name: song, imageUrl: images[0].url});
 
                 if (idx < songDataToSort.length - 1) {
                     if (
@@ -391,7 +401,7 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: SongDataArray }) 
             history: history.current,
             totalBattles: totalBattles.current
         }
-        saveResults(obj)
+        saveResults(obj, key)
     };
 
     const handleUndo = () => {
@@ -437,7 +447,7 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: SongDataArray }) 
         setProgress(0);
         setChoices("");
         setLoading(true);
-        saveResults(null)
+        saveResults(null, key)
         currSort.current = null
         sortedIndexList.current = [];
         recordDataList.current = [];

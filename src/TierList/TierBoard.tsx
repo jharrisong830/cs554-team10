@@ -4,46 +4,57 @@ import TierRow from "./TierRow";
 import TierBase from "./TierBase";
 import { TierBoardProps, TierItemProps, TierRowProps } from "../lib/spotify/types";
 
+const EXPIRY_TIME_MS = 60 * 60 * 24 * 1000; // 24 Hours
 
-const saveTierList = (items: TierItemProps[], rows: TierRowProps[], title: string) => {
+// Generate a unique key for saving/loading tier lists based on the base items' names
+const generateKey = (baseItems: TierItemProps[]): string => {
+    const baseNames = baseItems.map(item => item.id).join("_");
+    return `tier_list_${baseNames.replace(/\s+/g, "_").toLowerCase()}`;
+};
+
+const saveTierList = (items: TierItemProps[], rows: TierRowProps[], key: string) => {
     const data = {
         items,
         rows,
         timestamp: Date.now(),
     };
-    localStorage.setItem(title, JSON.stringify(data));
+    localStorage.setItem(key, JSON.stringify(data));
 };
 
-//const EXPIRY_TIME_MS = 60 * 60 * 24000; //24 Hour
-// const loadTierList = (title: string): { items: TierItemProps[], rows: TierRowProps[] } => {
-//     let items: TierItemProps[] = []
-//     let rows: TierRowProps[] = []
-//     if (typeof window === "undefined") return { items, rows }; // Ensure this runs only on the client
-//     const data = localStorage.getItem(title);
-//     if (data) {
-//         const { items, rows, timestamp } = JSON.parse(data);
-//         if (Date.now() - timestamp < EXPIRY_TIME_MS) {
-//             return { items, rows }
-//         }
-//     }
-//     return { items, rows };
-// };
-
+const loadTierList = (key: string): { items: TierItemProps[]; rows: TierRowProps[] } => {
+    let items: TierItemProps[] = [];
+    let rows: TierRowProps[] = [];
+    if (typeof window === "undefined") return { items, rows }; // Ensure this runs only on the client
+    const data = localStorage.getItem(key);
+    if (data) {
+        const { items: savedItems, rows: savedRows, timestamp } = JSON.parse(data);
+        if (Date.now() - timestamp < EXPIRY_TIME_MS) {
+            return { items: savedItems, rows: savedRows };
+        }
+    }
+    return { items, rows };
+};
 
 function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
-    const [rows, setRows] = useState(initialRows);
-    const [base, setBase] = useState(baseItems);
-    useEffect(() => {
-        // const data = loadTierList(title);
-        // if (data.rows.length > 0 && data.items.length > 0) {
-        //     setRows(data.rows);
-        //     setBase(data.items);
-        // }
-    }, [title]);
+    const key = generateKey(baseItems); // Generate a unique key based on the base items
+
+    const [rows, setRows] = useState<TierRowProps[]>(initialRows);
+    const [base, setBase] = useState<TierItemProps[]>(baseItems);
 
     useEffect(() => {
-        saveTierList(base, rows, title)
-    }, [rows, base])
+        // Load the saved tier list when the component mounts or the base items change
+        const { items: loadedItems, rows: loadedRows } = loadTierList(key);
+        if (loadedItems.length > 0 || loadedRows.length > 0) {
+            setBase(loadedItems);
+            setRows(loadedRows);
+        }
+    }, [key]);
+
+    useEffect(() => {
+        // Save the tier list whenever rows or base changes
+        saveTierList(base, rows, key);
+    }, [rows, base, key]);
+
     function onSubmitRow(event: FormEvent<HTMLFormElement>): void {
         event.preventDefault();
         const lastRow = rows[rows.length - 1];
@@ -63,6 +74,7 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
     const handleDragEnd = (result: DropResult) => {
         const { source, destination } = result;
         if (!destination) return;
+
         if (source.droppableId === destination.droppableId) {
             if (source.droppableId === "base") {
                 const reorderedBase = Array.from(base);
@@ -130,7 +142,6 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
         }
     };
 
-
     const handleRemove = (id: string) => {
         const updatedRows = rows.filter((item) => item.rowId !== id);
         const filteredOutRow = rows.filter((item) => item.rowId === id);
@@ -138,14 +149,12 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
         const updatedBase = [...base, ...itemsInRow];
         setRows(updatedRows);
         setBase(updatedBase);
-
     };
-
     return (
         <div
             style={{
                 display: "flex",
-                flexDirection: "column", // Ensure heading is at the top
+                flexDirection: "column",
                 alignItems: "center",
                 border: `2px solid ${"#ccc"}`,
                 borderRadius: "8px",
@@ -153,12 +162,14 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
                 marginBottom: "10px",
             }}
         >
-            {/* Add Heading */}
-            <h1 style={{
-                marginBottom: "20px", border: `2px solid ${"#ccc"}`,
-                borderRadius: "8px",
-                padding: "10px",
-            }}>
+            <h1
+                style={{
+                    marginBottom: "20px",
+                    border: `2px solid ${"#ccc"}`,
+                    borderRadius: "8px",
+                    padding: "10px",
+                }}
+            >
                 {title} Album Tier List Maker
             </h1>
 
@@ -188,7 +199,6 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
             </DragDropContext>
         </div>
     );
-
 }
 
 export default TierBoard;
