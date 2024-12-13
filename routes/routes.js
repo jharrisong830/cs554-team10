@@ -48,4 +48,31 @@ router
     }
   });
 
+
+router
+  .route('/api/process-image')
+  .get(async (req, res) => {
+    try {
+      const { image } = req.body;
+      const buffer = Buffer.from(image, "base64");
+
+      // Process the image using ImageMagick
+      const processedImageBuffer = im.convert({
+        srcData: buffer,          // Input base64 image buffer
+        width: 800,               // Resize the image width to 800px
+        quality: 80,              // Set the image quality to 80
+        format: "jpg",            // Output image format as JPEG
+      });
+
+      const base64Image = processedImageBuffer.toString("base64"); 
+      res.status(200).json({ image: base64Image }); 
+
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "An unknown error occurred." });
+      }
+    }
+  });
 export default router;
