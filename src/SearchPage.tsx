@@ -4,10 +4,12 @@ import {
     CardContent,
     CardMedia,
     Typography,
-    CardHeader,
+    CardHeader
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import SpotifyContext from "./contexts/SpotifyContext";
+import { Link, useNavigate } from "react-router-dom";
+import { Button } from "react-bootstrap";
 const RECENT_SEARCHES_KEY = "recentSearches";
 const EXPIRY_TIME_MS = 60 * 60 * 1000; //1 Hour
 const API_URL =
@@ -48,6 +50,8 @@ export default function SearchPage(props: any) {
     console.log(stateValue);
 
    
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         console.log("Recent Searches:", recentSearches.current);
@@ -220,13 +224,21 @@ export default function SearchPage(props: any) {
                                                 </p>
                                             </dl>
                                         </Typography>
+                                        <Button // @ts-ignore 
+                                            as={Link} to="/selection" 
+                                            variant="primary"
+                                            onClick={() => {
+                                                navigate("/selection", { state: { type: "artist", id: item.id } });
+                                            }}
+                                        >
+                                            Go to Selection
+                                        </Button>
                                     </CardContent>
                                 </Card>
                             </div>
                         );
                     })
-                
-            ) : (
+                ) :  (
                 <h2>Search for any artist on Spotify!</h2>
             )}
             {results != null && (results.artists && results.artists.offset > 0)  ? <button onClick={() => setPage(newPage-1)}>Previous Page</button> : ""}

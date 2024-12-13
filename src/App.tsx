@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
     createBrowserRouter,
     redirect,
@@ -20,128 +20,23 @@ import {
     getArtist2,
     getArtistAlbumsWithImage
 } from "./lib/spotify/data";
-import {
-    emptyAPIContextValue,
-    Track,
-    Album,
-    Artist
-} from "./lib/spotify/types";
+import { emptyAPIContextValue } from "./lib/spotify/types";
 import AuthSuccessPage from "./AuthSuccessPage";
 import SpotifyContext from "./contexts/SpotifyContext";
-import Homepage from "./homepage/Homepage";
+import Homepage from "./Homepage";
 import SearchPage from "./SearchPage";
 import ArtistPage from "./ArtistPage";
+import Selection from "./Selection";
+import RankerPage from "./RankerPage";
+import TierListPage from "./TierList/TierListPage";
 
 export default function App() {
     const [apiState, setApiState] = useState(emptyAPIContextValue());
 
-    const [currTrack, setCurrTrack] = useState<Track | null>(null);
-    const [currAlbum, setCurrAlbum] = useState<Album | null>(null);
-    const [currTrackImage, setCurrTrackImage] = useState<string | null>(null);
-    const [currAlbumImage, setCurrAlbumImage] = useState<string | null>(null);
-
-    const [currArtist, setCurrArtist] = useState<Artist | null>(null);
-    const [currArtistImage, setCurrArtistImage] = useState<string | null>(null);
-    const [artistAlbums, setArtistAlbums] = useState<Array<Album> | null>(null);
-
-    useEffect(() => {
-        // these funcs are only called when accessToken is not null, we can force the value with !
-        const trackWrapper = async () => {
-            const newTrack = await getTrack(
-                apiState.accessToken!,
-                "26QLJMK8G0M06sk7h7Fkse?si=f4e3764ddc3148a0"
-            );
-            setCurrTrack(newTrack);
-
-            const newTrackImage = await getAlbumArtwork(
-                apiState.accessToken!,
-                newTrack.albumId
-            );
-            setCurrTrackImage(newTrackImage);
-        };
-
-        const albumWrapper = async () => {
-            const newAlbum = await getAlbum(
-                apiState.accessToken!,
-                "4HTy9WFTYooRjE9giTmzAF?si=efxmZtHvR1W8FKyo5r7_MQ"
-            );
-            setCurrAlbum(newAlbum);
-
-            const newAlbumImage = await getAlbumArtwork(
-                apiState.accessToken!,
-                "4HTy9WFTYooRjE9giTmzAF?si=efxmZtHvR1W8FKyo5r7_MQ"
-            );
-            setCurrAlbumImage(newAlbumImage);
-        };
-
-        const artistWrapper = async () => {
-            const newArtist = await getArtist(
-                apiState.accessToken!,
-                "1oPRcJUkloHaRLYx0olBLJ"
-            );
-            setCurrArtist(newArtist);
-
-            const newArtistImage = await getArtistImage(
-                apiState.accessToken!,
-                "1oPRcJUkloHaRLYx0olBLJ"
-            );
-            setCurrArtistImage(newArtistImage);
-        };
-
-        const artistAlbumsWrapper = async () => {
-            const newAlbums = await getArtistAlbums(
-                apiState.accessToken!,
-                "1oPRcJUkloHaRLYx0olBLJ"
-            );
-            setArtistAlbums(newAlbums);
-        };
-
-        if (apiState.accessToken !== null) {
-            trackWrapper();
-            albumWrapper();
-            artistWrapper();
-            artistAlbumsWrapper();
-        }
-    }, [apiState]);
-
     const routeObjects: Array<RouteObject> = [
         {
             path: "/",
-            element: (
-                <>
-                    <Homepage />
-
-                    <p>API values:</p>
-                    <p>{JSON.stringify(apiState)}</p>
-
-                    <Link to="/search">Search</Link>
-
-                    {apiState.accessToken === null ? (
-                        <Link to="/auth">Authorize</Link>
-                    ) : (
-                        <div>
-                            <p>Test track:</p>
-                            <p>{JSON.stringify(currTrack)}</p>
-                            <img src={currTrackImage ?? ""} />
-
-                            <p>Test album:</p>
-                            <p>{JSON.stringify(currAlbum)}</p>
-                            <img src={currAlbumImage ?? ""} />
-
-                            <p>Test artist:</p>
-                            <p>{JSON.stringify(currArtist)}</p>
-                            <img src={currArtistImage ?? ""} />
-
-                            <p>Test artist albums:</p>
-                            <p>
-                                {JSON.stringify(
-                                    artistAlbums?.map((a) => a.name)
-                                )}
-                            </p>
-                        </div>
-                    )}
-                </>
-            )
+            element: <Homepage />
         },
         {
             path: "/auth",
@@ -169,7 +64,10 @@ export default function App() {
             element: (
                 <>
                     {apiState.accessToken === null ? (
-                        <Link to="/auth">Authorize</Link>
+                        <div>
+                            <br/>
+                            <Link to="/auth">Authorize</Link>
+                        </div>
                     ) : (
                         <SearchPage
                             handleSearch={(searched: string, type: string, page?:number) =>
@@ -181,14 +79,52 @@ export default function App() {
             )
         },
         {
+
             path: "/artist/:id",
             element: <ArtistPage handleArtist={(token: string, artistId: string) => 
                 getArtist2(token, artistId)} handleAlbums={(token:string, artistId: string) => getArtistAlbumsWithImage(token, artistId)}></ArtistPage>
+        },
+      {
+            path: "/ranker",
+            element: (
+                <>
+                    {apiState.accessToken === null ? (
+                        <Link to="/auth">Authorize</Link>
+                    ) : (
+                        <RankerPage />
+                    )}
+                </>
+            )
+        },
+        {
+            path: "/tierlist",
+            element: (
+                <>
+                    {apiState.accessToken === null ? (
+                        <Link to="/auth">Authorize</Link>
+                    ) : (
+                        <TierListPage />
+                    )}
+                </>
+            )
+        },
+        {
+            path: "/selection",
+            element: (
+                <>
+                    {apiState.accessToken === null ? (
+                        <div>
+                            <br/>
+                            <Link to="/auth">Authorize</Link>
+                        </div>
+                    ) : (<Selection/>)}
+                </>
+            )
         }
     ];
 
     const router = createBrowserRouter(routeObjects);
-
+    
     return (
         <SpotifyContext.Provider
             value={{ stateValue: apiState, stateSetter: setApiState }}
