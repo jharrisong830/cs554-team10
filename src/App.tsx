@@ -10,13 +10,16 @@ import "./App.css";
 import {
     getAuthorizationURL,
     getPKCECodes,
-    search
+    search,
+    getArtist2,
+    getArtistAlbumsWithImage
 } from "./lib/spotify/data";
 import { emptyAPIContextValue } from "./lib/spotify/types";
 import AuthSuccessPage from "./AuthSuccessPage";
 import SpotifyContext from "./contexts/SpotifyContext";
 import Homepage from "./Homepage";
 import SearchPage from "./SearchPage";
+import ArtistPage from "./ArtistPage";
 import Selection from "./Selection";
 import RankerPage from "./RankerPage";
 import TierListPage from "./TierList/TierListPage";
@@ -70,6 +73,12 @@ export default function App() {
             )
         },
         {
+
+            path: "/artist/:id",
+            element: <ArtistPage handleArtist={(token: string, artistId: string) => 
+                getArtist2(token, artistId)} handleAlbums={(token:string, artistId: string) => getArtistAlbumsWithImage(token, artistId)}></ArtistPage>
+        },
+      {
             path: "/ranker",
             element: (
                 <>
