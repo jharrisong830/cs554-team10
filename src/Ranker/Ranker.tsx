@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import "./App.css";
-import Results from "./Ranker/Results";
+import "../App.css";
+import Results from "./Results";
 const EXPIRY_TIME_MS = 60 * 60 * 1000; // 1 hour
-import { SongData, SongDataArray, CurrSortType } from "./lib/spotify/types";
+import { SongData, SongDataArray, CurrSortType } from "../lib/spotify/types";
 const generateKey = (names: string[]): string => {
     return `results_${names.join("_")}`;
 };
