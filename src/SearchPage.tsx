@@ -138,7 +138,7 @@ export default function SearchPage(props: any) {
                         type="text"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Brat"
+                        placeholder="Sabrina Carpenter"
                         list="recent-searches" // Attach the dropdown list
                     />
                 </label>

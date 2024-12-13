@@ -21,7 +21,7 @@ import Homepage from "./Homepage";
 import SearchPage from "./SearchPage";
 import ArtistPage from "./ArtistPage";
 import Selection from "./Selection";
-import RankerPage from "./RankerPage";
+import RankerPage from "./Ranker/RankerPage";
 import TierListPage from "./TierList/TierListPage";
 
 export default function App() {

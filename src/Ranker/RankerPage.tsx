@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import BattleComponent from "./Ranker";
+import BattleComponent from "../Ranker";
 
 const RankerPage = () => {
     const location = useLocation();
