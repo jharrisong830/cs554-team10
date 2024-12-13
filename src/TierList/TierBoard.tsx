@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import TierRow from "./TierRow";
 import TierBase from "./TierBase";
+import { toPng } from "html-to-image";
 import { TierBoardProps, TierItemProps, TierRowProps } from "../lib/spotify/types";
 
 const EXPIRY_TIME_MS = 60 * 60 * 24 * 1000; // 24 Hours
@@ -35,6 +36,8 @@ const loadTierList = (key: string): { items: TierItemProps[]; rows: TierRowProps
     return { items, rows };
 };
 
+
+
 function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
     const key = generateKey(baseItems); // Generate a unique key based on the base items
 
@@ -54,7 +57,35 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
         // Save the tier list whenever rows or base changes
         saveTierList(base, rows, key);
     }, [rows, base, key]);
-
+    const handleExport = async () => {
+        const node = document.getElementById("results-container");
+        if (node) {
+            try {
+                const imageData = await toPng(node);
+                const base64Image = imageData.split(",")[1]; 
+                const response = await fetch("/api/process-image", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ image: base64Image }), 
+                });
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.statusText}`);
+                }
+                const data = await response.json();
+                if (data.image) {
+                    const link = document.createElement("a");
+                    link.download = "processed-results.png";
+                    link.href = `data:image/png;base64,${data.image}`; 
+                    link.click();
+                } else {
+                    console.error("No image data in response");
+                }
+            } catch (error) {
+                console.error("Error exporting image:", error);
+                alert("Failed to export image. Please try again.");
+            }
+        }
+    };
     function onSubmitRow(event: FormEvent<HTMLFormElement>): void {
         event.preventDefault();
         const lastRow = rows[rows.length - 1];
@@ -151,7 +182,7 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
         setBase(updatedBase);
     };
     return (
-        <div
+        <><div
             style={{
                 display: "flex",
                 flexDirection: "column",
@@ -161,6 +192,7 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
                 padding: "10px",
                 marginBottom: "10px",
             }}
+            id="results-container"
         >
             <h1
                 style={{
@@ -189,15 +221,14 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
                                 rowId={row.rowId}
                                 items={row.items}
                                 color={row.color}
-                                letter={row.letter}
-                            />
+                                letter={row.letter} />
                             <button onClick={() => handleRemove(row.rowId)}>Remove</button>
                         </div>
                     ))}
                     <TierBase items={base} />
                 </div>
             </DragDropContext>
-        </div>
+        </div><button onClick={handleExport}>Save Results as Image</button></>
     );
 }
 

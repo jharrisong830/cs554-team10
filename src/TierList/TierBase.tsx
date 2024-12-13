@@ -1,33 +1,8 @@
 import { Droppable, Draggable } from "react-beautiful-dnd";
-import { toPng } from "html-to-image";
 import { TierBaseProps } from "../lib/spotify/types";
 
 
 function TierBase({ items }: TierBaseProps) {
-    const handleExport = async () => {
-        const node = document.getElementById("results-container");
-        if (node) {
-          try {
-            const imageData = await toPng(node);
-            const base64Image = imageData.split(",")[1]; 
-            const response = await fetch("/api/process-image", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ image: base64Image }),
-            });
-            
-            const data = await response.json();
-            if (data.image) {
-              const link = document.createElement("a");
-              link.download = "processed-results.jpg"; 
-              link.href = `data:image/jpeg;base64,${data.image}`;
-              link.click(); 
-            }
-          } catch (error) {
-            console.error("Error exporting image:", error);
-          }
-        }
-      };
     return (
         <><div
             style={{
@@ -39,7 +14,6 @@ function TierBase({ items }: TierBaseProps) {
                 padding: "10px",
                 marginBottom: "10px",
             }}
-            id="results-container"
         >
             <Droppable droppableId="base" direction="horizontal">
                 {(provided) => (
@@ -94,7 +68,7 @@ function TierBase({ items }: TierBaseProps) {
                     </div>
                 )}
             </Droppable>
-        </div><button onClick={handleExport}>Save Results as Image</button></>
+        </div></>
     );
 }
 
