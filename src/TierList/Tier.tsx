@@ -45,7 +45,7 @@ function Tier({ initialLetter, initialColor }: TierProps) {
     <div>
       <div
         ref={boxRef}
-        className="flex items-center justify-center w-20 h-20 border-2 border-gray-300 rounded-md cursor-pointer text-white font-bold text-center overflow-hidden"
+        className="flex items-center justify-center w-20 h-20 border-2 font-spotify border-gray-300 rounded-md cursor-pointer text-white text-center overflow-hidden"
         style={{
           backgroundColor: color,
           fontSize: `${fontSize}px`,
@@ -59,7 +59,7 @@ function Tier({ initialLetter, initialColor }: TierProps) {
             onChange={handleChange}
             onBlur={handleBlur}
             autoFocus
-            className="w-full h-full text-center font-bold border-none outline-none bg-transparent"
+            className="w-full h-full text-center font-spotify border-none outline-none bg-transparent"
             style={{
               fontSize: `${fontSize}px`,
             }}

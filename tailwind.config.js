@@ -6,8 +6,11 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        spotify: ["Spotify", "ui-serif"]
+      }
+    },
   },
   plugins: [],
 }
-
