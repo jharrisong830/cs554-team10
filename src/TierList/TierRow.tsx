@@ -19,7 +19,7 @@ function TierRow({ rowId, items, color, letter }: TierRowProps) {
                     <div
                         {...provided.droppableProps}
                         ref={provided.innerRef}
-                        className="flex items-center border-2 border-gray-300 p-2.5 rounded min-h-[80px] flex-1"
+                        className="flex items-center border-2 border-gray-300 p-2.5 rounded min-h-[80px] flex-wrap gap-2 flex-1"
                     >
                         {items.map((item, index) => (
                             <Draggable key={item.id} draggableId={item.id} index={index}>
