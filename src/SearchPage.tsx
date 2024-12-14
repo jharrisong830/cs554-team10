@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import SpotifyContext from "./contexts/SpotifyContext";
 import { Link} from "react-router-dom";
+import "./App.css";
 const RECENT_SEARCHES_KEY = "recentSearches";
 const EXPIRY_TIME_MS = 60 * 60 * 1000; //1 Hour
 const API_URL =
@@ -107,8 +108,6 @@ export default function SearchPage(props: any) {
                 console.error("Error saving data to Redis:", redisError);
             }
         }
-
-        //setSearchTerm("");
     };
 
     const updateRecentSearches = (searchTerm: string) => {
@@ -129,9 +128,13 @@ export default function SearchPage(props: any) {
 
     return (
         <>
-            <form id="simple-form" onSubmit={handleSubmit}>
-                <label>
-                    Search Artist here:
+            <form id="simple-form" onSubmit={handleSubmit} className="flex items-center space-x-4 p-4" style={{ backgroundColor:"lavender" }}>
+                <label
+                    className="flex items-center space-x-2"
+                >
+                    <p className="mr-2 font-websiteFont">
+                        Search Artist here:
+                    </p>
                     <input
                         id="searchTerm"
                         name="searchTerm"
@@ -140,6 +143,8 @@ export default function SearchPage(props: any) {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Sabrina Carpenter"
                         list="recent-searches" // Attach the dropdown list
+                        className="border rounded px-2 py-1"
+                        style={{ color: "white" }}
                     />
                 </label>
                 <datalist id="recent-searches">
@@ -147,7 +152,7 @@ export default function SearchPage(props: any) {
                         <option key={index} value={term} />
                     ))}
                 </datalist>
-                <input type="submit" value="Submit" />
+                <input type="submit" value="Submit" className="navbarButtons"/>
             </form>
 
             {results != null ? (
@@ -155,6 +160,7 @@ export default function SearchPage(props: any) {
                         if (!item || !item.name || !item.id) return null;
                         return (
                             <div key={item.id}>
+                                <br />
                                 <Card
                                     variant="outlined"
                                     sx={{
@@ -165,14 +171,16 @@ export default function SearchPage(props: any) {
                                         borderRadius: 5,
                                         border: "1px solid #1e8678",
                                         boxShadow:
-                                            "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);"
+                                            "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
+                                        backgroundColor: "lavender",
                                     }}
                                 >
                                     <CardHeader
                                         title={item.name || "unknown name"}
                                         sx={{
                                             borderBottom: "1px solid #1e8678",
-                                            fontWeight: "bold"
+                                            fontWeight: "bold",
+                                            fontFamily: "system-ui"
                                         }}
                                     />
                                     <CardMedia
@@ -190,44 +198,68 @@ export default function SearchPage(props: any) {
                                                 fontWeight: "bold"
                                             }}
                                         >
-                                            <dl>
-                                                <p>
-                                                    <dt className="URL">
-                                                        Spotify URL:
-                                                    </dt>
-                                                    <dd>
-                                                        <Link
-                                                            to={item?.external_urls?.spotify || "#"}
-                                                            target="_blank"
-                                                        >
-                                                            Go to Spotify Listing
-                                                        </Link>
-                                                        <Link to={`/artist/${item.id}`}  state= {{token:stateValue.accessToken}}>Go to listing on this site</Link>
-                                                    </dd>
+                                            <p>
+                                                <p 
+                                                    className="URL font-sans bg-[#b3f8b1] border-none text-black p-2.5 m-2.5 italic">
+                                                    Spotify URL:
+                                                </p>
+                                                <br />
+                                                <div>
+                                                    <Link
+                                                        to={item?.external_urls?.spotify || "#"}
+                                                        target="_blank"
+                                                        className="navbarButtons"
+                                                        style={{ fontFamily: "system-ui" }}
+                                                    >
+                                                        Spotify Listing
+                                                    </Link>
+                                                    <Link 
+                                                        to={`/artist/${item.id}`}
+                                                        state= {{token:stateValue.accessToken}}
+                                                        className="navbarButtons"
+                                                        style={{ fontFamily: "system-ui" }}
+                                                    >
+                                                        Artist's Page
+                                                    </Link>
+                                                </div>
+                                            </p>
+                                            <br />
+                                            <p>
+                                                <p 
+                                                    className="artists font-sans bg-[#b3f8b1] border-none text-black p-2.5 m-2.5 italic"
+                                                >
+                                                    Genres:
                                                 </p>
                                                 <p>
-                                                    <dt className="artists">
-                                                        Genres:
-                                                    </dt>
-                                                    <dd>
-                                                        {item?.genres?.map((genre: any) => (
-                                                            <p key={genre}>{genre}</p>
-                                                        ))}
-                                                    </dd>
+                                                    {item?.genres?.map((genre: any) => (
+                                                        <p key={genre} className="genreDisplay">{genre}</p>
+                                                    ))}
                                                 </p>
-                                                <p>
-                                                    <p>Spotify followers: {item.followers.total}</p>
+                                            </p>
+                                            <p>
+                                                <p className="font-sans bg-[#b3f8b1] border-none text-black p-2.5 m-2.5 italic">
+                                                    Spotify followers: {item.followers.total}
                                                 </p>
-                                            </dl>
+                                            </p>
+                                            <br />
                                         </Typography>
-                                        <Link to={"/selection"}  state= {{type: "artist", id: item.id}}>Go to Selection</Link>
+                                        <Link 
+                                            to={"/selection"}
+                                            state= {{type: "artist", id: item.id}}
+                                            className="navbarButtons"
+                                        >
+                                            Go to Selection
+                                        </Link>
                                     </CardContent>
                                 </Card>
                             </div>
                         );
                     })
                 ) :  (
-                <h2>Search for any artist on Spotify!</h2>
+                <div>
+                    <br />
+                    <h2 className="text-2xl font-bold">Search for any artist on Spotify!</h2>
+                </div>
             )}
             {results != null && (results.artists && results.artists.offset > 0)  ? <button onClick={() => setPage(newPage-1)}>Previous Page</button> : ""}
         {results != null ? (<p>Current page: {newPage}</p>) : ""}

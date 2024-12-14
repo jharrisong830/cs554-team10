@@ -1,9 +1,12 @@
-import "./App.css";
+import "../App.css";
 function Homepage() {
     return (
         <>
-            <h1 style={{ textDecoration:"underline", fontWeight:"bolder" }} className="text-4xl font-bold">Welcome to Groovy!!</h1>
-            <h2>What is Groovy?</h2>
+            <h1 className="text-8xl font-bold underline">Welcome to Groovy!!</h1>
+            <br />
+            <br />
+            <h2 className="text-4xl font-bold font-italic">What is Groovy?</h2>
+            <br />
             <h4>
                 People are obsessed with ranking literally anything. Whether it
                 be food, athletes, or music. One way that this is frequently
@@ -14,8 +17,11 @@ function Homepage() {
                 preferences. You can customize what you're ranking in the
                 artist's discography by filtering albums or songs.
             </h4>
-            <hr />
-            <h4>The tools we used:</h4>
+            <br />
+            <hr className="border-gray-500"/>
+            <br />
+            <h4 className="text-4xl font-bold font-italic">The tools we used:</h4>
+            <br />
             <nav>
                 <a href="https://react.dev/" className="navbarButtons">React</a>
                 <a href="https://developer.spotify.com/documentation/web-api" className="navbarButtons">Spotify API</a>
@@ -25,6 +31,7 @@ function Homepage() {
                 <a href="https://www.typescriptlang.org/" className="navbarButtons">TypeScript</a>
                 <a href="https://redis.io/" className="navbarButtons">Redis</a>
             </nav>
+            <br />
         </>
     );
 }

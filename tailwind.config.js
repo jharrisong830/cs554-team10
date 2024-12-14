@@ -9,5 +9,9 @@ export default {
     extend: {},
   },
   plugins: [],
+
+  fontFamily: {
+    websiteFont: ['Inter', 'system-ui', 'Avenir', 'Helvetica', 'Arial', 'sans-serif'],
+  },
 }
 

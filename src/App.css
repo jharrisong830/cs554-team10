@@ -7,6 +7,7 @@
     margin: 0 auto;
     padding: 2rem;
     text-align: center;
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
 .logo {
@@ -58,4 +59,30 @@
 
 .false {
     background-color: gray;
+}
+
+.navbarButtons {
+    background-color: #cca0e5;
+    border: none;
+    background-color: pink;
+    color: black;
+    padding: 10px;
+    margin: 10px;
+}
+
+.genreDisplay {
+    background-color: #f3fb98;
+    border: none;
+    color: black;
+    padding: 10px;
+    margin: 10px;
+}
+
+.labelDisplay {
+    background-color: #b3f8b1;
+    border: none;
+    color: black;
+    padding: 10px;
+    margin: 10px;
+    font-style: italic;
 }
