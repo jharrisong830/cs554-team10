@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
 import {
     Card,
     CardContent,
@@ -6,8 +6,9 @@ import {
     Typography,
     CardHeader
 } from "@mui/material";
-import { Link } from "react-router-dom";
-import { Button } from "react-bootstrap";
+import SpotifyContext from "./contexts/SpotifyContext";
+import { Link} from "react-router-dom";
+import "./App.css";
 const RECENT_SEARCHES_KEY = "recentSearches";
 const EXPIRY_TIME_MS = 60 * 60 * 1000; //1 Hour
 const API_URL =
@@ -38,16 +39,16 @@ const loadRecentSearches = (): string[] => {
 
 export default function SearchPage(props: any) {
     const [results, setResults] = useState<any>(null);
-    const [searchValue, setSearchValue] = useState("album");
+    const searchValue = "artist";
     const [searchTerm, setSearchTerm] = useState("");
     const [newPage, setPage] = useState(1);
     const recentSearches = useRef<string[]>(loadRecentSearches());
     // const cache = useRef<Map<string, any>>(new Map());
-    const handleType = (e: any) => {
-        setResults(null);
-        setPage(1);
-        setSearchValue(e.target.value);
-    };
+    const { stateValue } = useContext(SpotifyContext)!;
+    console.log("state value:");
+    console.log(stateValue);
+
+   
 
     useEffect(() => {
         console.log("Recent Searches:", recentSearches.current);
@@ -74,7 +75,7 @@ export default function SearchPage(props: any) {
         setResults(null);
         setPage(1);
         const trimmedSearchTerm = searchTerm.trim();
-        const finalSearchTerm = trimmedSearchTerm || "Brat";
+        const finalSearchTerm = trimmedSearchTerm || "Bruno Mars";
         const cacheKey = `${searchValue}:${finalSearchTerm}`;
 
         try {
@@ -107,8 +108,6 @@ export default function SearchPage(props: any) {
                 console.error("Error saving data to Redis:", redisError);
             }
         }
-
-        //setSearchTerm("");
     };
 
     const updateRecentSearches = (searchTerm: string) => {
@@ -129,25 +128,23 @@ export default function SearchPage(props: any) {
 
     return (
         <>
-            <form id="simple-form" onSubmit={handleSubmit}>
-                <label>
-                    Type of Search:
-                    <select value={searchValue} name="searchType" onChange={handleType}>
-                        <option value="album">Album</option>
-                        <option value="artist">Artist</option>
-                        <option value="track">Track</option>
-                    </select>
-                </label>
-                <label>
-                    Search here:
+            <form id="simple-form" onSubmit={handleSubmit} className="flex items-center space-x-4 p-4" style={{ backgroundColor:"lavender" }}>
+                <label
+                    className="flex items-center space-x-2"
+                >
+                    <p className="mr-2 font-websiteFont">
+                        Search Artist here:
+                    </p>
                     <input
                         id="searchTerm"
                         name="searchTerm"
                         type="text"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Brat"
+                        placeholder="Sabrina Carpenter"
                         list="recent-searches" // Attach the dropdown list
+                        className="border rounded px-2 py-1"
+                        style={{ color: "white" }}
                     />
                 </label>
                 <datalist id="recent-searches">
@@ -155,111 +152,15 @@ export default function SearchPage(props: any) {
                         <option key={index} value={term} />
                     ))}
                 </datalist>
-                <input type="submit" value="Submit" />
+                <input type="submit" value="Submit" className="navbarButtons"/>
             </form>
 
             {results != null ? (
-                searchValue === "album" ? (
-                    results.albums.items.map((item: any) => {
-                        if (!item || !item.name || !item.id) return null;
-                        return (
-                            <div key={item.id}>
-                                <Card
-                                    variant="outlined"
-                                    sx={{
-                                        maxWidth: 550,
-                                        height: "auto",
-                                        marginLeft: "auto",
-                                        marginRight: "auto",
-                                        borderRadius: 5,
-                                        border: "1px solid #1e8678",
-                                        boxShadow:
-                                            "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);"
-                                    }}
-                                >
-                                    <CardHeader
-                                        title={item.name || "unknown name"}
-                                        sx={{
-                                            borderBottom: "1px solid #1e8678",
-                                            fontWeight: "bold"
-                                        }}
-                                    />
-                                    <CardMedia
-                                        component="img"
-                                        image={item?.images?.[0]?.url || ""}
-                                        title="show image"
-                                    />
-                                    <CardContent>
-                                        <Typography
-                                            variant="body2"
-                                            color="textSecondary"
-                                            component="span"
-                                            sx={{
-                                                borderBottom: "1px solid #1e8678",
-                                                fontWeight: "bold"
-                                            }}
-                                        >
-                                            <dl>
-                                                <p>
-                                                    <dt className="URL">
-                                                        Spotify URL:
-                                                    </dt>
-                                                    <dd>
-                                                        <Link
-                                                            to={item?.external_urls?.spotify || "#"}
-                                                            target="_blank"
-                                                        >
-                                                            Go to Spotify Listing
-                                                        </Link>
-                                                    </dd>
-                                                </p>
-                                                <div>
-                                                    <dt className="artists">
-                                                        Artists:
-                                                    </dt>
-                                                    <dd>
-                                                        {item?.artists?.map((artist: any) => (
-                                                            <div key={artist.id}>
-                                                                <p>
-                                                                    <Link to={artist.external_urls.spotify}>
-                                                                        {artist.name}
-                                                                    </Link>
-                                                                </p>
-                                                            </div>
-                                                        ))}
-                                                    </dd>
-                                                </div>
-                                                <div>
-                                                    <dd>
-                                                        <p>
-                                                            Released {item?.release_date} ♫ {item?.total_tracks} Tracks
-                                                        </p>
-                                                    </dd>
-                                                </div>
-                                            </dl>
-                                        </Typography>
-                                        <Button // @ts-ignore 
-                                            as={Link} to="/ranker" 
-                                            variant="primary"
-                                        >
-                                            Rank
-                                        </Button>
-                                        <Button // @ts-ignore 
-                                            as={Link} to="/tierlist" 
-                                            variant="primary"
-                                        >
-                                            Tier List
-                                        </Button>
-                                    </CardContent>
-                                </Card>
-                            </div>
-                        );
-                    })
-                ) : searchValue === "artist" ? (
                     results.artists.items.map((item: any) => {
                         if (!item || !item.name || !item.id) return null;
                         return (
                             <div key={item.id}>
+                                <br />
                                 <Card
                                     variant="outlined"
                                     sx={{
@@ -270,14 +171,16 @@ export default function SearchPage(props: any) {
                                         borderRadius: 5,
                                         border: "1px solid #1e8678",
                                         boxShadow:
-                                            "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);"
+                                            "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
+                                        backgroundColor: "lavender",
                                     }}
                                 >
                                     <CardHeader
                                         title={item.name || "unknown name"}
                                         sx={{
                                             borderBottom: "1px solid #1e8678",
-                                            fontWeight: "bold"
+                                            fontWeight: "bold",
+                                            fontFamily: "system-ui"
                                         }}
                                     />
                                     <CardMedia
@@ -295,154 +198,74 @@ export default function SearchPage(props: any) {
                                                 fontWeight: "bold"
                                             }}
                                         >
-                                            <dl>
-                                                <p>
-                                                    <dt className="URL">
-                                                        Spotify URL:
-                                                    </dt>
-                                                    <dd>
-                                                        <Link
-                                                            to={item?.external_urls?.spotify || "#"}
-                                                            target="_blank"
-                                                        >
-                                                            Go to Spotify Listing
-                                                        </Link>
-                                                    </dd>
+                                            <p>
+                                                <p 
+                                                    className="URL font-sans bg-[#b3f8b1] border-none text-black p-2.5 m-2.5 italic">
+                                                    Spotify URL:
+                                                </p>
+                                                <br />
+                                                <div>
+                                                    <Link
+                                                        to={item?.external_urls?.spotify || "#"}
+                                                        target="_blank"
+                                                        className="navbarButtons"
+                                                        style={{ fontFamily: "system-ui" }}
+                                                    >
+                                                        Spotify Listing
+                                                    </Link>
+                                                    <Link 
+                                                        to={`/artist/${item.id}`}
+                                                        state= {{token:stateValue.accessToken}}
+                                                        className="navbarButtons"
+                                                        style={{ fontFamily: "system-ui" }}
+                                                    >
+                                                        Artist's Page
+                                                    </Link>
+                                                </div>
+                                            </p>
+                                            <br />
+                                            <p>
+                                                <p 
+                                                    className="artists font-sans bg-[#b3f8b1] border-none text-black p-2.5 m-2.5 italic"
+                                                >
+                                                    Genres:
                                                 </p>
                                                 <p>
-                                                    <dt className="artists">
-                                                        Genres:
-                                                    </dt>
-                                                    <dd>
-                                                        {item?.genres?.map((genre: any) => (
-                                                            <p key={genre}>{genre}</p>
-                                                        ))}
-                                                    </dd>
+                                                    {item?.genres?.map((genre: any) => (
+                                                        <p key={genre} className="genreDisplay">{genre}</p>
+                                                    ))}
                                                 </p>
-                                                <p>
-                                                    <p>Spotify followers: {item.followers.total}</p>
+                                            </p>
+                                            <p>
+                                                <p className="font-sans bg-[#b3f8b1] border-none text-black p-2.5 m-2.5 italic">
+                                                    Spotify followers: {item.followers.total}
                                                 </p>
-                                            </dl>
+                                            </p>
+                                            <br />
                                         </Typography>
-                                        <Button // @ts-ignore 
-                                            as={Link} to="/ranker" 
-                                            variant="primary"
+                                        <Link 
+                                            to={"/selection"}
+                                            state= {{type: "artist", id: item.id}}
+                                            className="navbarButtons"
                                         >
-                                            Rank
-                                        </Button>
-                                        <Button // @ts-ignore 
-                                            as={Link} to="/tierlist" 
-                                            variant="primary"
-                                        >
-                                            Tier List
-                                        </Button>
+                                            Go to Selection
+                                        </Link>
                                     </CardContent>
                                 </Card>
                             </div>
                         );
                     })
-                ) : (
-                    results.tracks.items.map((item: any) => {
-                        if (!item || !item.name || !item.id) return null;
-                        return (
-                            <div key={item.id}>
-                                <Card
-                                    variant="outlined"
-                                    sx={{
-                                        maxWidth: 550,
-                                        height: "auto",
-                                        marginLeft: "auto",
-                                        marginRight: "auto",
-                                        borderRadius: 5,
-                                        border: "1px solid #1e8678",
-                                        boxShadow:
-                                            "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);"
-                                    }}
-                                >
-                                    <CardHeader
-                                        title={item.name || "unknown name"}
-                                        sx={{
-                                            borderBottom: "1px solid #1e8678",
-                                            fontWeight: "bold"
-                                        }}
-                                    />
-                                    <CardMedia
-                                        component="img"
-                                        image={item?.album?.images?.[0]?.url || ""}
-                                        title="show image"
-                                    />
-                                    <CardContent>
-                                        <Typography
-                                            variant="body2"
-                                            color="textSecondary"
-                                            component="span"
-                                            sx={{
-                                                borderBottom: "1px solid #1e8678",
-                                                fontWeight: "bold"
-                                            }}
-                                        >
-                                            <dl>
-                                                <p>
-                                                    <dt className="artists">
-                                                        Artists:
-                                                    </dt>
-                                                    <dd>
-                                                        {item?.artists?.map((artist: any) => (
-                                                            <div key={artist.id}>
-                                                                <p>
-                                                                    <Link to={artist.external_urls.spotify}>
-                                                                        {artist.name}
-                                                                    </Link>
-                                                                </p>
-                                                            </div>
-                                                        ))}
-                                                    </dd>
-                                                </p>
-                                                <p>
-                                                    <dt className="URL">
-                                                        Spotify URL:
-                                                    </dt>
-                                                    <dd>
-                                                        <Link
-                                                            to={item?.external_urls?.spotify || "#"}
-                                                            target="_blank"
-                                                        >
-                                                            Go to Spotify Listing
-                                                        </Link>
-                                                    </dd>
-                                                </p>
-                                                <p>
-                                                    <dd>
-                                                        Track {item.track_number} on {item.album.name}
-                                                    </dd>
-                                                </p>
-                                            </dl>
-                                        </Typography>
-                                        <Button // @ts-ignore 
-                                            as={Link} to="/ranker" 
-                                            variant="primary"
-                                        >
-                                            Rank
-                                        </Button>
-                                        <Button // @ts-ignore 
-                                            as={Link} to="/tierlist" 
-                                            variant="primary"
-                                        >
-                                            Tier List
-                                        </Button>
-                                    </CardContent>
-                                </Card>
-                            </div>
-                        );
-                    })
-                )
-            ) : (
-                <h2>Search for an artist, track, or album!</h2>
+                ) :  (
+                <div>
+                    <br />
+                    <h2 className="text-2xl font-bold">Search for any artist on Spotify!</h2>
+                </div>
             )}
-            {results != null && ((results.albums && results.albums.offset > 0) || (results.tracks && results.tracks.offset > 0) || (results.artists && results.artists.offset > 0))  ? <button onClick={() => setPage(newPage-1)}>Previous Page</button> : ""}
-        <p>Current page: {newPage}</p>
-        {results != null && ((results.albums && results.albums.next != null) || (results.tracks && results.tracks.next != null) || (results.artists && results.artists.next != null)) ?<button onClick={() => setPage(newPage+1)}>Next Page</button>: ""}
+            {results != null && (results.artists && results.artists.offset > 0)  ? <button onClick={() => setPage(newPage-1)}>Previous Page</button> : ""}
+        {results != null ? (<p>Current page: {newPage}</p>) : ""}
+        {results != null && ( results.artists && results.artists.next != null) ?<button onClick={() => setPage(newPage+1)}>Next Page</button>: ""}
         
         </>
     );
 }
+

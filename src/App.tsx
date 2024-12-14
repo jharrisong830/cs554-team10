@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
     createBrowserRouter,
     redirect,
@@ -10,99 +10,22 @@ import "./App.css";
 import {
     getAuthorizationURL,
     getPKCECodes,
-    getTrack,
-    getAlbum,
-    getAlbumArtwork,
-    getArtist,
-    getArtistImage,
-    getArtistAlbums,
-    search
+    search,
+    getArtist2,
+    getArtistAlbumsWithImage
 } from "./lib/spotify/data";
-import {
-    emptyAPIContextValue,
-    Track,
-    Album,
-    Artist
-} from "./lib/spotify/types";
+import { emptyAPIContextValue } from "./lib/spotify/types";
 import AuthSuccessPage from "./AuthSuccessPage";
 import SpotifyContext from "./contexts/SpotifyContext";
 import Homepage from "./homepage/Homepage";
 import SearchPage from "./SearchPage";
+import ArtistPage from "./ArtistPage";
 import Selection from "./Selection";
-import RankerPage from "./RankerPage";
+import RankerPage from "./Ranker/RankerPage";
 import TierListPage from "./TierList/TierListPage";
 
 export default function App() {
     const [apiState, setApiState] = useState(emptyAPIContextValue());
-
-    const [currTrack, setCurrTrack] = useState<Track | null>(null);
-    const [currAlbum, setCurrAlbum] = useState<Album | null>(null);
-    const [currTrackImage, setCurrTrackImage] = useState<string | null>(null);
-    const [currAlbumImage, setCurrAlbumImage] = useState<string | null>(null);
-
-    const [currArtist, setCurrArtist] = useState<Artist | null>(null);
-    const [currArtistImage, setCurrArtistImage] = useState<string | null>(null);
-    const [artistAlbums, setArtistAlbums] = useState<Array<Album> | null>(null);
-
-    useEffect(() => {
-        // these funcs are only called when accessToken is not null, we can force the value with !
-        const trackWrapper = async () => {
-            const newTrack = await getTrack(
-                apiState.accessToken!,
-                "26QLJMK8G0M06sk7h7Fkse?si=f4e3764ddc3148a0"
-            );
-            setCurrTrack(newTrack);
-
-            const newTrackImage = await getAlbumArtwork(
-                apiState.accessToken!,
-                newTrack.albumId
-            );
-            setCurrTrackImage(newTrackImage);
-        };
-
-        const albumWrapper = async () => {
-            const newAlbum = await getAlbum(
-                apiState.accessToken!,
-                "4HTy9WFTYooRjE9giTmzAF?si=efxmZtHvR1W8FKyo5r7_MQ"
-            );
-            setCurrAlbum(newAlbum);
-
-            const newAlbumImage = await getAlbumArtwork(
-                apiState.accessToken!,
-                "4HTy9WFTYooRjE9giTmzAF?si=efxmZtHvR1W8FKyo5r7_MQ"
-            );
-            setCurrAlbumImage(newAlbumImage);
-        };
-
-        const artistWrapper = async () => {
-            const newArtist = await getArtist(
-                apiState.accessToken!,
-                "1oPRcJUkloHaRLYx0olBLJ"
-            );
-            setCurrArtist(newArtist);
-
-            const newArtistImage = await getArtistImage(
-                apiState.accessToken!,
-                "1oPRcJUkloHaRLYx0olBLJ"
-            );
-            setCurrArtistImage(newArtistImage);
-        };
-
-        const artistAlbumsWrapper = async () => {
-            const newAlbums = await getArtistAlbums(
-                apiState.accessToken!,
-                "1oPRcJUkloHaRLYx0olBLJ"
-            );
-            setArtistAlbums(newAlbums);
-        };
-
-        if (apiState.accessToken !== null) {
-            trackWrapper();
-            albumWrapper();
-            artistWrapper();
-            artistAlbumsWrapper();
-        }
-    }, [apiState]);
 
     const routeObjects: Array<RouteObject> = [
         {
@@ -112,13 +35,14 @@ export default function App() {
                     <Homepage />
 
                     <br />
-                    <hr />
+                    <hr  className="border-gray-500"/>
+                    <br />
 
-                    <h1>Click here to get started!</h1>
+                    <h1 className="text-4xl font-bold">Click here to get started!</h1>
+                    <br />
 
                     <nav>
                         <Link to="/search" className="navbarButtons">Search</Link>
-                        <Link to="/selection" className="navbarButtons">Select Songs to Rank</Link>
                         {apiState.accessToken === null ? (
                             <Link to="/auth" className="navbarButtons">Authorize</Link>
                         ) : (
@@ -160,7 +84,7 @@ export default function App() {
                 <>
                     {apiState.accessToken === null ? (
                         <div>
-                            <h1>Click below to authorize:</h1>
+                            <h1 className="text-4xl font-bold">Click below to authorize:</h1>
                             <br/>
                             <Link to="/auth" className="navbarButtons">Authorize</Link>
                         </div>
@@ -175,12 +99,18 @@ export default function App() {
             )
         },
         {
+
+            path: "/artist/:id",
+            element: <ArtistPage handleArtist={(token: string, artistId: string) => 
+                getArtist2(token, artistId)} handleAlbums={(token:string, artistId: string) => getArtistAlbumsWithImage(token, artistId)}></ArtistPage>
+        },
+      {
             path: "/ranker",
             element: (
                 <>
                     {apiState.accessToken === null ? (
                         <div>
-                            <h1>Click below to authorize:</h1>
+                            <h1 className="text-4xl font-bold">Click below to authorize:</h1>
                             <br/>
                             <Link to="/auth" className="navbarButtons">Authorize</Link>
                         </div>
@@ -196,7 +126,7 @@ export default function App() {
                 <>
                     {apiState.accessToken === null ? (
                         <div>
-                            <h1>Click below to authorize:</h1>
+                            <h1 className="text-4xl font-bold">Click below to authorize:</h1>
                             <br/>
                             <Link to="/auth" className="navbarButtons">Authorize</Link>
                         </div>
@@ -212,7 +142,7 @@ export default function App() {
                 <>
                     {apiState.accessToken === null ? (
                         <div>
-                            <h1>Click below to authorize:</h1>
+                            <h1 className="text-4xl font-bold">Click below to authorize:</h1>
                             <br/>
                             <Link to="/auth" className="navbarButtons">Authorize</Link>
                         </div>

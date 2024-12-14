@@ -8,15 +8,18 @@ import {
 import { Album, Artist, SongData, TierItemProps } from "./lib/spotify/types";
 import SpotifyContext from "./contexts/SpotifyContext";
 import { SongDataArray } from "./lib/spotify/types";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 function morphSongDataToTierItemProps(songs: SongData[]): TierItemProps[] {
     return songs.map((song) => ({
         id: song.spotifyId,
         imageUrl: song.images[0]?.url,
-        altText: song.name, 
+        altText: song.name,
     }));
 }
-
+const API_URL =
+    process.env.NODE_ENV === "production"
+        ? "https://cs554-team10.vercel.app/api/redis"
+        : "/api/redis";
 
 export default function Selection() {
     const { stateValue } = useContext(SpotifyContext)!;
@@ -28,6 +31,7 @@ export default function Selection() {
     const [allAlbums, setAllAlbums] = useState(true);
     const [allSingles, setAllSingles] = useState(true);
     const navigate = useNavigate();
+    let {state} = useLocation();
     const row = {
         rowId: "1",
         items: [],
@@ -37,21 +41,57 @@ export default function Selection() {
     useEffect(() => {
         const fetchAllData = async () => {
             if (hasFetchedData.current || !stateValue.accessToken) return;
-
+            const finalSearchTerm = "selection"
             try {
-                const [artist, artistImage, albums] = await Promise.all([
-                    getArtist(stateValue.accessToken, "2YZyLoL8N0Wb9xBt1NhZWg"),
-                    getArtistImage(stateValue.accessToken, "2YZyLoL8N0Wb9xBt1NhZWg"),
-                    getArtistAlbums(stateValue.accessToken, "2YZyLoL8N0Wb9xBt1NhZWg"),
-                ]);
-                const albumsWithNoAppearsOn = albums.filter((album) => album.albumType !== 'appears_on')
-                const albumsWithTracks = await fetchTracksForAlbums(stateValue.accessToken, albumsWithNoAppearsOn);
-                setCurrArtist(artist);
-                setCurrArtistImage(artistImage);
-                setSelectedAlbums(albumsWithTracks.map((album) => ({ ...album, selected: true })));
+                const fetchRedisData = async () => {
+                    const response = await fetch(`${API_URL}?searchTerm=${finalSearchTerm}&searchValue=${state.id}`, {
+                        method: "GET",
+                        headers: { Accept: "application/json" },
+                    });
+                    if (!response.ok) throw new Error("Data not found in Redis");
+                    return response.json();
+                };
+                const result = await fetchRedisData();
+                setCurrArtist(result.data.artist);
+                setCurrArtistImage(result.data.artistImage);
+                setSelectedAlbums(result.data.tracks);
                 hasFetchedData.current = true;
-            } catch (error) {
-                console.error("Error fetching Spotify data:", error);
+            }
+            catch (error) {
+                console.error("Redis fetch error:", error);
+                try {
+                    const [artist, artistImage, albums] = await Promise.all([
+                        getArtist(stateValue.accessToken, state.id),
+                        getArtistImage(stateValue.accessToken, state.id),
+                        getArtistAlbums(stateValue.accessToken, state.id),
+                    ]);
+                    const albumsWithNoAppearsOn = albums.filter((album) => album.albumType !== 'appears_on')
+                    const albumsWithTracks = await fetchTracksForAlbums(stateValue.accessToken, albumsWithNoAppearsOn);
+                    setCurrArtist(artist);
+                    setCurrArtistImage(artistImage);
+                    const tracks = albumsWithTracks.map((album) => ({ ...album, selected: true }))
+                    setSelectedAlbums(tracks);
+                    const redis = {
+                        artist: artist,
+                        artistImage: artistImage,
+                        tracks: tracks
+                    }
+                    hasFetchedData.current = true;
+                    try {
+                        await fetch(`${API_URL}?searchTerm=${finalSearchTerm}&searchValue=${state.id}`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ data: redis }),
+                        });
+                        console.log("Data successfully saved to Redis");
+                    } catch (redisError) {
+                        console.error("Error saving data to Redis:", redisError);
+                        hasFetchedData.current = true;
+                    }
+                } catch (error) {
+                    console.error("Error fetching Spotify data:", error);
+                    hasFetchedData.current = true;
+                }
             }
         };
 
@@ -261,10 +301,6 @@ export default function Selection() {
                     </div>
                 ))}
             </div>
-            {/* <form onSubmit={handleSubmit} className="center">
-                <h2>Submit songs for ranking:</h2>
-                <input type="submit" value="Submit" />
-            </form> */}
             <div>
                 <button onClick={handleSubmit}>Go to Ranker</button>
             </div>

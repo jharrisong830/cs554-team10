@@ -1,6 +1,6 @@
-import "./App.css";
+import "../App.css";
 import { toPng } from "html-to-image";
-import { SongDataArray } from "./lib/spotify/types";
+import { SongDataArray } from "../lib/spotify/types";
 
 const Results = ({
   finalResults,

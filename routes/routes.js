@@ -2,6 +2,8 @@ import express from 'express';
 const router = express.Router();
 import { config } from 'dotenv';
 import Redis from "ioredis";
+import * as im from "imagemagick";
+import fs from "fs";
 config();
 const REDISURL = process.env.REDIS_URL;
 const client = new Redis(REDISURL);
@@ -18,7 +20,7 @@ router
         result = JSON.parse(result);
         return res.status(200).json(result);
       }
-      return res.status(404).json({ error: `No cache found for ${searchValue}:${searchTerm}`});
+      return res.status(404).json({ error: `No cache found for ${searchValue}:${searchTerm}` });
     } catch (error) {
       return res.status(500).json({ error: 'Error accessing Redis cache' });
     }
@@ -45,6 +47,43 @@ router
     } catch (e) {
       console.log(e);
       return res.status(500).json({ error: 'Error saving data to Redis' });
+    }
+  });
+
+
+router
+  .route("/api/process-image")
+  .post(async (req, res) => {
+    try {
+      const { image } = req.body;
+
+      if (!image) {
+        return res.status(400).json({ error: "Image is required." });
+      }
+      const buffer = Buffer.from(image, "base64");
+      const tempInputFile = "/tmp/input.png"; 
+      const tempOutputFile = "/tmp/output.png"; 
+      await fs.promises.writeFile(tempInputFile, buffer);
+      im.convert(
+        [tempInputFile, "-resize", "1080x", "-quality", "120", tempOutputFile],
+        async (err) => {
+          if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Error processing image." });
+          }
+          const processedBuffer = await fs.promises.readFile(tempOutputFile);
+          const base64Image = processedBuffer.toString("base64");
+          await Promise.all([
+            fs.promises.unlink(tempInputFile),
+            fs.promises.unlink(tempOutputFile),
+          ]);
+
+          res.status(200).json({ image: base64Image });
+        }
+      );
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: error.message });
     }
   });
 
