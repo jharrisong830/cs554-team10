@@ -9,6 +9,7 @@ import { Album, Artist, SongData, TierItemProps } from "./lib/spotify/types";
 import SpotifyContext from "./contexts/SpotifyContext";
 import { SongDataArray } from "./lib/spotify/types";
 import { useNavigate, useLocation } from "react-router-dom";
+import "./App.css";
 function morphSongDataToTierItemProps(songs: SongData[]): TierItemProps[] {
     return songs.map((song) => ({
         id: song.spotifyId,
@@ -204,11 +205,13 @@ export default function Selection() {
                     <div style={{ paddingLeft: "10px" }}>
                         <button
                             onClick={() => toggleAllTracks(album.spotifyId, true)}
+                            className="navbarButtons"
                         >
                             Select All Tracks
                         </button>
                         <button
                             onClick={() => toggleAllTracks(album.spotifyId, false)}
+                            className="navbarButtons"
                         >
                             Deselect All Tracks
                         </button>
@@ -283,29 +286,27 @@ export default function Selection() {
         navigate("/tierlist", { state: { tierItems, currArtist, row } });
     };
     if (!selectedAlbums) {
-        return <h1>{currArtist?.name ?? "Loading..."}</h1>
+        return <h1 className="text-2xl font-bold">{currArtist?.name ?? "Loading..."}</h1>
     }
     return (
         <div>
-            <h1>{currArtist?.name ?? "Loading..."}</h1>
+            <h1 className="text-2xl font-bold">{currArtist?.name ?? "Loading..."}</h1>
             <img src={currArtistImage ?? ""} alt="Artist" />
             <div style={{ display: "flex", justifyContent: "center", gap: "10px", margin: "20px 0" }}>
                 {["album", "single"].map((type) => (
                     <div key={type} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                        <button onClick={() => setAllDropdown(type)} style={{ padding: "10px 20px", fontSize: "16px" }}>
+                        <button onClick={() => setAllDropdown(type)} className="navbarButtons">
                             {type.charAt(0).toUpperCase() + type.slice(1)}:
                         </button>
-                        <div className={`${type}Buttons`}>
+                        <div className="musicButtonBg">
                             {renderAlbumsByType(selectedAlbums, type)}
                         </div>
                     </div>
                 ))}
             </div>
             <div>
-                <button onClick={handleSubmit}>Go to Ranker</button>
-            </div>
-            <div>
-                <button onClick={handleSubmit2}>Go to TierList</button>
+                <button onClick={handleSubmit} className="navbarButtons">Go to Ranker</button>
+                <button onClick={handleSubmit2} className="navbarButtons">Go to TierList</button>
             </div>
         </div>
     );
