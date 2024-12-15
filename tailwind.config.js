@@ -6,12 +6,12 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        websiteFont: ['Inter', 'system-ui', 'Avenir', 'Helvetica', 'Arial', 'sans-serif'],
+        spotify: ["Spotify", "ui-serif"]
+      }
+    },
   },
   plugins: [],
-
-  fontFamily: {
-    websiteFont: ['Inter', 'system-ui', 'Avenir', 'Helvetica', 'Arial', 'sans-serif'],
-  },
 }
-

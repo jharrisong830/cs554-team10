@@ -4,15 +4,9 @@ import { TierRowProps } from "../lib/spotify/types";
 
 function TierRow({ rowId, items, color, letter }: TierRowProps) {
     return (
-        <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+        <div className="flex items-center mb-2.5">
             <div
-                style={{
-                    color: "white",
-                    padding: "10px",
-                    marginRight: "10px",
-                    borderRadius: "4px",
-                    fontWeight: "bold",
-                }}
+                className={`text-white p-2.5 mr-2.5 rounded font-bold`}
             >
                 {letter && color && (
                     <div>
@@ -25,15 +19,7 @@ function TierRow({ rowId, items, color, letter }: TierRowProps) {
                     <div
                         {...provided.droppableProps}
                         ref={provided.innerRef}
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            border: "2px solid #ccc",
-                            padding: "10px",
-                            borderRadius: "4px",
-                            minHeight: "80px",
-                            flex: 1,
-                        }}
+                        className="flex items-center border-2 border-gray-300 p-2.5 rounded min-h-[80px] flex-wrap gap-2 flex-1"
                     >
                         {items.map((item, index) => (
                             <Draggable key={item.id} draggableId={item.id} index={index}>
@@ -42,27 +28,13 @@ function TierRow({ rowId, items, color, letter }: TierRowProps) {
                                         ref={provided.innerRef}
                                         {...provided.draggableProps}
                                         {...provided.dragHandleProps}
-                                        style={{
-                                            ...provided.draggableProps.style,
-                                            margin: "0 8px",
-                                            display: "flex",
-                                            flexDirection: "column",
-                                            alignItems: "center",
-                                            border: "1px solid #ccc",
-                                            borderRadius: "4px",
-                                            padding: "8px",
-                                            backgroundColor: "black",
-                                        }}
+                                        className="mx-2 flex flex-col items-center border border-gray-300 rounded p-2 bg-black"
+                                        style={provided.draggableProps.style}
                                     >
                                         <img
                                             src={item.imageUrl}
                                             alt={item.altText}
-                                            style={{
-                                                width: "50px",
-                                                height: "50px",
-                                                objectFit: "cover",
-                                                marginBottom: "5px",
-                                            }}
+                                            className="w-12 h-12 object-cover mb-1.5"
                                         />
                                         <span>{item.altText}</span>
                                     </div>

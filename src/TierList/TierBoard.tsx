@@ -7,7 +7,6 @@ import { TierBoardProps, TierItemProps, TierRowProps } from "../lib/spotify/type
 
 const EXPIRY_TIME_MS = 60 * 60 * 24 * 1000; // 24 Hours
 
-// Generate a unique key for saving/loading tier lists based on the base items' names
 const generateKey = (baseItems: TierItemProps[]): string => {
     const baseNames = baseItems.map(item => item.id).join("_");
     return `tier_list_${baseNames.replace(/\s+/g, "_").toLowerCase()}`;
@@ -39,13 +38,12 @@ const loadTierList = (key: string): { items: TierItemProps[]; rows: TierRowProps
 
 
 function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
-    const key = generateKey(baseItems); // Generate a unique key based on the base items
+    const key = generateKey(baseItems);
 
     const [rows, setRows] = useState<TierRowProps[]>(initialRows);
     const [base, setBase] = useState<TierItemProps[]>(baseItems);
 
     useEffect(() => {
-        // Load the saved tier list when the component mounts or the base items change
         const { items: loadedItems, rows: loadedRows } = loadTierList(key);
         if (loadedItems.length > 0 || loadedRows.length > 0) {
             setBase(loadedItems);
@@ -54,7 +52,6 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
     }, [key]);
 
     useEffect(() => {
-        // Save the tier list whenever rows or base changes
         saveTierList(base, rows, key);
     }, [rows, base, key]);
     const handleExport = async () => {
@@ -62,11 +59,11 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
         if (node) {
             try {
                 const imageData = await toPng(node);
-                const base64Image = imageData.split(",")[1]; 
+                const base64Image = imageData.split(",")[1];
                 const response = await fetch("/api/process-image", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ image: base64Image }), 
+                    body: JSON.stringify({ image: base64Image }),
                 });
                 if (!response.ok) {
                     throw new Error(`Server error: ${response.statusText}`);
@@ -75,7 +72,7 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
                 if (data.image) {
                     const link = document.createElement("a");
                     link.download = "processed-results.png";
-                    link.href = `data:image/png;base64,${data.image}`; 
+                    link.href = `data:image/png;base64,${data.image}`;
                     link.click();
                 } else {
                     console.error("No image data in response");
@@ -182,53 +179,55 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
         setBase(updatedBase);
     };
     return (
-        <><div
-            style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                border: `2px solid ${"#ccc"}`,
-                borderRadius: "8px",
-                padding: "10px",
-                marginBottom: "10px",
-            }}
-            id="results-container"
-        >
-            <h1
-                style={{
-                    marginBottom: "20px",
-                    border: `2px solid ${"#ccc"}`,
-                    borderRadius: "8px",
-                    padding: "10px",
-                }}
+        <>
+            <div
+                className="flex flex-col items-center border-2 border-gray-300 rounded-lg p-2.5 mb-2.5 font-spotify font-bold"
+                id="results-container"
             >
-                {title} Album Tier List Maker
-            </h1>
+                <h1
+                    className="mb-5 border-2 border-gray-300 rounded-lg p-2.5"
+                >
+                    {title} Album Tier List Maker
+                </h1>
 
-            <div className='card'>
-                <form className='form' id='add-author' onSubmit={onSubmitRow}>
-                    <button className='button add-button' type='submit'>
-                        Add Row
-                    </button>
-                </form>
-            </div>
-
-            <DragDropContext onDragEnd={handleDragEnd}>
-                <div>
-                    {rows.map((row) => (
-                        <div key={row.rowId}>
-                            <TierRow
-                                rowId={row.rowId}
-                                items={row.items}
-                                color={row.color}
-                                letter={row.letter} />
-                            <button onClick={() => handleRemove(row.rowId)}>Remove</button>
-                        </div>
-                    ))}
-                    <TierBase items={base} />
+                <div className="card">
+                    <form className="form" id="add-author" onSubmit={onSubmitRow}>
+                        <button
+                            className="button add-button border-2 border-gray-300 rounded-lg px-4 py-2"
+                            type="submit"
+                        >
+                            Add Row
+                        </button>
+                    </form>
                 </div>
-            </DragDropContext>
-        </div><button onClick={handleExport}>Save Results as Image</button></>
+
+                <DragDropContext onDragEnd={handleDragEnd}>
+                    <div>
+                        {rows.map((row) => (
+                            <div key={row.rowId}>
+                                <TierRow
+                                    rowId={row.rowId}
+                                    items={row.items}
+                                    color={row.color}
+                                    letter={row.letter}
+                                />
+                                <button
+                                    className="border-2 border-red-700 rounded-lg px-4 py-2 mt-2 text-red-700"
+                                    onClick={() => handleRemove(row.rowId)}
+                                >
+                                    Remove
+                                </button>
+                            </div>
+                        ))}
+                        <TierBase items={base} />
+                    </div>
+                </DragDropContext>
+            </div>
+            <div
+            className="border-2 border-gray-300 rounded-lg px-4 py-2 mt-2 font-spotify font-bold">
+            <button onClick={handleExport}>Save Results as Image</button>
+            </div>
+        </>
     );
 }
 

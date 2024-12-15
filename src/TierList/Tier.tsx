@@ -1,4 +1,3 @@
-import { Box } from '@mui/material';
 import React, { useState, useEffect, useRef } from 'react';
 import { TierProps } from '../lib/spotify/types';
 
@@ -6,31 +5,32 @@ function Tier({ initialLetter, initialColor }: TierProps) {
   const [letter, setLetter] = useState(initialLetter);
   const [color, setColor] = useState(initialColor);
   const [isEditing, setIsEditing] = useState(false);
-  const [fontSize, setFontSize] = useState(30); 
+  const [fontSize, setFontSize] = useState(30);
 
   const boxRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (boxRef.current) {
       const boxWidth = boxRef.current.offsetWidth;
       const boxHeight = boxRef.current.offsetHeight;
       const letterLength = letter.length;
-      let newFontSize
-      if(letterLength !== 0){
-        newFontSize = Math.min(boxWidth, boxHeight) / ((letterLength + 1)*0.6);
-      } 
-      else{
-        newFontSize = 30/0.
+
+      let newFontSize;
+      if (letterLength !== 0) {
+        newFontSize = Math.min(boxWidth, boxHeight) / ((letterLength + 1) * 0.5);
+      } else {
+        newFontSize = 30;
       }
       setFontSize(newFontSize);
     }
   }, [letter]);
 
   const handleClick = () => {
-    setIsEditing(true); 
+    setIsEditing(true);
   };
 
   const handleBlur = () => {
-    setIsEditing(false); 
+    setIsEditing(false);
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,25 +43,12 @@ function Tier({ initialLetter, initialColor }: TierProps) {
 
   return (
     <div>
-      <Box
+      <div
         ref={boxRef}
-        sx={{
-          placeItems: 'center',
-          fontSize: `${fontSize}px`,
+        className="flex items-center justify-center w-20 h-20 border-2 font-spotify border-gray-300 rounded-md cursor-pointer text-white text-center overflow-hidden"
+        style={{
           backgroundColor: color,
-          cursor: 'pointer',
-          position: 'relative',
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "80px",
-          height: "80px",
-          border: "2px solid #ccc",
-          borderRadius: "8px",
-          marginRight: "10px",
-          color: "#fff",
-          fontWeight: "bold",
-          textAlign: "center",
+          fontSize: `${fontSize}px`,
         }}
         onClick={handleClick}
       >
@@ -72,32 +59,22 @@ function Tier({ initialLetter, initialColor }: TierProps) {
             onChange={handleChange}
             onBlur={handleBlur}
             autoFocus
+            className="w-full h-full text-center font-spotify border-none outline-none bg-transparent"
             style={{
-              width: '100%',
-              height: '100%',
-              textAlign: 'center',
               fontSize: `${fontSize}px`,
-              fontWeight: 'bold',
-              border: 'none',
-              outline: 'none',
-              background: 'transparent',
             }}
           />
         ) : (
-          letter
+          <span className="w-full break-words overflow-hidden whitespace-normal">
+            {letter}
+          </span>
         )}
-      </Box>
+      </div>
       <input
         type="color"
         value={color}
         onChange={handleColorChange}
-        style={{
-          width: '80px', 
-          height: '20px', 
-          border: 'none',
-          cursor: 'pointer',
-          position: 'relative',
-        }}
+        className="w-10/12 h-5 outline-none border-none cursor-pointer appearance-none"
       />
     </div>
   );
