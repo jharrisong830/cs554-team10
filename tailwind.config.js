@@ -8,6 +8,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
+        websiteFont: ['Inter', 'system-ui', 'Avenir', 'Helvetica', 'Arial', 'sans-serif'],
         spotify: ["Spotify", "ui-serif"]
       }
     },

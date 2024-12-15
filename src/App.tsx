@@ -17,7 +17,7 @@ import {
 import { emptyAPIContextValue } from "./lib/spotify/types";
 import AuthSuccessPage from "./AuthSuccessPage";
 import SpotifyContext from "./contexts/SpotifyContext";
-import Homepage from "./Homepage";
+import Homepage from "./homepage/Homepage";
 import SearchPage from "./SearchPage";
 import ArtistPage from "./ArtistPage";
 import Selection from "./Selection";
@@ -30,7 +30,32 @@ export default function App() {
     const routeObjects: Array<RouteObject> = [
         {
             path: "/",
-            element: <Homepage />
+            element: (
+                <>
+                    <Homepage />
+
+                    <br />
+                    <hr  className="border-gray-500"/>
+                    <br />
+
+                    <h1 className="text-4xl font-bold">Click here to get started!</h1>
+                    <br />
+
+                    <nav>
+                        <Link to="/search" className="navbarButtons">Search</Link>
+                        {apiState.accessToken === null ? (
+                            <Link to="/auth" className="navbarButtons">Authorize</Link>
+                        ) : (
+                            <div></div>
+                        )}
+                    </nav>
+
+
+                    <br/>
+
+                   
+                </>
+            )
         },
         {
             path: "/auth",
@@ -59,8 +84,9 @@ export default function App() {
                 <>
                     {apiState.accessToken === null ? (
                         <div>
+                            <h1 className="text-4xl font-bold">Click below to authorize:</h1>
                             <br/>
-                            <Link to="/auth">Authorize</Link>
+                            <Link to="/auth" className="navbarButtons">Authorize</Link>
                         </div>
                     ) : (
                         <SearchPage
@@ -82,7 +108,15 @@ export default function App() {
             path: "/ranker",
             element: (
                 <>
-                <RankerPage />
+                    {apiState.accessToken === null ? (
+                        <div>
+                            <h1 className="text-4xl font-bold">Click below to authorize:</h1>
+                            <br/>
+                            <Link to="/auth" className="navbarButtons">Authorize</Link>
+                        </div>
+                    ) : (
+                        <RankerPage />
+                    )}
                 </>
             )
         },
@@ -90,7 +124,15 @@ export default function App() {
             path: "/tierlist",
             element: (
                 <>
-                <TierListPage />    
+                    {apiState.accessToken === null ? (
+                        <div>
+                            <h1 className="text-4xl font-bold">Click below to authorize:</h1>
+                            <br/>
+                            <Link to="/auth" className="navbarButtons">Authorize</Link>
+                        </div>
+                    ) : (
+                        <TierListPage />
+                    )}
                 </>
             )
         },
@@ -100,8 +142,9 @@ export default function App() {
                 <>
                     {apiState.accessToken === null ? (
                         <div>
+                            <h1 className="text-4xl font-bold">Click below to authorize:</h1>
                             <br/>
-                            <Link to="/auth">Authorize</Link>
+                            <Link to="/auth" className="navbarButtons">Authorize</Link>
                         </div>
                     ) : (<Selection/>)}
                 </>
@@ -112,10 +155,41 @@ export default function App() {
     const router = createBrowserRouter(routeObjects);
     
     return (
-        <SpotifyContext.Provider
-            value={{ stateValue: apiState, stateSetter: setApiState }}
-        >
-            <RouterProvider router={router} />
-        </SpotifyContext.Provider>
+        <>
+            <SpotifyContext.Provider
+                value={{ stateValue: apiState, stateSetter: setApiState }}
+            >
+                <RouterProvider router={router} />
+            </SpotifyContext.Provider>
+        </>
     );
 }
+
+
+// {apiState.accessToken === null ? (
+//     <div>
+//          <br/>
+//          <Link to="/auth" className="navbarButtons">Authorize</Link>
+//      </div>
+//  ) : (
+//      <div>
+//          <p>Test track:</p>
+//          <p>{JSON.stringify(currTrack)}</p>
+//          <img src={currTrackImage ?? ""} />
+
+//          <p>Test album:</p>
+//          <p>{JSON.stringify(currAlbum)}</p>
+//          <img src={currAlbumImage ?? ""} />
+
+//          <p>Test artist:</p>
+//          <p>{JSON.stringify(currArtist)}</p>
+//          <img src={currArtistImage ?? ""} />
+
+//          <p>Test artist albums:</p>
+//          <p>
+//              {JSON.stringify(
+//                  artistAlbums?.map((a) => a.name)
+//              )}
+//          </p>
+//      </div>
+//  )}
