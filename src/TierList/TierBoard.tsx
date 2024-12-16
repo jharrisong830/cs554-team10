@@ -42,6 +42,7 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
 
     const [rows, setRows] = useState<TierRowProps[]>(initialRows);
     const [base, setBase] = useState<TierItemProps[]>(baseItems);
+    const [caption, setCaption] = useState("");
 
     useEffect(() => {
         const { items: loadedItems, rows: loadedRows } = loadTierList(key);
@@ -63,7 +64,7 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
                 const response = await fetch("/api/process-image", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ image: base64Image }),
+                    body: JSON.stringify({ image: base64Image, caption: caption }),
                 });
                 if (!response.ok) {
                     throw new Error(`Server error: ${response.statusText}`);
@@ -184,9 +185,7 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
                 className="flex flex-col items-center border-2 border-gray-300 rounded-lg p-2.5 mb-2.5 font-spotify font-bold bg-gray-200"
                 id="results-container"
             >
-                <h1
-                    className="mb-5 border-gray-300 font-spotify text-3xl"
-                >
+                <h1 className="mb-5 border-gray-300 font-spotify text-3xl">
                     {title} Song Tier List Maker
                 </h1>
 
@@ -200,19 +199,20 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
                         </button>
                     </form>
                 </div>
-
                 <DragDropContext onDragEnd={handleDragEnd}>
                     <div>
                         {rows.map((row) => (
-                            <div key={row.rowId}>
-                                <TierRow
-                                    rowId={row.rowId}
-                                    items={row.items}
-                                    color={row.color}
-                                    letter={row.letter}
-                                />
+                            <div key={row.rowId} className="flex items-center mb-1"> 
+                                <div className="flex-grow">
+                                    <TierRow
+                                        rowId={row.rowId}
+                                        items={row.items}
+                                        color={row.color}
+                                        letter={row.letter}
+                                    />
+                                </div>
                                 <button
-                                    className="mt-4 px-4 py-2 bg-red-300 text-black font-spotify font-semibold rounded hover:bg-red-400 transition m-3"
+                                    className="ml-4 px-4 py-2 bg-red-300 text-black font-spotify font-semibold rounded hover:bg-red-400 transition"
                                     onClick={() => handleRemove(row.rowId)}
                                 >
                                     Remove
@@ -224,8 +224,17 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
                 </DragDropContext>
             </div>
             <div
-            className="border-2 border-gray-300 rounded-lg px-4 py-2 mt-2 font-spotify font-bold bg-gray-200">
-            <button onClick={handleExport} className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Save Results as Image</button>
+                className="border-2 border-gray-300 rounded-lg px-4 py-2 mt-2 font-spotify font-bold bg-gray-200">
+                <button onClick={handleExport} className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Save Results as Image</button>
+                <br></br>
+                <input
+                    type="text"
+                    id="caption-input"
+                    placeholder="Enter your caption here"
+                    value={caption}
+                    onChange={(e) => setCaption(e.target.value)}
+                    className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"
+                />
             </div>
         </>
     );
