@@ -504,19 +504,19 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: SongDataArray }) 
             <div className="flex flex-col gap-4">
               <button
                 onClick={() => handleSelect("tie")}
-                className="mt-4 px-4 py-2 bg-blue-500 text-white font-spotify font-semibold rounded hover:bg-blue-600 transition"
+                className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"
               >
                 Tie
               </button>
               <button
                 onClick={handleUndo}
-                className="mt-4 px-4 py-2 bg-blue-500 text-white font-spotify font-semibold rounded hover:bg-blue-600 transition"
+                className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"
               >
                 Undo
               </button>
               <button
                 onClick={handleReset}
-                className="mt-4 px-4 py-2 bg-blue-500 text-white font-spotify font-semibold rounded hover:bg-blue-600 transition"
+                className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"
               >
                 Reset
               </button>
@@ -533,13 +533,13 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: SongDataArray }) 
           <div className="flex justify-around mt-6">
             <button
               onClick={() => handleSelect("left")}
-              className="mt-4 px-4 py-2 bg-blue-500 text-white font-spotify font-semibold rounded hover:bg-blue-600 transition"
+              className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"
             >
               {leftSong}
             </button>
             <button
               onClick={() => handleSelect("right")}
-              className="mt-4 px-4 py-2 bg-blue-500 text-white font-spotify font-semibold rounded hover:bg-blue-600 transition"
+              className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"
             >
               {rightSong}
             </button>

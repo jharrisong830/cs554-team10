@@ -59,7 +59,7 @@ function Tier({ initialLetter, initialColor }: TierProps) {
             onChange={handleChange}
             onBlur={handleBlur}
             autoFocus
-            className="w-full h-full text-center font-spotify border-none outline-none bg-transparent"
+            className="w-full h-full text-center font-spotify border-none outline-none bg-white"
             style={{
               fontSize: `${fontSize}px`,
             }}

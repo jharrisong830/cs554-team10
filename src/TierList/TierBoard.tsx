@@ -181,19 +181,19 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
     return (
         <>
             <div
-                className="flex flex-col items-center border-2 border-gray-300 rounded-lg p-2.5 mb-2.5 font-spotify font-bold"
+                className="flex flex-col items-center border-2 border-gray-300 rounded-lg p-2.5 mb-2.5 font-spotify font-bold bg-gray-200"
                 id="results-container"
             >
                 <h1
-                    className="mb-5 border-2 border-gray-300 rounded-lg p-2.5"
+                    className="mb-5 border-gray-300 font-spotify text-3xl"
                 >
-                    {title} Album Tier List Maker
+                    {title} Song Tier List Maker
                 </h1>
 
                 <div className="card">
                     <form className="form" id="add-author" onSubmit={onSubmitRow}>
                         <button
-                            className="mt-4 px-4 py-2 bg-blue-500 text-white font-spotify font-semibold rounded hover:bg-blue-600 transition"
+                            className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"
                             type="submit"
                         >
                             Add Row
@@ -212,7 +212,7 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
                                     letter={row.letter}
                                 />
                                 <button
-                                    className="mt-4 px-4 py-2 bg-red-500 text-white font-spotify font-semibold rounded hover:bg-red-600 transition"
+                                    className="mt-4 px-4 py-2 bg-red-300 text-black font-spotify font-semibold rounded hover:bg-red-400 transition m-3"
                                     onClick={() => handleRemove(row.rowId)}
                                 >
                                     Remove
@@ -224,8 +224,8 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
                 </DragDropContext>
             </div>
             <div
-            className="border-2 border-gray-300 rounded-lg px-4 py-2 mt-2 font-spotify font-bold">
-            <button onClick={handleExport} className="mt-4 px-4 py-2 bg-blue-500 text-white font-spotify font-semibold rounded hover:bg-blue-600 transition">Save Results as Image</button>
+            className="border-2 border-gray-300 rounded-lg px-4 py-2 mt-2 font-spotify font-bold bg-gray-200">
+            <button onClick={handleExport} className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Save Results as Image</button>
             </div>
         </>
     );

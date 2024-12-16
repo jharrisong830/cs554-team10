@@ -4,7 +4,7 @@ import { TierBaseProps } from "../lib/spotify/types";
 function TierBase({ items }: TierBaseProps) {
     return (
         <>
-            <div className="flex flex-col items-center border-2 border-gray-300 rounded-lg p-2.5 mb-2.5">
+            <div className="flex flex-col items-center border-2 border-gray-300 rounded-lg p-2.5 mb-2.5 bg-white">
                 <Droppable droppableId="base" direction="horizontal">
                     {(provided) => (
                         <div
@@ -19,7 +19,7 @@ function TierBase({ items }: TierBaseProps) {
                                             ref={provided.innerRef}
                                             {...provided.draggableProps}
                                             {...provided.dragHandleProps}
-                                            className="flex flex-col items-center border border-gray-300 rounded-md p-2 bg-gray-500 text-white"
+                                            className="flex flex-col items-center border border-gray-300 rounded-md p-2 bg-gray-100 text-black"
                                             style={provided.draggableProps.style}
                                         >
                                             <img

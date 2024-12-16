@@ -144,7 +144,7 @@ const Results = ({
       </div>
       <button
         onClick={handleExport}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white font-spotify font-semibold rounded hover:bg-blue-600 transition"
+        className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"
       >
         Save Results as Image
       </button>
