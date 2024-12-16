@@ -79,6 +79,13 @@
     padding: 10px;
     margin: 10px;
 }
+.musicButtonBg {
+    background-color: lavender;
+    border: none;
+    color: black;
+    padding: 10px;
+    margin: 10px;
+}
 
 .genreDisplay {
     background-color: #f3fb98;
