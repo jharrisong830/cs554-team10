@@ -36,19 +36,18 @@ const Results = ({
   };
 
   if (!finalResults?.length || !history?.length || !songDataToSort?.length) {
-    return (
-      <div className="text-center text-gray-500">
-        No data available
-      </div>
-    );
+    return <div className="text-center text-gray-500">No data available</div>;
   }
 
   const listItems = finalResults.map((result) => (
-    <li key={result.id} className="flex items-center space-x-4 mb-4">
+    <li
+      key={result.id}
+      className="flex items-center space-x-4 p-4 border border-gray-300 rounded-lg hover:scale-105 hover:shadow-lg transition-transform duration-200"
+    >
       <img
         src={result.imageUrl}
         alt={result.name}
-        className="w-16 h-16 object-cover rounded"
+        className="w-16 h-16 object-cover rounded-lg transition-transform duration-200 hover:scale-110"
       />
       <span className="text-gray-800 font-spotify">
         {result.rank}: {result.name}
@@ -88,18 +87,48 @@ const Results = ({
       }
     }
 
-    const outcomeText =
+    const leftSong = songDataToSort[
+      result.sortedIndexList[result.leftIndex][result.leftInnerIndex]
+    ];
+    const rightSong = songDataToSort[
+      result.sortedIndexList[result.rightIndex][result.rightInnerIndex]
+    ];
+
+    const leftClass =
       nextBattle === "0"
-        ? `Won ${songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]].name} vs. Lost ${songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]].name}`
+        ? "bg-green-100 text-green-700"
         : nextBattle === "1"
-        ? `Lost ${songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]].name} vs. Won ${songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]].name}`
-        : `${songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]].name} Tied vs. ${songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]].name}`;
+          ? "bg-red-100 text-red-700"
+          : "bg-gray-100 text-gray-700";
+
+    const rightClass =
+      nextBattle === "1"
+        ? "bg-green-100 text-green-700"
+        : nextBattle === "0"
+          ? "bg-red-100 text-red-700"
+          : "bg-gray-100 text-gray-700";
 
     return (
-      <li key={result.battleNumber} className="mb-2">
-        <span className="font-semibold font-spotify">Battle No:</span> {result.battleNumber}
+      <li
+        key={result.battleNumber}
+        className="p-4 border border-gray-300 rounded-lg hover:scale-105 hover:shadow-lg transition-transform duration-200"
+      >
+        <span className="font-semibold font-spotify text-lg">
+          Battle No: {result.battleNumber}
+        </span>
         <br />
-        <span className="text-gray-700">{outcomeText}</span>
+        <div className="mt-2 flex flex-col gap-2">
+          <span
+            className={`p-2 rounded-lg ${leftClass}`}
+          >
+            {leftSong.name}
+          </span>
+          <span
+            className={`p-2 rounded-lg ${rightClass}`}
+          >
+            {rightSong.name}
+          </span>
+        </div>
       </li>
     );
   });
@@ -111,7 +140,7 @@ const Results = ({
         className="p-4 bg-gray-50 border border-gray-200 rounded shadow-sm"
       >
         <ol className="list-none space-y-4">{listItems}</ol>
-        <ol className="list-none space-y-2 mt-6">{allBattles}</ol>
+        <ol className="list-none space-y-4 mt-6">{allBattles}</ol>
       </div>
       <button
         onClick={handleExport}
