@@ -193,7 +193,7 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
                 <div className="card">
                     <form className="form" id="add-author" onSubmit={onSubmitRow}>
                         <button
-                            className="button add-button border-2 border-gray-300 rounded-lg px-4 py-2"
+                            className="mt-4 px-4 py-2 bg-blue-500 text-white font-spotify font-semibold rounded hover:bg-blue-600 transition"
                             type="submit"
                         >
                             Add Row
@@ -212,7 +212,7 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
                                     letter={row.letter}
                                 />
                                 <button
-                                    className="border-2 border-red-700 rounded-lg px-4 py-2 mt-2 text-red-700"
+                                    className="mt-4 px-4 py-2 bg-red-500 text-white font-spotify font-semibold rounded hover:bg-red-600 transition"
                                     onClick={() => handleRemove(row.rowId)}
                                 >
                                     Remove
@@ -225,7 +225,7 @@ function TierBoard({ initialRows, baseItems, title }: TierBoardProps) {
             </div>
             <div
             className="border-2 border-gray-300 rounded-lg px-4 py-2 mt-2 font-spotify font-bold">
-            <button onClick={handleExport}>Save Results as Image</button>
+            <button onClick={handleExport} className="mt-4 px-4 py-2 bg-blue-500 text-white font-spotify font-semibold rounded hover:bg-blue-600 transition">Save Results as Image</button>
             </div>
         </>
     );
