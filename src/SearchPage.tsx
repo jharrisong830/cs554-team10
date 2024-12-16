@@ -256,6 +256,7 @@ export default function SearchPage(props: any) {
                         placeholder="Sabrina Carpenter"
                         list="recent-searches" 
                         className="border text-black rounded px-2 py-1"
+                        style={{ color: "white" }}
                     />
                 </label>
                 <datalist id="recent-searches">

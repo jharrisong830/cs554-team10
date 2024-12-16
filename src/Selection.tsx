@@ -12,7 +12,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "./App.css";
 function morphSongDataToTierItemProps(songs: SongData[]): TierItemProps[] {
     return songs.map((song) => ({
-        id: song.spotifyId,
+        id: song.id,
         imageUrl: song.images[0]?.url,
         altText: song.name,
     }));
@@ -32,13 +32,40 @@ export default function Selection() {
     const [allAlbums, setAllAlbums] = useState(true);
     const [allSingles, setAllSingles] = useState(true);
     const navigate = useNavigate();
-    let {state} = useLocation();
-    const row = {
+    let { state } = useLocation();
+    const rows = [{
         rowId: "1",
         items: [],
         color: "red",
         letter: "A",
-    }
+    },
+    {
+        rowId: "2",
+        items: [],
+        color: "orange",
+        letter: "B",
+    },
+    {
+        rowId: "3",
+        items: [],
+        color: "yellow",
+        letter: "C"
+    }, {
+        rowId: "4",
+        items: [],
+        color: "green",
+        letter: "D",
+    }, {
+        rowId: "5",
+        items: [],
+        color: "blue",
+        letter: "E",
+    }, {
+        rowId: "6",
+        items: [],
+        color: "purple",
+        letter: "F",
+    }]
     useEffect(() => {
         const fetchAllData = async () => {
             if (hasFetchedData.current || !stateValue.accessToken) return;
@@ -258,13 +285,13 @@ export default function Selection() {
         const allTracksWithAlbumData = finAlbums?.flatMap((album) =>
             album.tracks.map((track) => ({
                 ...track,
+                id: track.spotifyId,
                 platformURLAlbum: album.platformURL,
                 albumName: album.name,
                 images: album.images
             }))
         );
         const songDataToSort: SongDataArray = allTracksWithAlbumData ?? [];
-        console.log(songDataToSort)
         navigate("/ranker", { state: { songDataToSort } });
     };
     const handleSubmit2 = (e: { preventDefault: () => void }) => {
@@ -276,6 +303,7 @@ export default function Selection() {
         const allTracksWithAlbumData = finAlbums?.flatMap((album) =>
             album.tracks.map((track) => ({
                 ...track,
+                id: track.spotifyId,
                 platformURLAlbum: album.platformURL,
                 albumName: album.name,
                 images: album.images
@@ -283,7 +311,7 @@ export default function Selection() {
         );
         const songDataToSort: SongDataArray = allTracksWithAlbumData ?? [];
         const tierItems: TierItemProps[] = morphSongDataToTierItemProps(songDataToSort)
-        navigate("/tierlist", { state: { tierItems, currArtist, row } });
+        navigate("/tierlist", { state: { tierItems, currArtist, rows } });
     };
     if (!selectedAlbums) {
         return <h1 className="text-2xl font-bold">{currArtist?.name ?? "Loading..."}</h1>

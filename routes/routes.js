@@ -52,20 +52,37 @@ router
 
 
 router
-  .route("/api/process-image")
-  .post(async (req, res) => {
+  .post("/api/process-image", async (req, res) => {
     try {
-      const { image } = req.body;
+      const { image, caption } = req.body;
 
       if (!image) {
         return res.status(400).json({ error: "Image is required." });
       }
+
       const buffer = Buffer.from(image, "base64");
-      const tempInputFile = "/tmp/input.png"; 
-      const tempOutputFile = "/tmp/output.png"; 
+      const tempInputFile = "/tmp/input.png";
+      const tempOutputFile = "/tmp/output.png";
       await fs.promises.writeFile(tempInputFile, buffer);
+
+      const captionOptions = [
+        "-font", "Spotify",
+        "-pointsize", "48",
+        "-fill", "white",
+        "-stroke", "black",
+        "-strokewidth", "2",
+        "-gravity", "south",
+        "-annotate", "+0+20", caption,
+      ];
+
       im.convert(
-        [tempInputFile, "-resize", "1080x", "-quality", "120", tempOutputFile],
+        [
+          tempInputFile,
+          ...captionOptions,
+          "-resize", "1080x",
+          "-quality", "100",
+          tempOutputFile,
+        ],
         async (err) => {
           if (err) {
             console.error(err);
@@ -86,5 +103,4 @@ router
       res.status(500).json({ error: error.message });
     }
   });
-
 export default router;
