@@ -25,7 +25,7 @@ const saveRecentSearches = (searches: string[]) => {
 };
 
 const loadRecentSearches = (): string[] => {
-    if (typeof window === "undefined") return []; // Ensure this runs only on the client
+    if (typeof window === "undefined") return [];
     const data = localStorage.getItem(RECENT_SEARCHES_KEY);
     if (data) {
         const { searches, timestamp } = JSON.parse(data);
@@ -43,7 +43,6 @@ export default function SearchPage(props: any) {
     const [searchTerm, setSearchTerm] = useState("");
     const [newPage, setPage] = useState(1);
     const recentSearches = useRef<string[]>(loadRecentSearches());
-    // const cache = useRef<Map<string, any>>(new Map());
     const { stateValue } = useContext(SpotifyContext)!;
     console.log("state value:");
     console.log(stateValue);
@@ -74,8 +73,9 @@ export default function SearchPage(props: any) {
         e.preventDefault();
         setResults(null);
         setPage(1);
-        const trimmedSearchTerm = searchTerm.trim();
-        const finalSearchTerm = trimmedSearchTerm || "Bruno Mars";
+        let trimmedSearchTerm = searchTerm.trim();
+        trimmedSearchTerm = trimmedSearchTerm.toLowerCase()
+        const finalSearchTerm = trimmedSearchTerm || "sabrina carpenter";
         const cacheKey = `${searchValue}:${finalSearchTerm}`;
 
         try {
@@ -142,7 +142,7 @@ export default function SearchPage(props: any) {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Sabrina Carpenter"
-                        list="recent-searches" // Attach the dropdown list
+                        list="recent-searches" 
                         className="border rounded px-2 py-1"
                         style={{ color: "white" }}
                     />

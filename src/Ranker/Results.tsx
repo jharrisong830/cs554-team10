@@ -1,4 +1,3 @@
-import "../App.css";
 import { toPng } from "html-to-image";
 import { SongDataArray } from "../lib/spotify/types";
 
@@ -16,19 +15,19 @@ const Results = ({
     if (node) {
       try {
         const imageData = await toPng(node);
-        const base64Image = imageData.split(",")[1]; 
+        const base64Image = imageData.split(",")[1];
         const response = await fetch("/api/process-image", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ image: base64Image }),
         });
-        
+
         const data = await response.json();
         if (data.image) {
           const link = document.createElement("a");
-          link.download = "processed-results.jpg"; 
+          link.download = "processed-results.jpg";
           link.href = `data:image/jpeg;base64,${data.image}`;
-          link.click(); 
+          link.click();
         }
       } catch (error) {
         console.error("Error exporting image:", error);
@@ -37,13 +36,25 @@ const Results = ({
   };
 
   if (!finalResults?.length || !history?.length || !songDataToSort?.length) {
-    return <div>No data available</div>;
+    return <div className="text-center text-gray-500">No data available</div>;
   }
+
   const listItems = finalResults.map((result) => (
-    <li key={result.name}>
-      {result.rank}: {result.name}
+    <li
+      key={result.id}
+      className="flex items-center space-x-4 p-4 border border-gray-300 rounded-lg hover:scale-105 hover:shadow-lg transition-transform duration-200"
+    >
+      <img
+        src={result.imageUrl}
+        alt={result.name}
+        className="w-16 h-16 object-cover rounded-lg transition-transform duration-200 hover:scale-110"
+      />
+      <span className="text-gray-800 font-spotify">
+        {result.rank}: {result.name}
+      </span>
     </li>
   ));
+
   const allBattles = history.map((result, index) => {
     let nextBattle;
     try {
@@ -76,30 +87,67 @@ const Results = ({
       }
     }
 
-    const outcomeText =
+    const leftSong = songDataToSort[
+      result.sortedIndexList[result.leftIndex][result.leftInnerIndex]
+    ];
+    const rightSong = songDataToSort[
+      result.sortedIndexList[result.rightIndex][result.rightInnerIndex]
+    ];
+
+    const leftClass =
       nextBattle === "0"
-        ? `Won ${songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]].name} vs. Lost ${songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]].name}`
+        ? "bg-green-100 text-green-700"
         : nextBattle === "1"
-        ? `Lost ${songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]].name} vs. Won ${songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]].name}`
-        : `${songDataToSort[result.sortedIndexList[result.leftIndex][result.leftInnerIndex]].name} Tied vs. ${songDataToSort[result.sortedIndexList[result.rightIndex][result.rightInnerIndex]].name}`;
+          ? "bg-red-100 text-red-700"
+          : "bg-gray-100 text-gray-700";
+
+    const rightClass =
+      nextBattle === "1"
+        ? "bg-green-100 text-green-700"
+        : nextBattle === "0"
+          ? "bg-red-100 text-red-700"
+          : "bg-gray-100 text-gray-700";
 
     return (
-      <li key={result.battleNumber}>
-        Battle No: {result.battleNumber}
+      <li
+        key={result.battleNumber}
+        className="p-4 border border-gray-300 rounded-lg hover:scale-105 hover:shadow-lg transition-transform duration-200"
+      >
+        <span className="font-semibold font-spotify text-lg">
+          Battle No: {result.battleNumber}
+        </span>
         <br />
-        {outcomeText}
+        <div className="mt-2 flex flex-col gap-2">
+          <span
+            className={`p-2 rounded-lg ${leftClass}`}
+          >
+            {leftSong.name}
+          </span>
+          <span
+            className={`p-2 rounded-lg ${rightClass}`}
+          >
+            {rightSong.name}
+          </span>
+        </div>
       </li>
     );
   });
 
   return (
-    <div>
-      <div id="results-container" style={{ padding: "10px" }}>
-        <ol style={{ listStyle: "none" }}>{listItems}</ol>
-        <ol style={{ listStyle: "none" }}>{allBattles}</ol>
+    <div className="p-6">
+      <div
+        id="results-container"
+        className="p-4 bg-gray-50 border border-gray-200 rounded shadow-sm"
+      >
+        <ol className="list-none space-y-4">{listItems}</ol>
+        <ol className="list-none space-y-4 mt-6">{allBattles}</ol>
       </div>
-      {/* Button to export the results as an image */}
-      <button onClick={handleExport}>Save Results as Image</button>
+      <button
+        onClick={handleExport}
+        className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"
+      >
+        Save Results as Image
+      </button>
     </div>
   );
 };
