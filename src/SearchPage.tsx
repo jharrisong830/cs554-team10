@@ -152,7 +152,7 @@ export default function SearchPage(props: any) {
                         <option key={index} value={term} />
                     ))}
                 </datalist>
-                <input type="submit" value="Submit" className="navbarButtons"/>
+                <input type="submit" value="Submit" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"/>
             </form>
 
             {results != null ? (
@@ -208,16 +208,14 @@ export default function SearchPage(props: any) {
                                                     <Link
                                                         to={item?.external_urls?.spotify || "#"}
                                                         target="_blank"
-                                                        className="navbarButtons"
-                                                        style={{ fontFamily: "system-ui" }}
+                                                        className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"
                                                     >
                                                         Spotify Listing
                                                     </Link>
                                                     <Link 
                                                         to={`/artist/${item.id}`}
                                                         state= {{token:stateValue.accessToken}}
-                                                        className="navbarButtons"
-                                                        style={{ fontFamily: "system-ui" }}
+                                                        className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"
                                                     >
                                                         Artist's Page
                                                     </Link>
@@ -246,7 +244,7 @@ export default function SearchPage(props: any) {
                                         <Link 
                                             to={"/selection"}
                                             state= {{type: "artist", id: item.id}}
-                                            className="navbarButtons"
+                                            className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"
                                         >
                                             Go to Selection
                                         </Link>

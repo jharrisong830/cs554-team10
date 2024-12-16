@@ -205,13 +205,13 @@ export default function Selection() {
                     <div style={{ paddingLeft: "10px" }}>
                         <button
                             onClick={() => toggleAllTracks(album.spotifyId, true)}
-                            className="navbarButtons"
+                            className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"
                         >
                             Select All Tracks
                         </button>
                         <button
                             onClick={() => toggleAllTracks(album.spotifyId, false)}
-                            className="navbarButtons"
+                            className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"
                         >
                             Deselect All Tracks
                         </button>
@@ -295,7 +295,7 @@ export default function Selection() {
             <div style={{ display: "flex", justifyContent: "center", gap: "10px", margin: "20px 0" }}>
                 {["album", "single"].map((type) => (
                     <div key={type} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                        <button onClick={() => setAllDropdown(type)} className="navbarButtons">
+                        <button onClick={() => setAllDropdown(type)} className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">
                             {type.charAt(0).toUpperCase() + type.slice(1)}:
                         </button>
                         <div className="musicButtonBg">
@@ -305,8 +305,8 @@ export default function Selection() {
                 ))}
             </div>
             <div>
-                <button onClick={handleSubmit} className="navbarButtons">Go to Ranker</button>
-                <button onClick={handleSubmit2} className="navbarButtons">Go to TierList</button>
+                <button onClick={handleSubmit} className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Go to Ranker</button>
+                <button onClick={handleSubmit2} className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Go to TierList</button>
             </div>
         </div>
     );

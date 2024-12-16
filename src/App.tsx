@@ -42,9 +42,9 @@ export default function App() {
                     <br />
 
                     <nav>
-                        <Link to="/search" className="navbarButtons">Search</Link>
+                        <Link to="/search" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Search</Link>
                         {apiState.accessToken === null ? (
-                            <Link to="/auth" className="navbarButtons">Authorize</Link>
+                            <Link to="/auth" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Authorize</Link>
                         ) : (
                             <div></div>
                         )}
@@ -86,7 +86,7 @@ export default function App() {
                         <div>
                             <h1 className="text-4xl font-bold">Click below to authorize:</h1>
                             <br/>
-                            <Link to="/auth" className="navbarButtons">Authorize</Link>
+                            <Link to="/auth" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Authorize</Link>
                         </div>
                     ) : (
                         <SearchPage
@@ -112,7 +112,7 @@ export default function App() {
                         <div>
                             <h1 className="text-4xl font-bold">Click below to authorize:</h1>
                             <br/>
-                            <Link to="/auth" className="navbarButtons">Authorize</Link>
+                            <Link to="/auth" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Authorize</Link>
                         </div>
                     ) : (
                         <RankerPage />
@@ -128,7 +128,7 @@ export default function App() {
                         <div>
                             <h1 className="text-4xl font-bold">Click below to authorize:</h1>
                             <br/>
-                            <Link to="/auth" className="navbarButtons">Authorize</Link>
+                            <Link to="/auth" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Authorize</Link>
                         </div>
                     ) : (
                         <TierListPage />
@@ -144,7 +144,7 @@ export default function App() {
                         <div>
                             <h1 className="text-4xl font-bold">Click below to authorize:</h1>
                             <br/>
-                            <Link to="/auth" className="navbarButtons">Authorize</Link>
+                            <Link to="/auth" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Authorize</Link>
                         </div>
                     ) : (<Selection/>)}
                 </>
