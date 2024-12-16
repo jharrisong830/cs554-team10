@@ -11,7 +11,7 @@ import { SongDataArray } from "./lib/spotify/types";
 import { useNavigate, useLocation } from "react-router-dom";
 function morphSongDataToTierItemProps(songs: SongData[]): TierItemProps[] {
     return songs.map((song) => ({
-        id: song.spotifyId,
+        id: song.id,
         imageUrl: song.images[0]?.url,
         altText: song.name,
     }));
@@ -255,13 +255,13 @@ export default function Selection() {
         const allTracksWithAlbumData = finAlbums?.flatMap((album) =>
             album.tracks.map((track) => ({
                 ...track,
+                id: track.spotifyId,
                 platformURLAlbum: album.platformURL,
                 albumName: album.name,
                 images: album.images
             }))
         );
         const songDataToSort: SongDataArray = allTracksWithAlbumData ?? [];
-        console.log(songDataToSort)
         navigate("/ranker", { state: { songDataToSort } });
     };
     const handleSubmit2 = (e: { preventDefault: () => void }) => {
@@ -273,6 +273,7 @@ export default function Selection() {
         const allTracksWithAlbumData = finAlbums?.flatMap((album) =>
             album.tracks.map((track) => ({
                 ...track,
+                id: track.spotifyId,
                 platformURLAlbum: album.platformURL,
                 albumName: album.name,
                 images: album.images

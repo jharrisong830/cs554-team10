@@ -19,6 +19,7 @@ export type SongData = {
     name: string;
     spotifyId: string;
     selected: boolean;
+    id: string;
     images: { url: string; height: number; width: number; }[]
 };
 

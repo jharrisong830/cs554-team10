@@ -19,7 +19,7 @@ function TierBase({ items }: TierBaseProps) {
                                             ref={provided.innerRef}
                                             {...provided.draggableProps}
                                             {...provided.dragHandleProps}
-                                            className="flex flex-col items-center border border-gray-300 rounded-md p-2 bg-black text-white"
+                                            className="flex flex-col items-center border border-gray-300 rounded-md p-2 bg-gray-500 text-white"
                                             style={provided.draggableProps.style}
                                         >
                                             <img

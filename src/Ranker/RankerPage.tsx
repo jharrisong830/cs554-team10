@@ -6,12 +6,14 @@ const RankerPage = () => {
     const { songDataToSort } = location.state || {};
 
     return (
-        <div>
-            <h1>Ranker Page</h1>
+        <div className="p-6 font-spotify">
+            <h1 className="text-4xl font-bold text-center text-black mb-6">
+                Ranker Page
+            </h1>
             {songDataToSort ? (
                 <BattleComponent songDataToSort={songDataToSort} />
             ) : (
-                <p>No data to sort</p>
+                <p className="text-center text-gray-500">No data to sort</p>
             )}
         </div>
     );

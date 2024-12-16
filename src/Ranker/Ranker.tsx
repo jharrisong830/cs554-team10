@@ -107,13 +107,11 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: SongDataArray }) 
                     console.log(songDataToSort)
                     songDataToSort.forEach((_, idx) => {
                         const songIndex = finalSortedIndexes[idx];
-                        const song = songDataToSort[songIndex];
-                        const images = song.images; 
-                        finalSongs.current.push({ 
-                            rank: rankNum, 
-                            name: song.name, 
-                            images: images 
-                        });
+                        const song = songDataToSort[songIndex].name;
+                        const images = songDataToSort[songIndex].images
+                        const id = songDataToSort[songIndex].id
+                        finalSongs.current.push({ rank: rankNum, name: song, imageUrl: images[0].url, id: id});
+        
                         if (idx < songDataToSort.length - 1) {
                             if (
                                 tiedDataList.current[songIndex] ===
@@ -125,7 +123,7 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: SongDataArray }) 
                                 tiedRankNum = 1;
                             }
                         }
-                    });                    
+                    });                   
                     console.log(finalSongs);
                     console.log("Done");
                     setShowResults(true);
@@ -361,7 +359,8 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: SongDataArray }) 
                 const songIndex = finalSortedIndexes[idx];
                 const song = songDataToSort[songIndex].name;
                 const images = songDataToSort[songIndex].images
-                finalSongs.current.push({ rank: rankNum, name: song, imageUrl: images[0].url});
+                const id = songDataToSort[songIndex].id
+                finalSongs.current.push({ rank: rankNum, name: song, imageUrl: images[0].url, id: id});
 
                 if (idx < songDataToSort.length - 1) {
                     if (
@@ -480,110 +479,73 @@ const BattleComponent = ({ songDataToSort }: { songDataToSort: SongDataArray }) 
     }
 
     return (
-        <div style={{ textAlign: "center", fontFamily: "Arial, sans-serif" }}>
-            <h2>Battle No. {battleNumber}</h2>
-            <div style={{ margin: "20px 0" }}>
-                <div
-                    style={{
-                        height: "20px",
-                        width: "100%",
-                        backgroundColor: "#e0e0e0",
-                        borderRadius: "10px",
-                        overflow: "hidden",
-                        position: "relative"
-                    }}
-                >
-                    <div
-                        style={{
-                            height: "100%",
-                            width: `${progress}%`,
-                            backgroundColor:
-                                progress === 100 ? "#4caf50" : "#cca0e5",
-                            transition: "width 0.3s ease"
-                        }}
-                    ></div>
-                </div>
-                <div style={{ marginTop: "5px", fontSize: "14px" }}>
-                    {progress}%
-                </div>
+        <div className="text-center font-spotify">
+          <h2 className="text-2xl font-bold mb-6">Battle No. {battleNumber}</h2>
+          <div className="w-full max-w-md mx-auto mb-6">
+            <div className="h-5 w-full bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className={`h-full transition-all ${
+                  progress === 100 ? "bg-green-500" : "bg-purple-300"
+                }`}
+                style={{ width: `${progress}%` }}
+              ></div>
             </div>
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: "10px",
-                    margin: "20px 0"
-                }}
+            <div className="mt-2 text-sm text-gray-700">{progress}%</div>
+          </div>
+          <div className="flex justify-center items-center gap-6 mb-6">
+            <div className="text-center">
+              <h3 className="text-lg font-semibold mb-2">{leftAlbum}</h3>
+              <img
+                src={leftImage}
+                alt={leftSong}
+                className="h-36 w-36 object-cover mx-auto rounded"
+              />
+            </div>
+            <div className="flex flex-col gap-4">
+              <button
+                onClick={() => handleSelect("tie")}
+                className="mt-4 px-4 py-2 bg-blue-500 text-white font-spotify font-semibold rounded hover:bg-blue-600 transition"
+              >
+                Tie
+              </button>
+              <button
+                onClick={handleUndo}
+                className="mt-4 px-4 py-2 bg-blue-500 text-white font-spotify font-semibold rounded hover:bg-blue-600 transition"
+              >
+                Undo
+              </button>
+              <button
+                onClick={handleReset}
+                className="mt-4 px-4 py-2 bg-blue-500 text-white font-spotify font-semibold rounded hover:bg-blue-600 transition"
+              >
+                Reset
+              </button>
+            </div>
+            <div className="text-center">
+              <h3 className="text-lg font-semibold mb-2">{rightAlbum}</h3>
+              <img
+                src={rightImage}
+                alt={rightSong}
+                className="h-36 w-36 object-cover mx-auto rounded"
+              />
+            </div>
+          </div>
+          <div className="flex justify-around mt-6">
+            <button
+              onClick={() => handleSelect("left")}
+              className="mt-4 px-4 py-2 bg-blue-500 text-white font-spotify font-semibold rounded hover:bg-blue-600 transition"
             >
-                <h3>{leftAlbum}</h3>
-                <br></br>
-                <img
-                    src={leftImage}
-                    alt={leftSong}
-                    style={{ height: "150px", width: "150px" }}
-                />
-                <div
-                    style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "10px"
-                    }}
-                >
-                    <button
-                        onClick={() => handleSelect("tie")}
-                        style={{ padding: "10px 20px", fontSize: "16px" }}
-                        className="click"
-                    >
-                        Tie
-                    </button>
-                    <button
-                        onClick={handleUndo}
-                        style={{ padding: "10px 20px", fontSize: "16px" }}
-                        className="click"
-                    >
-                        Undo
-                    </button>
-                    <button
-                        onClick={handleReset}
-                        style={{ padding: "10px 20px", fontSize: "16px" }}
-                        className="click"
-                    >
-                        Reset
-                    </button>
-                </div>
-                <h3>{rightAlbum}</h3>
-                <br></br>
-                <img
-                    src={rightImage}
-                    alt={rightSong}
-                    style={{ height: "150px", width: "150px" }}
-                />
-            </div>
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "space-around",
-                    marginTop: "20px"
-                }}
+              {leftSong}
+            </button>
+            <button
+              onClick={() => handleSelect("right")}
+              className="mt-4 px-4 py-2 bg-blue-500 text-white font-spotify font-semibold rounded hover:bg-blue-600 transition"
             >
-                <button
-                    onClick={() => handleSelect("left")}
-                    style={{ padding: "10px 20px", fontSize: "16px" }}
-                    className="click"
-                >
-                    {leftSong}
-                </button>
-                <button
-                    onClick={() => handleSelect("right")}
-                    style={{ padding: "10px 20px", fontSize: "16px" }}
-                    className="click"
-                >
-                    {rightSong}
-                </button>
-            </div>
+              {rightSong}
+            </button>
+          </div>
         </div>
-    );
+      );
 };
 
 export default BattleComponent;

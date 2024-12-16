@@ -7,7 +7,8 @@ const TierListPage = () => {
 
     return (
         <div>
-            <h1>Tier List Page</h1>
+            <h1
+            className="font-spotify text-4xl">Tier List Page</h1>
             {tierItems ? (
                 <TierBoard
                     baseItems={tierItems}
