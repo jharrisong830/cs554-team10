@@ -4,8 +4,9 @@ import {
     CardContent,
     CardMedia,
     Typography,
-    CardHeader
+    CardHeader,
 } from "@mui/material";
+import Grid from "@mui/material/Grid2"
 import SpotifyContext from "./contexts/SpotifyContext";
 import { Link} from "react-router-dom";
 import "./App.css";
@@ -25,7 +26,7 @@ const saveRecentSearches = (searches: string[]) => {
 };
 
 const loadRecentSearches = (): string[] => {
-    if (typeof window === "undefined") return []; // Ensure this runs only on the client
+    if (typeof window === "undefined") return [];
     const data = localStorage.getItem(RECENT_SEARCHES_KEY);
     if (data) {
         const { searches, timestamp } = JSON.parse(data);
@@ -43,7 +44,6 @@ export default function SearchPage(props: any) {
     const [searchTerm, setSearchTerm] = useState("");
     const [newPage, setPage] = useState(1);
     const recentSearches = useRef<string[]>(loadRecentSearches());
-    // const cache = useRef<Map<string, any>>(new Map());
     const { stateValue } = useContext(SpotifyContext)!;
     console.log("state value:");
     console.log(stateValue);
@@ -74,8 +74,9 @@ export default function SearchPage(props: any) {
         e.preventDefault();
         setResults(null);
         setPage(1);
-        const trimmedSearchTerm = searchTerm.trim();
-        const finalSearchTerm = trimmedSearchTerm || "Bruno Mars";
+        let trimmedSearchTerm = searchTerm.trim();
+        trimmedSearchTerm = trimmedSearchTerm.toLowerCase()
+        const finalSearchTerm = trimmedSearchTerm || "sabrina carpenter";
         const cacheKey = `${searchValue}:${finalSearchTerm}`;
 
         try {
@@ -126,9 +127,120 @@ export default function SearchPage(props: any) {
         saveRecentSearches(recent);
     };
 
+    let artistCards;
+
+    if (results != null) {
+        artistCards = results.artists.items && results.artists.items.map((item: any) => {
+            if (!item || !item.name || !item.id) return null;
+            return (
+                <div key={item.id}>
+                    <br />
+                    <Grid size={10} key={item.id}>
+                        <Card
+                            variant="outlined"
+                            sx={{
+                                maxWidth: 550,
+                                height: "auto",
+                                marginLeft: "auto",
+                                marginRight: "auto",
+                                borderRadius: 5,
+                                border: "4px solid #f9a8d4",
+                                boxShadow:
+                                    "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
+                                backgroundColor: "lavender",
+                            }}
+                        >
+                            <CardHeader
+                                title={item.name || "unknown name"}
+                                sx={{
+                                    borderBottom: "1px solid #1e8678",
+                                    fontWeight: "bold",
+                                    fontFamily: "system-ui"
+                                }}
+                            />
+                            <CardMedia
+                                sx={{width: 500}}
+                                component="img"
+                                image={item?.images?.[0]?.url || ""}
+                                title="show image"
+                            />
+                            <CardContent>
+                                <Typography
+                                    variant="body2"
+                                    color="textSecondary"
+                                    component="span"
+                                    sx={{
+                                        borderBottom: "1px solid #1e8678",
+                                        fontWeight: "bold"
+                                    }}
+                                >
+                                    <p>
+                                        <p 
+                                            className="URL font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5 italic">
+                                            Spotify URL:
+                                        </p>
+                                        <br />
+                                        <div>
+                                            <Link
+                                                to={item?.external_urls?.spotify || "#"}
+                                                target="_blank"
+                                                className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold border-black border-2 rounded hover:bg-pink-400 transition m-3"
+                                            >
+                                                Spotify Listing
+                                            </Link>
+                                            <Link 
+                                                to={`/artist/${item.id}`}
+                                                state= {{token:stateValue.accessToken}}
+                                                className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold border-black border-2 rounded hover:bg-pink-400 transition m-3"
+                                            >
+                                                Artist's Page
+                                            </Link>
+                                        </div>
+                                    </p>
+                                    <br />
+                                    <p>
+                                        <p 
+                                            className="artists font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5 italic"
+                                        >
+                                            Genres: {item?.genres.length === 0 ? "N/A" : ""}
+                                        </p>
+                                        <p>
+                                            {item?.genres?.map((genre: any) => (
+                                                <p key={genre} className="bg-yellow-200 text-black border-pink-600 border-2 rounded px-2 py-2 p-2 m-4">{genre}</p>
+                                            ))}
+                                        </p>
+                                    </p>
+                                    <p>
+                                        <p className="font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5 italic">
+                                            Spotify followers: {item.followers.total}
+                                        </p>
+                                    </p>
+                                    <br />
+                                </Typography>
+                                <Link 
+                                    to={"/selection"}
+                                    state= {{type: "artist", id: item.id}}
+                                    className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold border-black border-2 rounded hover:bg-pink-400 transition m-3"
+                                >
+                                    Go to Selection
+                                </Link>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                </div>
+            );
+        })
+    } else {
+        artistCards = (
+        <div>
+            <br />
+            <h2 className="text-2xl font-bold">Search for any artist on Spotify!</h2>
+        </div>)
+    }
+
     return (
         <>
-            <form id="simple-form" onSubmit={handleSubmit} className="flex items-center space-x-4 p-4" style={{ backgroundColor:"lavender" }}>
+            <form id="simple-form" onSubmit={handleSubmit} className="bg-violet-100 border-4 rounded px-2 py-1 border-pink-300 flex md:justify-center items-center space-x-4 p-4">
                 <label
                     className="flex items-center space-x-2"
                 >
@@ -142,9 +254,8 @@ export default function SearchPage(props: any) {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Sabrina Carpenter"
-                        list="recent-searches" // Attach the dropdown list
-                        className="border rounded px-2 py-1"
-                        style={{ color: "white" }}
+                        list="recent-searches" 
+                        className="border text-black rounded px-2 py-1"
                     />
                 </label>
                 <datalist id="recent-searches">
@@ -154,116 +265,18 @@ export default function SearchPage(props: any) {
                 </datalist>
                 <input type="submit" value="Submit" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"/>
             </form>
+            
+            <Grid container justifyContent="center">
+                {artistCards}
+            </Grid>
 
-            {results != null ? (
-                    results.artists.items.map((item: any) => {
-                        if (!item || !item.name || !item.id) return null;
-                        return (
-                            <div key={item.id}>
-                                <br />
-                                <Card
-                                    variant="outlined"
-                                    sx={{
-                                        maxWidth: 550,
-                                        height: "auto",
-                                        marginLeft: "auto",
-                                        marginRight: "auto",
-                                        borderRadius: 5,
-                                        border: "1px solid #1e8678",
-                                        boxShadow:
-                                            "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
-                                        backgroundColor: "lavender",
-                                    }}
-                                >
-                                    <CardHeader
-                                        title={item.name || "unknown name"}
-                                        sx={{
-                                            borderBottom: "1px solid #1e8678",
-                                            fontWeight: "bold",
-                                            fontFamily: "system-ui"
-                                        }}
-                                    />
-                                    <CardMedia
-                                        component="img"
-                                        image={item?.images?.[0]?.url || ""}
-                                        title="show image"
-                                    />
-                                    <CardContent>
-                                        <Typography
-                                            variant="body2"
-                                            color="textSecondary"
-                                            component="span"
-                                            sx={{
-                                                borderBottom: "1px solid #1e8678",
-                                                fontWeight: "bold"
-                                            }}
-                                        >
-                                            <p>
-                                                <p 
-                                                    className="URL font-sans bg-[#b3f8b1] border-none text-black p-2.5 m-2.5 italic">
-                                                    Spotify URL:
-                                                </p>
-                                                <br />
-                                                <div>
-                                                    <Link
-                                                        to={item?.external_urls?.spotify || "#"}
-                                                        target="_blank"
-                                                        className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"
-                                                    >
-                                                        Spotify Listing
-                                                    </Link>
-                                                    <Link 
-                                                        to={`/artist/${item.id}`}
-                                                        state= {{token:stateValue.accessToken}}
-                                                        className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"
-                                                    >
-                                                        Artist's Page
-                                                    </Link>
-                                                </div>
-                                            </p>
-                                            <br />
-                                            <p>
-                                                <p 
-                                                    className="artists font-sans bg-[#b3f8b1] border-none text-black p-2.5 m-2.5 italic"
-                                                >
-                                                    Genres:
-                                                </p>
-                                                <p>
-                                                    {item?.genres?.map((genre: any) => (
-                                                        <p key={genre} className="genreDisplay">{genre}</p>
-                                                    ))}
-                                                </p>
-                                            </p>
-                                            <p>
-                                                <p className="font-sans bg-[#b3f8b1] border-none text-black p-2.5 m-2.5 italic">
-                                                    Spotify followers: {item.followers.total}
-                                                </p>
-                                            </p>
-                                            <br />
-                                        </Typography>
-                                        <Link 
-                                            to={"/selection"}
-                                            state= {{type: "artist", id: item.id}}
-                                            className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"
-                                        >
-                                            Go to Selection
-                                        </Link>
-                                    </CardContent>
-                                </Card>
-                            </div>
-                        );
-                    })
-                ) :  (
-                <div>
-                    <br />
-                    <h2 className="text-2xl font-bold">Search for any artist on Spotify!</h2>
-                </div>
-            )}
-            {results != null && (results.artists && results.artists.offset > 0)  ? <button onClick={() => setPage(newPage-1)}>Previous Page</button> : ""}
-        {results != null ? (<p>Current page: {newPage}</p>) : ""}
-        {results != null && ( results.artists && results.artists.next != null) ?<button onClick={() => setPage(newPage+1)}>Next Page</button>: ""}
-        
+            
+        <div className="flex-none items-center x-4 p-4">
+            {results != null && (results.artists && results.artists.offset > 0) && searchTerm != "" ? <button className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3" onClick={() => setPage(newPage-1)}>Previous Page</button> : ""}
+            {results != null && ( results.artists && results.artists.next != null) && searchTerm != "" ?<button className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3" onClick={() => setPage(newPage+1)}>Next Page</button>: ""}
+            {results != null && ( results.artists && results.artists.next != null) && searchTerm === ""? <p className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Search an artist to see multiple results pages!</p>: ""}
+        </div>
+        {results != null ? (<p className="mt-4 px-4 py-2 bg-violet-300 text-black font-spotify font-semibold rounded transition m-3">Current page: {newPage}</p>) : ""}
         </>
     );
 }
-
