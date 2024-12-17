@@ -294,7 +294,7 @@ export default function Selection() {
             }))
         );
         const songDataToSort: SongDataArray = allTracksWithAlbumData ?? [];
-        navigate("/ranker", { state: { songDataToSort } });
+        navigate("/ranker", { state: { songDataToSort, currArtist } });
     };
     const handleSubmit2 = (e: { preventDefault: () => void }) => {
         e.preventDefault();
@@ -321,7 +321,7 @@ export default function Selection() {
     return (
         <div>
             <h1 className="text-2xl font-bold">{currArtist?.name ?? "Loading..."}</h1>
-            <img src={currArtistImage ?? ""} alt="Artist" />
+            <img src={currArtistImage ?? ""} alt="Artist" className="block mx-auto object-cover rounded-lg shadow-md" />
             <div style={{ display: "flex", justifyContent: "center", gap: "10px", margin: "20px 0" }}>
                 {["album", "single"].map((type) => (
                     <div key={type} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>

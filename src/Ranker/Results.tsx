@@ -1,15 +1,19 @@
 import { toPng } from "html-to-image";
-import { SongDataArray } from "../lib/spotify/types";
+import { Artist, SongDataArray } from "../lib/spotify/types";
+import { useState } from "react";
 
 const Results = ({
   finalResults,
   history,
   songDataToSort,
+  currArtist
 }: {
   finalResults: any[];
   history: any[];
   songDataToSort: SongDataArray;
+  currArtist: Artist
 }) => {
+  const [caption, setCaption] = useState("");
   const handleExport = async () => {
     const node = document.getElementById("results-container");
     if (node) {
@@ -19,7 +23,7 @@ const Results = ({
         const response = await fetch("/api/process-image", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ image: base64Image }),
+          body: JSON.stringify({ image: base64Image, caption: caption }),
         });
 
         const data = await response.json();
@@ -139,6 +143,7 @@ const Results = ({
         id="results-container"
         className="p-4 bg-gray-50 border border-gray-200 rounded shadow-sm"
       >
+        <ol className="list-none space-y-4">{currArtist.name}</ol>
         <ol className="list-none space-y-4">{listItems}</ol>
         <ol className="list-none space-y-4 mt-6">{allBattles}</ol>
       </div>
@@ -148,6 +153,15 @@ const Results = ({
       >
         Save Results as Image
       </button>
+      <br></br>
+      <input
+        type="text"
+        id="caption-input"
+        placeholder="Enter your caption here"
+        value={caption}
+        onChange={(e) => setCaption(e.target.value)}
+        className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"
+      />
     </div>
   );
 };
