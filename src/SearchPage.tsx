@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2"
 import SpotifyContext from "./contexts/SpotifyContext";
-import { Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./App.css";
 const RECENT_SEARCHES_KEY = "recentSearches";
 const EXPIRY_TIME_MS = 60 * 60 * 1000; //1 Hour
@@ -48,7 +48,7 @@ export default function SearchPage(props: any) {
     console.log("state value:");
     console.log(stateValue);
 
-   
+
 
     useEffect(() => {
         console.log("Recent Searches:", recentSearches.current);
@@ -159,7 +159,7 @@ export default function SearchPage(props: any) {
                                 }}
                             />
                             <CardMedia
-                                sx={{width: 500}}
+                                sx={{ width: 500 }}
                                 component="img"
                                 image={item?.images?.[0]?.url || ""}
                                 title="show image"
@@ -175,7 +175,7 @@ export default function SearchPage(props: any) {
                                     }}
                                 >
                                     <div>
-                                        <p 
+                                        <p
                                             className="URL font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5 italic">
                                             Spotify URL:
                                         </p>
@@ -188,9 +188,9 @@ export default function SearchPage(props: any) {
                                             >
                                                 Spotify Listing
                                             </Link>
-                                            <Link 
+                                            <Link
                                                 to={`/artist/${item.id}`}
-                                                state= {{token:stateValue.accessToken}}
+                                                state={{ token: stateValue.accessToken }}
                                                 className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold border-black border-2 rounded hover:bg-pink-400 transition m-3"
                                             >
                                                 Artist's Page
@@ -199,27 +199,27 @@ export default function SearchPage(props: any) {
                                     </div>
                                     <br />
                                     <div>
-                                        <p 
+                                        <p
                                             className="artists font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5 italic"
                                         >
                                             Genres: {item?.genres.length === 0 ? "N/A" : ""}
                                         </p>
-                                        <p>
+                                        <div>
                                             {item?.genres?.map((genre: any) => (
                                                 <p key={genre} className="bg-yellow-200 text-black border-pink-600 border-2 rounded px-2 py-2 p-2 m-4">{genre}</p>
                                             ))}
-                                        </p>
+                                        </div>
                                     </div>
-                                    <p>
+                                    <div>
                                         <p className="font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5 italic">
                                             Spotify followers: {item.followers.total}
                                         </p>
-                                    </p>
+                                    </div>
                                     <br />
                                 </Typography>
-                                <Link 
-                                    to={"/selection"}
-                                    state= {{type: "artist", id: item.id}}
+                                <Link
+                                    to={`/selection/${item.id}`}
+                                    state={{ type: "artist", id: item.id }}
                                     className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold border-black border-2 rounded hover:bg-pink-400 transition m-3"
                                 >
                                     Go to Selection
@@ -232,10 +232,10 @@ export default function SearchPage(props: any) {
         })
     } else {
         artistCards = (
-        <div>
-            <br />
-            <h2 className="text-2xl font-bold">Search for any artist on Spotify!</h2>
-        </div>)
+            <div>
+                <br />
+                <h2 className="text-2xl font-bold">Search for any artist on Spotify!</h2>
+            </div>)
     }
 
     return (
@@ -254,7 +254,7 @@ export default function SearchPage(props: any) {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Sabrina Carpenter"
-                        list="recent-searches" 
+                        list="recent-searches"
                         className="border text-black rounded px-2 py-1"
                         style={{ color: "white" }}
                     />
@@ -264,20 +264,20 @@ export default function SearchPage(props: any) {
                         <option key={index} value={term} />
                     ))}
                 </datalist>
-                <input type="submit" value="Submit" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"/>
+                <input type="submit" value="Submit" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3" />
             </form>
-            
+
             <Grid container justifyContent="center">
                 {artistCards}
             </Grid>
 
-            
-        <div className="flex-none items-center x-4 p-4">
-            {results != null && (results.artists && results.artists.offset > 0) && searchTerm != "" ? <button className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3" onClick={() => setPage(newPage-1)}>Previous Page</button> : ""}
-            {results != null && ( results.artists && results.artists.next != null) && searchTerm != "" ?<button className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3" onClick={() => setPage(newPage+1)}>Next Page</button>: ""}
-            {results != null && ( results.artists && results.artists.next != null) && searchTerm === ""? <p className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Search an artist to see multiple results pages!</p>: ""}
-        </div>
-        {results != null ? (<p className="mt-4 px-4 py-2 bg-violet-300 text-black font-spotify font-semibold rounded transition m-3">Current page: {newPage}</p>) : ""}
+
+            <div className="flex-none items-center x-4 p-4">
+                {results != null && (results.artists && results.artists.offset > 0) && searchTerm != "" ? <button className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3" onClick={() => setPage(newPage - 1)}>Previous Page</button> : ""}
+                {results != null && (results.artists && results.artists.next != null) && searchTerm != "" ? <button className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3" onClick={() => setPage(newPage + 1)}>Next Page</button> : ""}
+                {results != null && (results.artists && results.artists.next != null) && searchTerm === "" ? <p className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Search an artist to see multiple results pages!</p> : ""}
+            </div>
+            {results != null ? (<p className="mt-4 px-4 py-2 bg-violet-300 text-black font-spotify font-semibold rounded transition m-3">Current page: {newPage}</p>) : ""}
         </>
     );
 }

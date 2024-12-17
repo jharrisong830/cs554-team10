@@ -8,7 +8,7 @@ import {
 import { Album, Artist, SongData, TierItemProps } from "./lib/spotify/types";
 import SpotifyContext from "./contexts/SpotifyContext";
 import { SongDataArray } from "./lib/spotify/types";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import "./App.css";
 function morphSongDataToTierItemProps(songs: SongData[]): TierItemProps[] {
     return songs.map((song) => ({
@@ -33,6 +33,8 @@ export default function Selection() {
     const [allSingles, setAllSingles] = useState(true);
     const navigate = useNavigate();
     let { state } = useLocation();
+    const { id } = useParams(); 
+    const artistId = state?.id || id; 
     const rows = [{
         rowId: "1",
         items: [],
@@ -68,11 +70,11 @@ export default function Selection() {
     }]
     useEffect(() => {
         const fetchAllData = async () => {
-            if (hasFetchedData.current || !stateValue.accessToken) return;
+            if (hasFetchedData.current || !stateValue.accessToken || !artistId) return;
             const finalSearchTerm = "selection"
             try {
                 const fetchRedisData = async () => {
-                    const response = await fetch(`${API_URL}?searchTerm=${finalSearchTerm}&searchValue=${state.id}`, {
+                    const response = await fetch(`${API_URL}?searchTerm=${finalSearchTerm}&searchValue=${artistId}`, {
                         method: "GET",
                         headers: { Accept: "application/json" },
                     });
@@ -89,9 +91,9 @@ export default function Selection() {
                 console.error("Redis fetch error:", error);
                 try {
                     const [artist, artistImage, albums] = await Promise.all([
-                        getArtist(stateValue.accessToken, state.id),
-                        getArtistImage(stateValue.accessToken, state.id),
-                        getArtistAlbums(stateValue.accessToken, state.id),
+                        getArtist(stateValue.accessToken, artistId),
+                        getArtistImage(stateValue.accessToken, artistId),
+                        getArtistAlbums(stateValue.accessToken, artistId),
                     ]);
                     const albumsWithNoAppearsOn = albums.filter((album) => album.albumType !== 'appears_on')
                     const albumsWithTracks = await fetchTracksForAlbums(stateValue.accessToken, albumsWithNoAppearsOn);
@@ -106,7 +108,7 @@ export default function Selection() {
                     }
                     hasFetchedData.current = true;
                     try {
-                        await fetch(`${API_URL}?searchTerm=${finalSearchTerm}&searchValue=${state.id}`, {
+                        await fetch(`${API_URL}?searchTerm=${finalSearchTerm}&searchValue=${artistId}`, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ data: redis }),
