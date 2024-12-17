@@ -174,7 +174,7 @@ export default function SearchPage(props: any) {
                                         fontWeight: "bold"
                                     }}
                                 >
-                                    <p>
+                                    <div>
                                         <p 
                                             className="URL font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5 italic">
                                             Spotify URL:
@@ -196,9 +196,9 @@ export default function SearchPage(props: any) {
                                                 Artist's Page
                                             </Link>
                                         </div>
-                                    </p>
+                                    </div>
                                     <br />
-                                    <p>
+                                    <div>
                                         <p 
                                             className="artists font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5 italic"
                                         >
@@ -209,7 +209,7 @@ export default function SearchPage(props: any) {
                                                 <p key={genre} className="bg-yellow-200 text-black border-pink-600 border-2 rounded px-2 py-2 p-2 m-4">{genre}</p>
                                             ))}
                                         </p>
-                                    </p>
+                                    </div>
                                     <p>
                                         <p className="font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5 italic">
                                             Spotify followers: {item.followers.total}
