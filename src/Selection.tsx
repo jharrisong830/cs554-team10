@@ -17,6 +17,9 @@ function morphSongDataToTierItemProps(songs: SongData[]): TierItemProps[] {
         altText: song.name,
     }));
 }
+import {
+  Avatar,
+} from "@mui/material";
 const API_URL =
     process.env.NODE_ENV === "production"
         ? "https://cs554-team10.vercel.app/api/redis"
@@ -318,8 +321,13 @@ export default function Selection() {
     }
     return (
         <div>
-            <h1 className="text-2xl font-bold">{currArtist?.name ?? "Loading..."}</h1>
-            <img src={currArtistImage ?? ""} alt="Artist" />
+            <h1 className="text-8xl font-bold underline">{currArtist?.name ?? "Loading..."}</h1>
+            <br />
+            <Avatar
+                alt="Artist avatar"
+                src={currArtistImage ?? ""}
+                sx={{ width: 250, height: 250, justifyContent: "center", display: "flex", margin: "auto" }}
+            />
             <div style={{ display: "flex", justifyContent: "center", gap: "10px", margin: "20px 0" }}>
                 {["album", "single"].map((type) => (
                     <div key={type} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>

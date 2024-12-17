@@ -6,6 +6,9 @@ import {
     Typography,
     CardHeader,
 } from "@mui/material";
+import GroupsIcon from '@mui/icons-material/Groups';
+import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
+import LaunchIcon from '@mui/icons-material/Launch';
 import Grid from "@mui/material/Grid2"
 import SpotifyContext from "./contexts/SpotifyContext";
 import { Link} from "react-router-dom";
@@ -177,7 +180,7 @@ export default function SearchPage(props: any) {
                                     <p>
                                         <p 
                                             className="URL font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5 italic">
-                                            Spotify URL:
+                                            <LaunchIcon /> Spotify URL:
                                         </p>
                                         <br />
                                         <div>
@@ -202,7 +205,7 @@ export default function SearchPage(props: any) {
                                         <p 
                                             className="artists font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5 italic"
                                         >
-                                            Genres: {item?.genres.length === 0 ? "N/A" : ""}
+                                            <LibraryMusicIcon /> Genres: {item?.genres.length === 0 ? "N/A" : ""}
                                         </p>
                                         <p>
                                             {item?.genres?.map((genre: any) => (
@@ -212,7 +215,8 @@ export default function SearchPage(props: any) {
                                     </p>
                                     <p>
                                         <p className="font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5 italic">
-                                            Spotify followers: {item.followers.total}
+                                            
+                                            <GroupsIcon /> Spotify followers: {item.followers.total}
                                         </p>
                                     </p>
                                     <br />
