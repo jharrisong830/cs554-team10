@@ -259,7 +259,7 @@ export default function SearchPage(props: any) {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Sabrina Carpenter"
                         list="recent-searches"
-                        className="border text-black rounded px-2 py-1"
+                        className="border text-black bg-white rounded px-2 py-1"
                         style={{ color: "black" }}
                     />
                 </label>
