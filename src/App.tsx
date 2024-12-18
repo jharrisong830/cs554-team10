@@ -108,15 +108,7 @@ export default function App() {
             path: "/ranker",
             element: (
                 <>
-                    {apiState.accessToken === null ? (
-                        <div>
-                            <h1 className="text-4xl font-bold">Click below to authorize:</h1>
-                            <br/>
-                            <Link to="/auth" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Authorize</Link>
-                        </div>
-                    ) : (
                         <RankerPage />
-                    )}
                 </>
             )
         },
@@ -124,15 +116,7 @@ export default function App() {
             path: "/tierlist",
             element: (
                 <>
-                    {apiState.accessToken === null ? (
-                        <div>
-                            <h1 className="text-4xl font-bold">Click below to authorize:</h1>
-                            <br/>
-                            <Link to="/auth" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Authorize</Link>
-                        </div>
-                    ) : (
                         <TierListPage />
-                    )}
                 </>
             )
         },

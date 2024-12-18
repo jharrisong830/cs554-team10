@@ -52,6 +52,7 @@ const BattleComponent = ({ songDataToSort, currArtist }: { songDataToSort: SongD
     const [leftImage, setLeftImage] = useState("");
     const [leftAlbum, setLeftAlbum] = useState("");
     const [rightAlbum, setRightAlbum] = useState("");
+    const loaded = useRef(0)
     const history = useRef<any[]>([]);
     const currSort = useRef<CurrSortType | null>();
     const key = generateKey(songDataToSort.map((song) => song.name));
@@ -67,6 +68,7 @@ const BattleComponent = ({ songDataToSort, currArtist }: { songDataToSort: SongD
         setLoading(true);
         try {
             if (currSort.current) {
+                loaded.current = 1
                 const {
                     battleNumber: prevBattleNumber,
                     progress: prevProgress,
@@ -130,7 +132,7 @@ const BattleComponent = ({ songDataToSort, currArtist }: { songDataToSort: SongD
                     setShowResults(true);
                 }
                 else {
-                    updateSongs();
+                    updateSongs(prevTotalBattles);
                 }
                 setLoading(false);
                 return;
@@ -175,7 +177,8 @@ const BattleComponent = ({ songDataToSort, currArtist }: { songDataToSort: SongD
             rightIndex.current = sortedIndexList.current.length - 1;
             leftInnerIndex.current = 0;
             rightInnerIndex.current = 0;
-            updateSongs();
+            console.log(totalBattlesCurr)
+            updateSongs(totalBattlesCurr);
         } catch (error) {
             console.error("Error during initialization:", error);
         } finally {
@@ -183,7 +186,7 @@ const BattleComponent = ({ songDataToSort, currArtist }: { songDataToSort: SongD
         }
     };
 
-    const updateSongs = () => {
+    const updateSongs = (total: number) => {
         const leftSongIndex =
             sortedIndexList.current[leftIndex.current][leftInnerIndex.current];
         const rightSongIndex =
@@ -207,9 +210,13 @@ const BattleComponent = ({ songDataToSort, currArtist }: { songDataToSort: SongD
         }
         setLeftImage(((songDataToSort[leftSongIndex]).images[0]).url);
         setRightImage(((songDataToSort[rightSongIndex]).images[0]).url);
-        console.log(totalBattles)
         if (totalBattles === 0) {
-            setProgress(0)
+            console.log(total)
+            setProgress(
+                Math.floor(
+                    (sortedNumber.current * 100) / (total)
+                )
+            );
         }
         else {
             setProgress(
@@ -387,11 +394,11 @@ const BattleComponent = ({ songDataToSort, currArtist }: { songDataToSort: SongD
             setShowResults(true);
         } else {
             setBattleNumber(battleNumber + 1);
-            updateSongs();
+            updateSongs(1);
         }
         let obj = {
             battleNumber: battleNumber + 1,
-            progress,
+            progress: progress,
             leftIndex: leftIndex.current,
             leftInnerIndex: leftInnerIndex.current,
             rightIndex: rightIndex.current,
@@ -408,6 +415,7 @@ const BattleComponent = ({ songDataToSort, currArtist }: { songDataToSort: SongD
             history: history.current,
             totalBattles: totalBattles
         }
+        console.log(progress)
         saveResults(obj, key)
     };
 
@@ -445,7 +453,7 @@ const BattleComponent = ({ songDataToSort, currArtist }: { songDataToSort: SongD
             tiedDataList.current = prevTiedDataList;
             pointer.current = prevPointer;
             sortedNumber.current = prevSortedNo;
-            updateSongs();
+            updateSongs(1);
         }
     };
 
