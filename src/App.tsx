@@ -137,7 +137,7 @@ export default function App() {
             )
         },
         {
-            path: "/selection",
+            path: "/selection/:id",
             element: (
                 <>
                     {apiState.accessToken === null ? (

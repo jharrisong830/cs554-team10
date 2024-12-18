@@ -4,15 +4,11 @@ import { TierRowProps } from "../lib/spotify/types";
 
 function TierRow({ rowId, items, color, letter }: TierRowProps) {
     return (
-        <div className="flex items-center mb-2.5">
+        <div className="flex items-start mb-2.5">
             <div
-                className={`text-white p-2.5 mr-2.5 rounded font-bold`}
+                className="min-w-[5rem] max-w-[8rem] min-h-[5rem] mr-4 text-white p-2.5 rounded font-bold flex items-center justify-center text-center break-words"
             >
-                {letter && color && (
-                    <div>
-                        <Tier initialLetter={letter} initialColor={color} />
-                    </div>
-                )}
+                <Tier initialLetter={letter} initialColor={color} />
             </div>
             <Droppable droppableId={rowId} direction="horizontal">
                 {(provided) => (
@@ -36,7 +32,7 @@ function TierRow({ rowId, items, color, letter }: TierRowProps) {
                                             alt={item.altText}
                                             className="w-12 h-12 object-cover mb-1.5"
                                         />
-                                        <span>{item.altText}</span>
+                                        <span className="text-sm">{item.altText}</span>
                                     </div>
                                 )}
                             </Draggable>
