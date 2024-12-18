@@ -215,7 +215,7 @@ export default function SearchPage(props: any) {
                                     </div>
                                     <div>
                                         <p className="font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5 italic">
-                                            
+
                                             <GroupsIcon /> Spotify followers: {item.followers.total}
                                         </p>
                                     </div>
@@ -244,6 +244,9 @@ export default function SearchPage(props: any) {
 
     return (
         <>
+            <Link to="/" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Home</Link>
+            <br></br>
+            <br></br>
             <form id="simple-form" onSubmit={handleSubmit} className="bg-violet-100 border-4 rounded px-2 py-1 border-pink-300 flex md:justify-center items-center space-x-4 p-4">
                 <label
                     className="flex items-center space-x-2"
@@ -282,7 +285,6 @@ export default function SearchPage(props: any) {
                 {results != null && (results.artists && results.artists.next != null) && searchTerm === "" ? <p className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Search an artist to see multiple results pages!</p> : ""}
             </div>
             {results != null ? (<p className="mt-4 px-4 py-2 bg-violet-300 text-black font-spotify font-semibold rounded transition m-3">Current page: {newPage}</p>) : ""}
-            <Link to="/" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Home</Link>
         </>
     );
 }

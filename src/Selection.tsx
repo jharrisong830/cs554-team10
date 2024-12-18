@@ -18,7 +18,7 @@ function morphSongDataToTierItemProps(songs: SongData[]): TierItemProps[] {
     }));
 }
 import {
-  Avatar,
+    Avatar,
 } from "@mui/material";
 const API_URL =
     process.env.NODE_ENV === "production"
@@ -36,8 +36,8 @@ export default function Selection() {
     const [allSingles, setAllSingles] = useState(true);
     const navigate = useNavigate();
     let { state } = useLocation();
-    const { id } = useParams(); 
-    const artistId = state?.id || id; 
+    const { id } = useParams();
+    const artistId = state?.id || id;
     const rows = [{
         rowId: "1",
         items: [],
@@ -323,6 +323,9 @@ export default function Selection() {
     }
     return (
         <div>
+            <Link to="/" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Home</Link>
+            <br></br>
+            <br></br>
             <h1 className="text-8xl font-bold underline">{currArtist?.name ?? "Loading..."}</h1>
             <br />
             <Avatar
@@ -346,8 +349,7 @@ export default function Selection() {
                 <button onClick={handleSubmit} className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Go to Ranker</button>
                 <button onClick={handleSubmit2} className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Go to TierList</button>
             </div>
-            <br/>
-            <Link to="/" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Home</Link>
+            <br />
         </div>
     );
 }

@@ -84,6 +84,9 @@ export default function ArtistPage(props: any) {
 
   return (
     <>
+      <Link to="/" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Home</Link>
+      <br></br>
+      <br></br>
       {results != null && albumResults != null ?
         (<>
           <h1 className="text-8xl font-bold underline">{results.name}</h1>
@@ -95,54 +98,54 @@ export default function ArtistPage(props: any) {
           />
           <br />
           <Divider textAlign="center" ><Chip label="Info" size="medium" /></Divider>
-            <br />
-            <Card
-                variant="outlined"
+          <br />
+          <Card
+            variant="outlined"
+            sx={{
+              maxWidth: 550,
+              height: "auto",
+              marginLeft: "auto",
+              marginRight: "auto",
+              borderRadius: 5,
+              border: "4px solid #f9a8d4",
+              boxShadow:
+                "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
+              backgroundColor: "lavender",
+            }}
+          >
+            <CardContent>
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                component="span"
                 sx={{
-                    maxWidth: 550,
-                    height: "auto",
-                    marginLeft: "auto",
-                    marginRight: "auto",
-                    borderRadius: 5,
-                    border: "4px solid #f9a8d4",
-                    boxShadow:
-                        "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
-                    backgroundColor: "lavender",
+                  borderBottom: "1px solid #1e8678",
+                  fontWeight: "bold"
                 }}
-            >
-              <CardContent>
-                <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    component="span"
-                    sx={{
-                        borderBottom: "1px solid #1e8678",
-                        fontWeight: "bold"
-                    }}
+              >
+                <p>
+                  <p className="font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5">
+                    <GroupsIcon /> Spotify Followers: {results.followers.total}
+                  </p>
+                </p>
+                <p>
+                  <p className="bg-yellow-200 text-black border-pink-600 border-2 rounded px-2 py-2 p-2 m-4">
+                    <LibraryMusicIcon /> Main Genre: {results.genres[0]}
+                  </p>
+                </p>
+                <Link
+                  to={results?.external_urls?.spotify || "#"}
+                  target="_blank"
+                  className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold border-black border-2 rounded hover:bg-pink-400 transition m-3"
                 >
-                  <p>
-                      <p className="font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5">  
-                        <GroupsIcon /> Spotify Followers: {results.followers.total}
-                      </p>
-                  </p>
-                  <p>
-                      <p className="bg-yellow-200 text-black border-pink-600 border-2 rounded px-2 py-2 p-2 m-4">
-                        <LibraryMusicIcon /> Main Genre: {results.genres[0]}
-                      </p>
-                  </p>
-                  <Link
-                      to={results?.external_urls?.spotify || "#"}
-                      target="_blank"
-                      className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold border-black border-2 rounded hover:bg-pink-400 transition m-3"
-                  >
-                    <LaunchIcon /> {results.name}'s Spotify
-                  </Link>
-                </Typography>
-              </CardContent>
-            </Card>
-            <br />
+                  <LaunchIcon /> {results.name}'s Spotify
+                </Link>
+              </Typography>
+            </CardContent>
+          </Card>
+          <br />
           <Divider textAlign="center" ><Chip label="Top Albums" size="medium" /></Divider>
-          <br />  
+          <br />
           <Grid
             container
             spacing={2}
@@ -152,32 +155,32 @@ export default function ArtistPage(props: any) {
             }}
           >
             {albumResults[0] ? <Card
-                                  variant="outlined"
-                                  sx={{
-                                      maxWidth: 250,
-                                      height: "auto",
-                                      marginLeft: "auto",
-                                      marginRight: "auto",
-                                      borderRadius: 5,
-                                      border: "4px solid #f9a8d4",
-                                      boxShadow:
-                                          "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
-                                      backgroundColor: "lavender",
-                                  }}
-                                >
+              variant="outlined"
+              sx={{
+                maxWidth: 250,
+                height: "auto",
+                marginLeft: "auto",
+                marginRight: "auto",
+                borderRadius: 5,
+                border: "4px solid #f9a8d4",
+                boxShadow:
+                  "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
+                backgroundColor: "lavender",
+              }}
+            >
               <CardMedia
                 sx={{ height: 250, width: 250 }}
-                component = "img"
+                component="img"
                 image={albumResults[0].image}
                 title="first album"
               />
               <CardHeader
-                  title={albumResults[0].name || "unknown name"}
-                  sx={{
-                      borderBottom: "1px solid #1e8678",
-                      fontWeight: "bold",
-                      fontFamily: "system-ui"
-                  }}
+                title={albumResults[0].name || "unknown name"}
+                sx={{
+                  borderBottom: "1px solid #1e8678",
+                  fontWeight: "bold",
+                  fontFamily: "system-ui"
+                }}
               />
               <CardContent>
                 <Typography
@@ -185,11 +188,11 @@ export default function ArtistPage(props: any) {
                   color="textSecondary"
                   component="span"
                   sx={{
-                      borderBottom: "1px solid #1e8678",
-                      fontWeight: "bold"
+                    borderBottom: "1px solid #1e8678",
+                    fontWeight: "bold"
                   }}
                 >
-                  <p className="font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5">  
+                  <p className="font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5">
                     Artists:
                   </p>
                   {albumResults[0].artists.map((artist: any) => (
@@ -197,43 +200,43 @@ export default function ArtistPage(props: any) {
                   ))}
                   <p>
                   </p>
-                  <Link 
+                  <Link
                     to={albumResults[0].platformURL}
                     target="_blank"
                     className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold border-black border-2 rounded hover:bg-pink-400 transition m-3"
                   >
-                      Album Link
+                    Album Link
                   </Link>
                 </Typography>
-            </CardContent>
+              </CardContent>
             </Card> : ""}
             {albumResults[1] ? <Card
-                                  variant="outlined"
-                                  sx={{
-                                      maxWidth: 250,
-                                      height: "auto",
-                                      marginLeft: "auto",
-                                      marginRight: "auto",
-                                      borderRadius: 5,
-                                      border: "4px solid #f9a8d4",
-                                      boxShadow:
-                                          "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
-                                      backgroundColor: "lavender",
-                                  }}
-                                >
+              variant="outlined"
+              sx={{
+                maxWidth: 250,
+                height: "auto",
+                marginLeft: "auto",
+                marginRight: "auto",
+                borderRadius: 5,
+                border: "4px solid #f9a8d4",
+                boxShadow:
+                  "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
+                backgroundColor: "lavender",
+              }}
+            >
               <CardMedia
                 sx={{ height: 250, width: 250 }}
-                component = "img"
+                component="img"
                 image={albumResults[1].image}
                 title="first album"
               />
               <CardHeader
-                  title={albumResults[1].name || "unknown name"}
-                  sx={{
-                      borderBottom: "1px solid #1e8678",
-                      fontWeight: "bold",
-                      fontFamily: "system-ui"
-                  }}
+                title={albumResults[1].name || "unknown name"}
+                sx={{
+                  borderBottom: "1px solid #1e8678",
+                  fontWeight: "bold",
+                  fontFamily: "system-ui"
+                }}
               />
               <CardContent>
                 <Typography
@@ -241,11 +244,11 @@ export default function ArtistPage(props: any) {
                   color="textSecondary"
                   component="span"
                   sx={{
-                      borderBottom: "1px solid #1e8678",
-                      fontWeight: "bold"
+                    borderBottom: "1px solid #1e8678",
+                    fontWeight: "bold"
                   }}
                 >
-                  <p className="font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5">  
+                  <p className="font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5">
                     Artists:
                   </p>
                   {albumResults[1].artists.map((artist: any) => (
@@ -253,43 +256,43 @@ export default function ArtistPage(props: any) {
                   ))}
                   <p>
                   </p>
-                  <Link 
+                  <Link
                     to={albumResults[1].platformURL}
                     target="_blank"
                     className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold border-black border-2 rounded hover:bg-pink-400 transition m-3"
                   >
-                      Album Link
+                    Album Link
                   </Link>
                 </Typography>
-            </CardContent>
+              </CardContent>
             </Card> : ""}
             {albumResults[2] ? <Card
-                                  variant="outlined"
-                                  sx={{
-                                      maxWidth: 250,
-                                      height: "auto",
-                                      marginLeft: "auto",
-                                      marginRight: "auto",
-                                      borderRadius: 5,
-                                      border: "4px solid #f9a8d4",
-                                      boxShadow:
-                                          "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
-                                      backgroundColor: "lavender",
-                                  }}
-                                >
+              variant="outlined"
+              sx={{
+                maxWidth: 250,
+                height: "auto",
+                marginLeft: "auto",
+                marginRight: "auto",
+                borderRadius: 5,
+                border: "4px solid #f9a8d4",
+                boxShadow:
+                  "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
+                backgroundColor: "lavender",
+              }}
+            >
               <CardMedia
                 sx={{ height: 250, width: 250 }}
-                component = "img"
+                component="img"
                 image={albumResults[2].image}
                 title="first album"
               />
               <CardHeader
-                  title={albumResults[2].name || "unknown name"}
-                  sx={{
-                      borderBottom: "1px solid #1e8678",
-                      fontWeight: "bold",
-                      fontFamily: "system-ui"
-                  }}
+                title={albumResults[2].name || "unknown name"}
+                sx={{
+                  borderBottom: "1px solid #1e8678",
+                  fontWeight: "bold",
+                  fontFamily: "system-ui"
+                }}
               />
               <CardContent>
                 <Typography
@@ -297,11 +300,11 @@ export default function ArtistPage(props: any) {
                   color="textSecondary"
                   component="span"
                   sx={{
-                      borderBottom: "1px solid #1e8678",
-                      fontWeight: "bold"
+                    borderBottom: "1px solid #1e8678",
+                    fontWeight: "bold"
                   }}
                 >
-                  <p className="font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5">  
+                  <p className="font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5">
                     Artists:
                   </p>
                   {albumResults[2].artists.map((artist: any) => (
@@ -309,43 +312,43 @@ export default function ArtistPage(props: any) {
                   ))}
                   <p>
                   </p>
-                  <Link 
+                  <Link
                     to={albumResults[2].platformURL}
                     target="_blank"
                     className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold border-black border-2 rounded hover:bg-pink-400 transition m-3"
                   >
-                      Album Link
+                    Album Link
                   </Link>
                 </Typography>
-            </CardContent>
+              </CardContent>
             </Card> : ""}
             {albumResults[3] ? <Card
-                                  variant="outlined"
-                                  sx={{
-                                      maxWidth: 250,
-                                      height: "auto",
-                                      marginLeft: "auto",
-                                      marginRight: "auto",
-                                      borderRadius: 5,
-                                      border: "4px solid #f9a8d4",
-                                      boxShadow:
-                                          "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
-                                      backgroundColor: "lavender",
-                                  }}
-                                >
+              variant="outlined"
+              sx={{
+                maxWidth: 250,
+                height: "auto",
+                marginLeft: "auto",
+                marginRight: "auto",
+                borderRadius: 5,
+                border: "4px solid #f9a8d4",
+                boxShadow:
+                  "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
+                backgroundColor: "lavender",
+              }}
+            >
               <CardMedia
                 sx={{ height: 250, width: 250 }}
-                component = "img"
+                component="img"
                 image={albumResults[3].image}
                 title="first album"
               />
               <CardHeader
-                  title={albumResults[3].name || "unknown name"}
-                  sx={{
-                      borderBottom: "1px solid #1e8678",
-                      fontWeight: "bold",
-                      fontFamily: "system-ui"
-                  }}
+                title={albumResults[3].name || "unknown name"}
+                sx={{
+                  borderBottom: "1px solid #1e8678",
+                  fontWeight: "bold",
+                  fontFamily: "system-ui"
+                }}
               />
               <CardContent>
                 <Typography
@@ -353,11 +356,11 @@ export default function ArtistPage(props: any) {
                   color="textSecondary"
                   component="span"
                   sx={{
-                      borderBottom: "1px solid #1e8678",
-                      fontWeight: "bold"
+                    borderBottom: "1px solid #1e8678",
+                    fontWeight: "bold"
                   }}
                 >
-                  <p className="font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5">  
+                  <p className="font-sans bg-[#b3f8b1] border-pink-600 border-2 rounded px-2 py-2 text-black p-2.5 m-2.5">
                     Artists:
                   </p>
                   {albumResults[3].artists.map((artist: any) => (
@@ -365,23 +368,21 @@ export default function ArtistPage(props: any) {
                   ))}
                   <p>
                   </p>
-                  <Link 
+                  <Link
                     to={albumResults[3].platformURL}
                     target="_blank"
                     className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold border-black border-2 rounded hover:bg-pink-400 transition m-3"
                   >
-                      Album Link
+                    Album Link
                   </Link>
                 </Typography>
-            </CardContent>
+              </CardContent>
             </Card> : ""}
           </Grid>
         </>
         )
         : ""}
-        <br/>
-        <br/>
-        <Link to="/" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Home</Link>
-    </>
+      <br />
+      <br />    </>
   );
 }
