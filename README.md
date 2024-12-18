@@ -30,7 +30,7 @@ brew install git node imagemagick redis-stack
 ```
 
 ### Environment Variables
-Create a .env.local file in the root of the project, and add the following variables:
+Create a `.env.local` file in the root of the project, and add the following variables:
 
 ```sh
 touch .env.local
@@ -41,7 +41,7 @@ VITE_SPOTIFY_REDIRECT_URL=http://localhost:5173/auth/success # set this on local
 REDIS_URL=127.0.0.1:6379 # default url for redis when running on local
 ```
 
-**NOTE**: For TAs grading this project, please see `TA_README.md` for more details on how to set up the environment. Our submission will contain the necessary keys and login information.
+**NOTE**: For TAs grading this project, please see [TA_README.md](TA_README.md) for more details on how to set up the environment. Our submission will contain the necessary keys and login information.
 
 ### Starting the Project
 Run the following commands in order to start the backend and frontend for the project:
