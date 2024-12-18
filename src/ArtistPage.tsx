@@ -379,7 +379,9 @@ export default function ArtistPage(props: any) {
         </>
         )
         : ""}
-
+        <br/>
+        <br/>
+        <Link to="/" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Home</Link>
     </>
   );
 }

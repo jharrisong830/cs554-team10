@@ -6,6 +6,7 @@ import { SongData, SongDataArray, CurrSortType, Artist } from "../lib/spotify/ty
 const generateKey = (names: string[]): string => {
     return `results_${names.join("_")}`;
 };
+import { Link } from "react-router-dom";
 
 const saveResults = (sorting: CurrSortType | null, key: string) => {
     const data = {
@@ -563,6 +564,7 @@ const BattleComponent = ({ songDataToSort, currArtist }: { songDataToSort: SongD
                     </button>
                 </div>
             </div>
+            <Link to="/" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Home</Link>
         </div>
     );
 

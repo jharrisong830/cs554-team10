@@ -23,13 +23,13 @@ function Homepage() {
             <h4 className="text-4xl font-bold font-italic">The tools we used:</h4>
             <br />
             <nav>
-                <a href="https://react.dev/" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">React</a>
-                <a href="https://developer.spotify.com/documentation/web-api" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Spotify API</a>
-                <a href="https://imagemagick.org/script/index.php" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">ImageMagick</a>
-                <a href="https://vercel.com/" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Vercel</a>
-                <a href="https://tailwindcss.com/" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Tailwind</a>
-                <a href="https://www.typescriptlang.org/" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">TypeScript</a>
-                <a href="https://redis.io/" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Redis</a>
+                <a href="https://react.dev/" target="_blank" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">React</a>
+                <a href="https://developer.spotify.com/documentation/web-api" target="_blank" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Spotify API</a>
+                <a href="https://imagemagick.org/script/index.php" target="_blank" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">ImageMagick</a>
+                <a href="https://vercel.com/" target="_blank" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Vercel</a>
+                <a href="https://tailwindcss.com/" target="_blank" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Tailwind</a>
+                <a href="https://www.typescriptlang.org/" target="_blank" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">TypeScript</a>
+                <a href="https://redis.io/" target="_blank" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Redis</a>
             </nav>
             <br />
         </>

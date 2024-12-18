@@ -260,7 +260,7 @@ export default function SearchPage(props: any) {
                         placeholder="Sabrina Carpenter"
                         list="recent-searches"
                         className="border text-black rounded px-2 py-1"
-                        style={{ color: "white" }}
+                        style={{ color: "black" }}
                     />
                 </label>
                 <datalist id="recent-searches">
@@ -282,6 +282,7 @@ export default function SearchPage(props: any) {
                 {results != null && (results.artists && results.artists.next != null) && searchTerm === "" ? <p className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Search an artist to see multiple results pages!</p> : ""}
             </div>
             {results != null ? (<p className="mt-4 px-4 py-2 bg-violet-300 text-black font-spotify font-semibold rounded transition m-3">Current page: {newPage}</p>) : ""}
+            <Link to="/" className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3">Home</Link>
         </>
     );
 }
