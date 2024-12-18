@@ -2,26 +2,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import { TierProps } from '../lib/spotify/types';
 
 function Tier({ initialLetter, initialColor }: TierProps) {
-  const [letter, setLetter] = useState(initialLetter);
   const [color, setColor] = useState(initialColor);
+  const [letter, setLetter] = useState(initialLetter);
   const [isEditing, setIsEditing] = useState(false);
-  const [fontSize, setFontSize] = useState(30);
-
+  const [fontSize] = useState(20);
+  const [height, setHeight] = useState(80);
   const boxRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    if (boxRef.current) {
-      const boxWidth = boxRef.current.offsetWidth;
-      const boxHeight = boxRef.current.offsetHeight;
-      const letterLength = letter.length;
-
-      let newFontSize;
-      if (letterLength !== 0) {
-        newFontSize = Math.min(boxWidth, boxHeight) / ((letterLength + 1) * 0.5);
-      } else {
-        newFontSize = 30;
-      }
-      setFontSize(newFontSize);
+    if (inputRef.current) {
+      const scrollHeight = inputRef.current.scrollHeight;
+      setHeight(scrollHeight);
     }
   }, [letter]);
 
@@ -33,8 +25,8 @@ function Tier({ initialLetter, initialColor }: TierProps) {
     setIsEditing(false);
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLetter(event.target.value);
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setLetter(e.target.value);
   };
 
   const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +37,7 @@ function Tier({ initialLetter, initialColor }: TierProps) {
     <div>
       <div
         ref={boxRef}
-        className="flex items-center justify-center w-20 h-20 border-2 font-spotify border-gray-300 rounded-md cursor-pointer text-white text-center overflow-hidden"
+        className="flex items-center justify-center min-w-[5rem] max-w-[8rem] min-h-[5rem] border-2 font-spotify border-gray-300 rounded-md cursor-pointer text-white text-center overflow-hidden break-words whitespace-normal"
         style={{
           backgroundColor: color,
           fontSize: `${fontSize}px`,
@@ -53,14 +45,15 @@ function Tier({ initialLetter, initialColor }: TierProps) {
         onClick={handleClick}
       >
         {isEditing ? (
-          <input
-            type="text"
+          <textarea
+            ref={inputRef}
             value={letter}
             onChange={handleChange}
             onBlur={handleBlur}
             autoFocus
-            className="w-full h-full text-center font-spotify border-none outline-none bg-white"
+            className="w-full h-full text-center font-spotify border-none outline-none bg-transparent resize-none overflow-hidden"
             style={{
+              height: `${height}px`,
               fontSize: `${fontSize}px`,
             }}
           />

@@ -490,6 +490,8 @@ const BattleComponent = ({ songDataToSort, currArtist }: { songDataToSort: SongD
         <div className="text-center font-spotify">
             <h2 className="text-2xl font-bold mb-6">
                 Battle No. {battleNumber}/{totalBattles} Possible Battles
+                <br></br>
+                {songDataToSort.length} Songs to Rank
             </h2>
             <div className="w-full max-w-md mx-auto mb-6">
                 <div className="h-5 w-full bg-gray-200 rounded-full overflow-hidden">
