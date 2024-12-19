@@ -1,7 +1,7 @@
 import { toPng } from "html-to-image";
 import { Artist, SongDataArray } from "../lib/spotify/types";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Results = ({
   finalResults,
@@ -14,6 +14,7 @@ const Results = ({
   songDataToSort: SongDataArray;
   currArtist: Artist
 }) => {
+  const navigate = useNavigate();
   const [caption, setCaption] = useState("");
   const handleExport = async () => {
     const node = document.getElementById("results-container");
@@ -38,6 +39,14 @@ const Results = ({
         console.error("Error exporting image:", error);
       }
     }
+  };
+
+  /**
+   * clears local storage of any ranker results, and returns to the artist search page
+   */
+  const handleClear = () => {
+    localStorage.clear();
+    navigate("/search");
   };
 
   if (!finalResults?.length || !history?.length || !songDataToSort?.length) {
@@ -153,6 +162,12 @@ const Results = ({
         className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"
       >
         Save Results as Image
+      </button>
+      <button
+        onClick={handleClear}
+        className="mt-4 px-4 py-2 bg-pink-300 text-black font-spotify font-semibold rounded hover:bg-pink-400 transition m-3"
+      >
+        Clear & Start New Battle
       </button>
       <br></br>
       <input
